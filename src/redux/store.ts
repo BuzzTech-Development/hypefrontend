@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { logger } from 'redux-logger';
+import logger from 'redux-logger';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import userSlice from "./userSlice";
 
@@ -7,7 +7,7 @@ const store = configureStore({
     reducer: {
         user: userSlice,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+    middleware: getDefaultMiddleware => getDefaultMiddleware().concat(logger),
 })
 
 export type RootState = ReturnType<typeof store.getState>
