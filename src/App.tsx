@@ -1,13 +1,13 @@
 import React from 'react';
 import {Button} from "antd";
 import './App.css';
+import {useSelector} from "react-redux";
+import Login from "./scenes/Login";
 
 function App() {
-  return (
-    <div className="App">
-        <Button type="primary">HYPE</Button>
-    </div>
-  );
+    return (
+        <Login />
+    );
 }
 
 export default App;
