@@ -1,9 +1,18 @@
 import React from 'react';
 import {Button, Form, Input} from "antd";
+import {useDispatch} from "react-redux";
+import {useAppDispatch} from "../redux/store";
+import {login} from "../redux/userSlice";
 
 const Login = () => {
+    const dispatch = useAppDispatch();
+
+    const onFinish = (values: { username: string, password: string }) => {
+        dispatch(login(values));
+    }
+
     return (
-        <Form>
+        <Form onFinish={onFinish}>
             <Form.Item
                 label="Username"
                 name="username"
