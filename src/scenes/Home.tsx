@@ -23,7 +23,7 @@ const Home = () => {
             </Layout.Sider>
             <Layout>
                 <Layout.Header style={{ padding: 0, textAlign: "center", ...headerStyle }}>
-                    <div>Header Title</div>
+                    Header Title
                 </Layout.Header>
                 <Layout.Content>
 
