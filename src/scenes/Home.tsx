@@ -3,6 +3,7 @@ import React, {ReactNode, useState} from 'react';
 import {
     CalendarOutlined,
     HomeOutlined,
+    LogoutOutlined,
     NotificationOutlined,
     TrophyOutlined,
     UnorderedListOutlined,
@@ -94,6 +95,7 @@ const Home = ({ location, history }: RouteComponentProps) => {
                     style={{ position: "absolute", width: "100%", }}
                 >
                     {tabs.map(tab => <Menu.Item key={tab.key} icon={tab.icon}>{tab.title}</Menu.Item>)}
+                    <Menu.Item icon={<LogoutOutlined />} danger>Log Out</Menu.Item>
                 </Menu>
             </Layout.Sider>
             <Layout>
