@@ -28,7 +28,8 @@ const Home = ({ location, history }: RouteComponentProps) => {
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
 
-    const headerStyle = { height: "50px", color: "white", }
+    const headerHeight = "50px";
+    const headerStyle = { height: headerHeight, color: "white", }
 
     const tabs: ApplicationTab[] = [
         {
@@ -112,7 +113,7 @@ const Home = ({ location, history }: RouteComponentProps) => {
             </Layout.Sider>
             <Layout>
                 <Layout.Header style={{ padding: 0, textAlign: "center", ...headerStyle }}>
-                    <Typography.Title level={3} style={{ color: "white", }}>
+                    <Typography.Title level={3} style={{ color: "white", lineHeight: headerHeight, }}>
                         {selectedTab && selectedTab.title}
                     </Typography.Title>
                 </Layout.Header>
