@@ -28,7 +28,7 @@ const Home = ({ location, history }: RouteComponentProps) => {
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
 
-    const headerHeight = "50px";
+    const headerHeight = "60px";
     const headerStyle = { height: headerHeight, color: "white", }
 
     const tabs: ApplicationTab[] = [
