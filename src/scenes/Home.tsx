@@ -1,6 +1,13 @@
 import {Layout, Menu} from 'antd';
 import React, {useState} from 'react';
-import {CalendarOutlined, HomeOutlined} from "@ant-design/icons";
+import {
+    CalendarOutlined,
+    HomeOutlined,
+    NotificationOutlined,
+    TrophyOutlined,
+    UnorderedListOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 
 const Home = () => {
     const [menuCollapsed, setMenuCollapsed] = useState(false);
@@ -18,7 +25,11 @@ const Home = () => {
                     style={{ position: "absolute", width: "100%", }}
                 >
                     <Menu.Item icon={<HomeOutlined />}>Home</Menu.Item>
+                    <Menu.Item icon={<NotificationOutlined />}>Announcements</Menu.Item>
                     <Menu.Item icon={<CalendarOutlined />}>Calendar</Menu.Item>
+                    <Menu.Item icon={<UnorderedListOutlined />}>Assignments</Menu.Item>
+                    <Menu.Item icon={<TrophyOutlined />}>Progress</Menu.Item>
+                    <Menu.Item icon={<UserOutlined />}>Account</Menu.Item>
                 </Menu>
             </Layout.Sider>
             <Layout>
