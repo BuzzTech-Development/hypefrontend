@@ -1,4 +1,4 @@
-import {Layout, Menu} from 'antd';
+import {Calendar, Layout, Menu} from 'antd';
 import React, {ReactNode, useState} from 'react';
 import {
     CalendarOutlined,
@@ -51,7 +51,7 @@ const Home = ({ location, history }: RouteComponentProps) => {
             key: "calendar",
             path: "/calendar",
             icon: <CalendarOutlined />,
-            content: <h2>Calendar</h2>,
+            content: <Calendar />,
         },
         {
             title: "Assignments",
@@ -113,7 +113,7 @@ const Home = ({ location, history }: RouteComponentProps) => {
                     {selectedTab && selectedTab.title}
                 </Layout.Header>
                 <Layout.Content>
-                    <div style={{ textAlign: "center", }}>
+                    <div style={{ textAlign: "center", margin: "20px", }}>
                         {selectedTab && selectedTab.content}
                     </div>
                 </Layout.Content>
