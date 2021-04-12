@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, Col, Form, Input, Row} from "antd";
+import {Button, Col, Form, Input, Row, Typography} from "antd";
 import {useAppDispatch} from "../redux/store";
 import {login} from "../redux/userSlice";
 
@@ -14,6 +14,7 @@ const Login = () => {
         <Row align="middle" justify="center" style={{ minHeight: "100vh" }}>
             <Col>
                 <Form onFinish={onFinish}>
+                    <Typography.Title level={2}>HYPE Login</Typography.Title>
                     <Form.Item
                         label="Username"
                         name="username"
@@ -30,7 +31,7 @@ const Login = () => {
                     </Form.Item>
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
-                            Submit
+                            Log In
                         </Button>
                     </Form.Item>
                 </Form>
