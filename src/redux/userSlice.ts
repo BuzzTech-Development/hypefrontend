@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import apiInstance from "../utils/api";
+import api from "../utils/api";
 
 interface UserState {
     authenticated: boolean;
@@ -17,7 +18,12 @@ export const login = createAsyncThunk(
 const userSlice = createSlice({
     name: 'user',
     initialState,
-    reducers: {},
+    reducers: {
+        logout: (state) => {
+            apiInstance.removeTokenAuth();
+            state.authenticated = false;
+        },
+    },
     extraReducers: (builder) => {
         builder.addCase(login.fulfilled, (state) => ({
             ...state,
@@ -25,5 +31,7 @@ const userSlice = createSlice({
         }))
     }
 });
+
+export const { logout } = userSlice.actions;
 
 export default userSlice.reducer
