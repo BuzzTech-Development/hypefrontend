@@ -8,7 +8,7 @@ import {
     UnorderedListOutlined,
     UserOutlined
 } from "@ant-design/icons";
-import {matchPath, Route, RouteComponentProps, withRouter} from "react-router-dom";
+import {Link, matchPath, Route, RouteComponentProps, withRouter} from "react-router-dom";
 
 interface ApplicationTab {
     title: string;
@@ -19,7 +19,7 @@ interface ApplicationTab {
     content: ReactNode;
 }
 
-const Home = ({ location }: RouteComponentProps) => {
+const Home = ({ location, history }: RouteComponentProps) => {
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
 
@@ -75,6 +75,13 @@ const Home = ({ location }: RouteComponentProps) => {
         tab => matchPath(location.pathname, { path: tab.path, exact: tab.exact || false })
     );
 
+    const selectMenuItem = (key: string | number) => {
+        const selected = tabs.find(tab => tab.key === key);
+        if (selected) {
+            history.push(selected.path);
+        }
+    }
+
     return (
         <Layout style={{ minHeight: "100vh", }}>
             <Layout.Sider collapsible collapsed={menuCollapsed} onCollapse={onCollapse} style={{ height: "100vh" }}>
@@ -82,14 +89,11 @@ const Home = ({ location }: RouteComponentProps) => {
                 <Menu
                     theme="dark"
                     mode="vertical"
+                    selectedKeys={selectedTab ? [ selectedTab.key ] : []}
+                    onSelect={({ key }) => selectMenuItem(key)}
                     style={{ position: "absolute", width: "100%", }}
                 >
-                    <Menu.Item icon={<HomeOutlined />}>Home</Menu.Item>
-                    <Menu.Item icon={<NotificationOutlined />}>Announcements</Menu.Item>
-                    <Menu.Item icon={<CalendarOutlined />}>Calendar</Menu.Item>
-                    <Menu.Item icon={<UnorderedListOutlined />}>Assignments</Menu.Item>
-                    <Menu.Item icon={<TrophyOutlined />}>Progress</Menu.Item>
-                    <Menu.Item icon={<UserOutlined />}>Account</Menu.Item>
+                    {tabs.map(tab => <Menu.Item key={tab.key} icon={tab.icon}>{tab.title}</Menu.Item>)}
                 </Menu>
             </Layout.Sider>
             <Layout>
