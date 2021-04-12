@@ -101,7 +101,9 @@ const Home = ({ location, history }: RouteComponentProps) => {
                     {selectedTab && selectedTab.title}
                 </Layout.Header>
                 <Layout.Content>
-                    <h2 style={{ textAlign: "center", }}>*Content Here*</h2>
+                    <div style={{ textAlign: "center", }}>
+                        {selectedTab && selectedTab.content}
+                    </div>
                 </Layout.Content>
                 <Layout.Footer style={{ textAlign: "center" }}>HYPE - Hope for Youth Program</Layout.Footer>
             </Layout>
