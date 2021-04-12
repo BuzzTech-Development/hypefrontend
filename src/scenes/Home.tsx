@@ -8,7 +8,7 @@ import {
     UnorderedListOutlined,
     UserOutlined
 } from "@ant-design/icons";
-import {Link, matchPath, Route, RouteComponentProps, withRouter} from "react-router-dom";
+import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
 
 interface ApplicationTab {
     title: string;
@@ -53,21 +53,21 @@ const Home = ({ location, history }: RouteComponentProps) => {
             key: "assignments",
             path: "/assignments",
             icon: <UnorderedListOutlined />,
-            content: <h2>Assignments</h2>
+            content: <h2>Assignments</h2>,
         },
         {
             title: "Progress",
             key: "progress",
             path: "/progress",
             icon: <TrophyOutlined />,
-            content: <h2>Progress</h2>
+            content: <h2>Progress</h2>,
         },
         {
             title: "Account",
             key: "account",
             path: "/account",
             icon: <UserOutlined />,
-            content: <h2>Account</h2>
+            content: <h2>Account</h2>,
         }
     ]
 
