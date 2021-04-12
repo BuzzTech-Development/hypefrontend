@@ -28,7 +28,7 @@ const Home = () => {
                 <Layout.Content>
 
                 </Layout.Content>
-                <Layout.Footer style={{ textAlign: "center" }}>HYPE</Layout.Footer>
+                <Layout.Footer style={{ textAlign: "center" }}>HYPE - Hope for Youth Program</Layout.Footer>
             </Layout>
         </Layout>
     )
