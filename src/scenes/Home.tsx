@@ -10,12 +10,12 @@ const Home = () => {
 
     return (
         <Layout style={{ minHeight: "100vh", }}>
-            <Layout.Sider collapsible collapsed={menuCollapsed} onCollapse={onCollapse}>
+            <Layout.Sider collapsible collapsed={menuCollapsed} onCollapse={onCollapse} style={{ height: "100vh" }}>
                 <div style={{ textAlign: "center", ...headerStyle }}>Hype Logo Here</div>
                 <Menu
                     theme="dark"
                     mode="vertical"
-                    style={{ height: "100vh", position: "absolute", width: "100%", }}
+                    style={{ position: "absolute", width: "100%", }}
                 >
                     <Menu.Item icon={<HomeOutlined />}>Home</Menu.Item>
                     <Menu.Item icon={<CalendarOutlined />}>Calendar</Menu.Item>
