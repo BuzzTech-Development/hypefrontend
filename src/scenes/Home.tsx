@@ -90,7 +90,9 @@ const Home = ({ location, history }: RouteComponentProps) => {
     return (
         <Layout style={{ minHeight: "100vh", }}>
             <Layout.Sider collapsible collapsed={menuCollapsed} onCollapse={onCollapse} style={{ height: "100vh" }}>
-                <div style={{ textAlign: "center", ...headerStyle }}>Hype Logo Here</div>
+                <div style={{ textAlign: "center", ...headerStyle }}>
+                    <img src={"./hype-logo.svg"} />
+                </div>
                 <Menu
                     theme="dark"
                     mode="vertical"
