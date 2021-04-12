@@ -1,6 +1,5 @@
 import React from 'react';
-import {Button, Form, Input} from "antd";
-import {useDispatch} from "react-redux";
+import {Button, Col, Form, Input, Row} from "antd";
 import {useAppDispatch} from "../redux/store";
 import {login} from "../redux/userSlice";
 
@@ -12,27 +11,31 @@ const Login = () => {
     }
 
     return (
-        <Form onFinish={onFinish}>
-            <Form.Item
-                label="Username"
-                name="username"
-                rules={[{ required: true, }]}
-            >
-                <Input />
-            </Form.Item>
-            <Form.Item
-                label="Password"
-                name="password"
-                rules={[{ required: true, }]}
-            >
-                <Input.Password />
-            </Form.Item>
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Submit
-                </Button>
-            </Form.Item>
-        </Form>
+        <Row align="middle" justify="center" style={{ minHeight: "100vh" }}>
+            <Col>
+                <Form onFinish={onFinish}>
+                    <Form.Item
+                        label="Username"
+                        name="username"
+                        rules={[{ required: true, }]}
+                    >
+                        <Input />
+                    </Form.Item>
+                    <Form.Item
+                        label="Password"
+                        name="password"
+                        rules={[{ required: true, }]}
+                    >
+                        <Input.Password />
+                    </Form.Item>
+                    <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </Col>
+        </Row>
     );
 }
 
