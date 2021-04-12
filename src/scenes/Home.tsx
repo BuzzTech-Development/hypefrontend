@@ -10,6 +10,8 @@ import {
     UserOutlined
 } from "@ant-design/icons";
 import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
+import {useAppDispatch} from "../redux/store";
+import { logout } from '../redux/userSlice';
 
 interface ApplicationTab {
     title: string;
@@ -21,6 +23,8 @@ interface ApplicationTab {
 }
 
 const Home = ({ location, history }: RouteComponentProps) => {
+    const dispatch = useAppDispatch();
+
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
 
@@ -95,7 +99,13 @@ const Home = ({ location, history }: RouteComponentProps) => {
                     style={{ position: "absolute", width: "100%", }}
                 >
                     {tabs.map(tab => <Menu.Item key={tab.key} icon={tab.icon}>{tab.title}</Menu.Item>)}
-                    <Menu.Item icon={<LogoutOutlined />} danger>Log Out</Menu.Item>
+                    <Menu.Item
+                        icon={<LogoutOutlined />}
+                        danger
+                        onClick={() => dispatch(logout())}
+                    >
+                        Log Out
+                    </Menu.Item>
                 </Menu>
             </Layout.Sider>
             <Layout>
