@@ -26,7 +26,7 @@ const Home = () => {
                     Header Title
                 </Layout.Header>
                 <Layout.Content>
-
+                    <h2 style={{ textAlign: "center", }}>*Content Here*</h2>
                 </Layout.Content>
                 <Layout.Footer style={{ textAlign: "center" }}>HYPE - Hope for Youth Program</Layout.Footer>
             </Layout>
