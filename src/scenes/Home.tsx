@@ -1,5 +1,5 @@
 import {Layout, Menu} from 'antd';
-import React, {useState} from 'react';
+import React, {ReactNode, useState} from 'react';
 import {
     CalendarOutlined,
     HomeOutlined,
@@ -8,12 +8,72 @@ import {
     UnorderedListOutlined,
     UserOutlined
 } from "@ant-design/icons";
+import {matchPath, Route, RouteComponentProps, withRouter} from "react-router-dom";
 
-const Home = () => {
+interface ApplicationTab {
+    title: string;
+    key: string;
+    path: string;
+    exact?: boolean;
+    icon: ReactNode;
+    content: ReactNode;
+}
+
+const Home = ({ location }: RouteComponentProps) => {
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
 
     const headerStyle = { height: "50px", color: "white", }
+
+    const tabs: ApplicationTab[] = [
+        {
+            title: "Home",
+            key: "home",
+            path: "/",
+            exact: true,
+            icon: <HomeOutlined />,
+            content: <h2>Home</h2>,
+        },
+        {
+            title: "Announcements",
+            key: "announcements",
+            path: "/announcements",
+            icon: <NotificationOutlined />,
+            content: <h2>Announcements</h2>,
+        },
+        {
+            title: "Calendar",
+            key: "calendar",
+            path: "/calendar",
+            icon: <CalendarOutlined />,
+            content: <h2>Calendar</h2>,
+        },
+        {
+            title: "Assignments",
+            key: "assignments",
+            path: "/assignments",
+            icon: <UnorderedListOutlined />,
+            content: <h2>Assignments</h2>
+        },
+        {
+            title: "Progress",
+            key: "progress",
+            path: "/progress",
+            icon: <TrophyOutlined />,
+            content: <h2>Progress</h2>
+        },
+        {
+            title: "Account",
+            key: "account",
+            path: "/account",
+            icon: <UserOutlined />,
+            content: <h2>Account</h2>
+        }
+    ]
+
+    const selectedTab = tabs.find(
+        tab => matchPath(location.pathname, { path: tab.path, exact: tab.exact || false })
+    );
 
     return (
         <Layout style={{ minHeight: "100vh", }}>
@@ -45,4 +105,4 @@ const Home = () => {
     )
 }
 
-export default Home;
+export default withRouter(Home);
