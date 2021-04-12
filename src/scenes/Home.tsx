@@ -98,7 +98,7 @@ const Home = ({ location, history }: RouteComponentProps) => {
             </Layout.Sider>
             <Layout>
                 <Layout.Header style={{ padding: 0, textAlign: "center", ...headerStyle }}>
-                    Header Title
+                    {selectedTab && selectedTab.title}
                 </Layout.Header>
                 <Layout.Content>
                     <h2 style={{ textAlign: "center", }}>*Content Here*</h2>
