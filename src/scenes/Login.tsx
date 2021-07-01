@@ -1,7 +1,9 @@
 import React from 'react';
+
 import {Button, Col, Form, Input, Row, Typography} from "antd";
-import {useAppDispatch} from "../redux/store";
-import {login} from "../redux/userSlice";
+
+import {useAppDispatch} from "redux/store";
+import {login} from "redux/userSlice";
 
 const Login = () => {
     const dispatch = useAppDispatch();

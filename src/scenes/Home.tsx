@@ -1,5 +1,7 @@
-import {Calendar, Layout, Menu, Typography} from 'antd';
 import React, {ReactNode, useState} from 'react';
+import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
+
+import {Calendar, Layout, Menu, Typography} from 'antd';
 import {
     CalendarOutlined,
     HomeOutlined,
@@ -9,9 +11,9 @@ import {
     UnorderedListOutlined,
     UserOutlined
 } from "@ant-design/icons";
-import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
-import {useAppDispatch} from "../redux/store";
-import { logout } from '../redux/userSlice';
+
+import { useAppDispatch } from 'redux/store';
+import { logout } from 'redux/userSlice';
 
 interface ApplicationTab {
     title: string;

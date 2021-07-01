@@ -1,14 +1,16 @@
 import React from 'react';
-import './App.css';
-import Login from "./scenes/Login";
-import {useAppSelector} from "./redux/store";
-import Home from "./scenes/Home";
 import {
     BrowserRouter,
     Redirect,
     Route,
     Switch
 } from "react-router-dom";
+
+import Home from "./scenes/Home";
+import Login from "./scenes/Login";
+import {useAppSelector} from "./redux/store";
+
+import './App.css';
 
 function App() {
     const authenticated = useAppSelector((state) => state.user.authenticated);

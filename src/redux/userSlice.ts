@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import apiInstance from "../utils/api";
-import api from "../utils/api";
+
+import apiInstance from "utils/api";
 
 interface UserState {
     authenticated: boolean;
