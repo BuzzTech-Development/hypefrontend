@@ -1,0 +1,50 @@
+.Home {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.Sider {
+    height: 100vh;
+}
+
+.Header {
+    height: 64px;
+    padding: 10px;
+
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.Logo {
+    height: 100%;
+}
+
+.Menu {
+    position: absolute;
+    width: 100%;
+    top: 60px;
+}
+
+.Title {
+    font-size: 18px;
+    color: white;
+}
+
+.Content {
+    padding: 20px;
+
+    display: flex;
+    justify-content: center;
+}
+
+.Footer {
+    height: 48px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+

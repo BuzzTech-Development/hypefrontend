@@ -15,6 +15,8 @@ import {
 import { useAppDispatch } from 'redux/store';
 import { logout } from 'redux/userSlice';
 
+import styles from './Home.module.css';
+
 interface ApplicationTab {
     title: string;
     key: string;
@@ -29,9 +31,6 @@ const Home = ({ location, history }: RouteComponentProps) => {
 
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
-
-    const headerHeight = "60px";
-    const headerStyle = { height: headerHeight, color: "white", }
 
     const tabs: ApplicationTab[] = [
         {
@@ -91,17 +90,17 @@ const Home = ({ location, history }: RouteComponentProps) => {
     }
 
     return (
-        <Layout style={{ minHeight: "100vh", }}>
-            <Layout.Sider collapsible collapsed={menuCollapsed} onCollapse={onCollapse} style={{ height: "100vh" }}>
-                <div style={{ textAlign: "center", ...headerStyle }}>
-                    <img src={"./hype-logo.svg"} />
+        <Layout className={styles.Home}>
+            <Layout.Sider theme="dark" collapsible collapsed={menuCollapsed} onCollapse={onCollapse} className={styles.Sider}>
+                <div className={styles.Header}>
+                    <img src="./hype-logo.svg" className={styles.Logo} />
                 </div>
                 <Menu
                     theme="dark"
                     mode="vertical"
                     selectedKeys={selectedTab ? [ selectedTab.key ] : []}
                     onSelect={({ key }) => selectMenuItem(key)}
-                    style={{ position: "absolute", width: "100%", }}
+                    className={styles.Menu}
                 >
                     {tabs.map(tab => <Menu.Item key={tab.key} icon={tab.icon}>{tab.title}</Menu.Item>)}
                     <Menu.Item
@@ -114,17 +113,15 @@ const Home = ({ location, history }: RouteComponentProps) => {
                 </Menu>
             </Layout.Sider>
             <Layout>
-                <Layout.Header style={{ padding: 0, textAlign: "center", ...headerStyle }}>
-                    <Typography.Title level={3} style={{ color: "white", lineHeight: headerHeight, }}>
+                <Layout.Header className={styles.Header}>
+                    <span className={styles.Title}>
                         {selectedTab && selectedTab.title}
-                    </Typography.Title>
+                    </span>
                 </Layout.Header>
-                <Layout.Content>
-                    <div style={{ textAlign: "center", margin: "20px", }}>
-                        {selectedTab && selectedTab.content}
-                    </div>
+                <Layout.Content className={styles.Content}>
+                    {selectedTab && selectedTab.content}
                 </Layout.Content>
-                <Layout.Footer style={{ textAlign: "center" }}>HYPE - Hope for Youth Program</Layout.Footer>
+                <Layout.Footer className={styles.Footer}>HYPE - Hope for Youth Program</Layout.Footer>
             </Layout>
         </Layout>
     )
