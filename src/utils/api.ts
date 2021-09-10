@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from "axios";
+import { UserType } from "./UserType"
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
@@ -6,6 +7,16 @@ class ApiWrapper{
 
     ENPOINTS = {
         tokenAuth: 'token-auth/'
+    }
+
+    private userType = UserType.STUDENT;
+
+    public static setUserType(userType: string) {
+        this.userType = userType;
+    }
+
+    public static getUserType() {
+        return this.userType;
     }
 
     private static getToken() {
@@ -37,7 +48,10 @@ class ApiWrapper{
 
     async login(payload: { username: string, password: string }) {
         const response = await this.instance.post(this.ENPOINTS.tokenAuth, payload);
-        const token = response.data;
+        const {token, userType} = response.data;
+        if (Object.values(UserType).includes(userType)) {
+            this.setUserType(userType);
+        }
         ApiWrapper.storeToken(token);
         this.setTokenAuth(token);
     }
