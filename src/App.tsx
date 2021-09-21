@@ -1,19 +1,13 @@
-import React from 'react';
-import {
-    BrowserRouter,
-    Redirect,
-    Route,
-    Switch
-} from "react-router-dom";
-
+import React, { useContext } from 'react';
+import AuthContext from 'context/AuthContext';
+import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 import Home from "./scenes/Home";
 import Login from "./scenes/Login";
-import {useAppSelector} from "./redux/store";
 
 import './App.css';
 
 function App() {
-    const authenticated = useAppSelector((state) => state.user.authenticated);
+    const user = useContext(AuthContext);
 
     return (
         <BrowserRouter>
