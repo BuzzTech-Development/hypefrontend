@@ -17,13 +17,9 @@ const accepted_filetypes = [
 const CreateAssignment = () => {
     const dispatch = useAppDispatch();
     const [files, setFiles] = useState([{value: null, label: null, id: 0}]);
-    console.log(files);
 
     const addNewFile = () => {
-        console.log(files);
-        const temp = files;
-        temp.push({value: null, label: null, id: files.length});
-        setFiles(temp);
+        setFiles(files => [...files, {value: null, label: null, id: files.length}]);
     }
  
 
