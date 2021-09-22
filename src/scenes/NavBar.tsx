@@ -14,7 +14,7 @@ interface ApplicationTab {
     icon: ReactNode;
 }
 
-const NavBar = ({ location, history }: RouteComponentProps) => {
+const NavBar = (props: any) => {
     const dispatch = useAppDispatch();
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
@@ -60,13 +60,13 @@ const NavBar = ({ location, history }: RouteComponentProps) => {
     ]
 
     const selectedTab = tabs.find(
-        tab => matchPath(location.pathname, { path: tab.path, exact: tab.exact || false })
+        tab => matchPath(props.location.pathname, { path: tab.path, exact: tab.exact || false })
     );
 
     const selectMenuItem = (key: string | number) => {
         const selected = tabs.find(tab => tab.key === key);
         if (selected) {
-            history.push(selected.path);
+            props.history.push(selected.path);
         }
     }
 
@@ -100,7 +100,7 @@ const NavBar = ({ location, history }: RouteComponentProps) => {
                     </span>
                 </Layout.Header>
                 <Layout.Content className={styles.Content}>
-                    {selectedTab && selectedTab.content}
+                    {props.content}
                 </Layout.Content>
                 <Layout.Footer className={styles.Footer}>HYPE - Hope for Youth Program</Layout.Footer>
             </Layout>
