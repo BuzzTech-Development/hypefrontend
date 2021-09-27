@@ -19,7 +19,7 @@ function App() {
     return (
         <BrowserRouter>
             <Switch>
-                <Route path="/create">
+                <Route path="/assignment/create">
                     <CreateAssignment/>
                 </Route>
                 <Route path="/login">

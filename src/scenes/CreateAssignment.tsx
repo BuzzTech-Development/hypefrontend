@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Select from 'react-select';
 import 'reactjs-popup/dist/index.css';
-import {Button, Col, Modal, Form, Drawer, Checkbox, Avatar, Input, Row, Typography, Divider, DatePicker, TimePicker} from "antd";
+import {Button, Col, Modal, Form, Drawer, Checkbox, Avatar, Input, Row, Typography, Divider, DatePicker, TimePicker, InputNumber} from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import { Editor } from '@tinymce/tinymce-react';
 import moment from 'moment';
@@ -35,27 +35,32 @@ const available_badges = [
 ]
 
 
-
-
 const CreateAssignment = () => {
     const dispatch = useAppDispatch();
-    const [files, setFiles] = useState([{value: null, label: null, id: 0}]);
-    const [badges, setBadges] = useState(available_badges);
+
     const [name, setName] = useState("");
+
+
+
+    const [description, setDescription] = useState("<p>This is the initial content of the editor.</p>")
+
+    const [badges, setBadges] = useState(available_badges);
+    const [selectedBadges, setSelectedBadges] = useState([]);
+
     const [points, setPoints] = useState(0);
 
-    const editorRef = useRef<null>(null);
-    const log = () => {
-                        if (editorRef.current !== null) {
-                            console.log(editorRef.current);
-                        }
-    };
+    const [date, setDate] = useState(moment());
+    const [time, setTime] = useState(moment());
+
+    const [files, setFiles] = useState([{value: null, label: null, id: 0}]);
+
+    const output = [name, description, badges, points, date, time, files];
+
+    const editorRef = useRef<any>(null);
+
     const addNewFile = () => {
         setFiles(files => [...files, {value: null, label: null, id: files.length}]);
     }
-
-    console.log(badges);
-
 
     const removeLastFile = () => {
         if (files.length == 1) {
@@ -65,36 +70,100 @@ const CreateAssignment = () => {
         }
     }
     
-    const updateName = (event: { target: HTMLInputElement; }) => {
+    const changeName = (event: { target: HTMLInputElement; }) => {
         setName(event.target.value);
     }
 
-    var tempVal = 0;
-    const updatePoints = (event: { target: HTMLInputElement; }) => {
-        const num = parseInt(event.target.value);
-        if (num === NaN || num == null) {
-            setPoints(0);
+    const changeDate = (datey: any, dateString: any) => {
+        setDate(datey);
+    }
+
+    const changeTime = (timey: any, timeString: any) => {
+        setTime(timey);
+    }
+
+    function changePoints(value: any) {
+        setPoints(value);
+    }
+
+    function changeDescription(value: any) {
+        if (editorRef.current) {
+            console.log(editorRef.current.getContent());
+          }
+    }
+
+    function cancelPost() {
+        alert("Are you sure you would like to discard this assignment?");
+    }
+    function checkForms(output: Array<any>) {
+        console.log(output);
+        var name, description, badges, points, date, time, files;
+        [name, description, badges, points, date, time, files] = output;
+        if (name == null || name == "") {
+            alert("Must Complete 'Assignment Name' Field'");
+            return false;
+        }
+        if (description == null || description == "") {
+            alert("Must Complete 'Assignment Description' Field'");
+            return false;
+        }
+        // No requirement for bagdes
+    
+        if (points == null || points == NaN) {
+            alert("Must Complete 'Points' Field'");
+            return false;
+        }
+        if (date == null) {
+            alert("Must Complete 'Date' Field'");
+            return false;
+        }
+        if (time == null) {
+            alert("Must Complete 'Time' Field'");
+            return false;
+        }
+        if (files == null || files == []) {
+            alert("Must Complete 'Files' Field'");
+            return false;
         } else {
-            tempVal = num;
-            setPoints(num);
+            files.forEach((file: any) => {
+                if (file.label == null || file.label == "") {
+                    alert("Must Complete 'Files' Field'");
+                    return false;
+                }
+                if (file.value == null || file.value == "") {
+                    alert("Must Complete 'Files' Field'");
+                    return false;
+                }
+                if (file.id == null || file.id == NaN || file.id < 0) {
+                    alert("Must Complete 'Files' Field'");
+                    return false;
+                }
+            });
+        }
+        return true;
+    }
+
+    const submitPost = (output: any) => () => {
+        const op = checkForms(output);
+        if (op) {
+            alert("Assignment Posted!");
         }
     }
 
+    console.log(description);
 
     const format = 'HH:mm';
-    const satisfiedFields = true;
-
-
     return (<>
         <Row>
             <Col span={12} offset={6}>
                 <Divider orientation="left">Assignment Name</Divider>
-                <input type="text" value={name} onChange={updateName}/>
+                <input type="text" value={name} onChange={changeName}/>
 
                 <Divider orientation="left">Assignment Description</Divider>
                 <Editor
                     onInit={(evt, editor: any) => editorRef.current = editor}
                     initialValue="<p>This is the initial content of the editor.</p>"
+                    onChange={changeDescription}
                     init={{
                     height: 500,
                     menubar: false,
@@ -112,22 +181,24 @@ const CreateAssignment = () => {
                 />
 
                 <Divider orientation="left">Point Value</Divider>
-                <input type="text"  value={tempVal} onChange={updatePoints}/>
+                <InputNumber min={1} max={1000} defaultValue={0} onChange={changePoints} />
 
                 <Divider orientation="left">Add Badge Rewards</Divider>
-                <BadgesSelector badges={badges}/><br/>
+                <BadgesSelector badges={badges} selected={selectedBadges} setSelectedBadges={setSelectedBadges}/><br/>
+                <BadgesDisplay badges={badges} selected={selectedBadges}/><br/>
 
                 <Divider orientation="left">Due Date and Time</Divider>
-                <DatePicker/>
-                <TimePicker defaultValue={moment('23:59', format)} format={format} />
+                <DatePicker onChange={changeDate}/>
+                <TimePicker defaultValue={moment('23:59', format)} 
+                            format={format} 
+                            onChange={changeTime}/>
 
                 <Divider orientation="left">Add File Requirements</Divider>
                 <Button onClick={() => removeLastFile()} disabled={files.length == 1}>-</Button>
                 <Button onClick={() => addNewFile()} disabled={files.length == 3}> + </Button>
-                <RequiredFileList files={files}/>
-                <Button onClick={() => removeLastFile()}> Cancel </Button>
-                <Button onClick={() => addNewFile()} disabled={!satisfiedFields}> Post </Button>
-
+                <RequiredFileList files={files} setFiles={setFiles}/>
+                <Button onClick={cancelPost}> Cancel </Button>
+                <Button onClick={submitPost(output)} > Post </Button>
             </Col>
         </Row>
         </>
@@ -137,17 +208,32 @@ const CreateAssignment = () => {
 
 function RequiredFileList(props: any) {
     const files = props.files;
-    const listItems =  files.map((file: any) =>
+    const setFiles = props.setFiles;
+
+
+    const onLabelChange = (index: number) =>  (event: any) => {
+        const filesCopy = [...files];
+        filesCopy[index].label = event.target.value;
+        setFiles(filesCopy);
+    }
+
+    const onValueChange = (index: number) => (value: any) => {
+        const filesCopy = [...files];
+        filesCopy[index].value = value.value;
+        setFiles(filesCopy);
+    }
+
+    const listItems =  files.map((file: any, index: number) =>
         <>
         <Form>
             <label>
                 File Label: 
-                <input type="text" value={file.label}/>
+                <input type="text" value={file.label} onChange={onLabelChange(index)}/>
             </label>
             <br/>
             <label>
                 Accepted Submission Type: 
-                <Select options={accepted_filetypes} value={file.value}/> 
+                <Select options={accepted_filetypes} onChange={onValueChange(index)}/> 
             </label>
         </Form>
         <Divider/>
@@ -175,7 +261,9 @@ function BadgesSelector(props: any) {
           Open
         </Button>
         <Drawer title="Basic Drawer" placement="bottom" onClose={onClose} visible={visible} height={500}>
-            <BadgesCheckbox badges={props.badges}/>
+            <BadgesCheckbox badges={props.badges} 
+                            selected={props.selectedBadges} 
+                            setSelectedBadges={props.setSelectedBadges}/>
         </Drawer>
       </>
     );
@@ -183,7 +271,7 @@ function BadgesSelector(props: any) {
 
 function BadgesCheckbox(props: any) {
     function onChange(checkedValues: any) {
-        console.log('checked = ', checkedValues);
+        props.setSelectedBadges(checkedValues);
     }
     const badgelist = []
     const rowlen = 3;
@@ -192,7 +280,7 @@ function BadgesCheckbox(props: any) {
             <Row> 
                 {props.badges.slice(row, Math.min(props.badges.length, row+rowlen)).map((badge: any) => (
                         <Col span={8}>
-                            <Checkbox value={badge.label}><Avatar size={64} icon={<UserOutlined />} /> {badge.label}</Checkbox>
+                            <Checkbox value={badge.id}><Avatar size={64} icon={<UserOutlined />} /> {badge.label}</Checkbox>
                         </Col>
                 ))}
             </Row>
@@ -202,6 +290,21 @@ function BadgesCheckbox(props: any) {
 
     return (
         <Checkbox.Group style={{ width: '100%' }} onChange={onChange}> {badgelist} </Checkbox.Group>
+    );
+}
+
+function BadgesDisplay(props: any) {
+    const selectedBadges = props.selected;
+    const badgeList = props.badges;
+    const listItems =  selectedBadges.map((badgeID: number) =>
+        <>
+            <Avatar size={64} icon={<UserOutlined />} /> {badgeList[badgeID].label}
+        </>
+    );
+
+    return  (<>
+        {listItems}
+        </>
     );
 }
 
