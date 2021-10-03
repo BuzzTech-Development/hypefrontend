@@ -1,16 +1,16 @@
 import React, { useState, useRef } from 'react';
 import Select from 'react-select';
 import 'reactjs-popup/dist/index.css';
-import {Button, Col, Modal, Form, Drawer, Checkbox, Avatar, Input, Row, Typography, Divider, DatePicker, TimePicker, InputNumber} from "antd";
+import {Button, Col, Form, Drawer, Radio, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber, Layout} from "antd";
 import { UserOutlined } from '@ant-design/icons';
-import { Editor } from '@tinymce/tinymce-react';
 import moment from 'moment';
+import styles from './Home.module.css';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 
 
 import {useAppDispatch} from "redux/store";
-import {login} from "redux/userSlice";
-import { setConstantValue } from 'typescript';
 
 
 const accepted_filetypes = [
@@ -36,16 +36,12 @@ const available_badges = [
 
 
 const CreateAssignment = () => {
-    const dispatch = useAppDispatch();
 
     const [name, setName] = useState("");
 
+    const [form] = Form.useForm()
 
-
-    const [description, setDescription] = useState("<p>This is the initial content of the editor.</p>")
-
-    const [badges, setBadges] = useState(available_badges);
-    const [selectedBadges, setSelectedBadges] = useState([]);
+    const [description, setDescription] = useState("<p>This is the initial content of the editor.</p>");
 
     const [points, setPoints] = useState(0);
 
@@ -54,9 +50,7 @@ const CreateAssignment = () => {
 
     const [files, setFiles] = useState([{value: null, label: null, id: 0}]);
 
-    const output = [name, description, badges, points, date, time, files];
 
-    const editorRef = useRef<any>(null);
 
     const addNewFile = () => {
         setFiles(files => [...files, {value: null, label: null, id: files.length}]);
@@ -86,121 +80,133 @@ const CreateAssignment = () => {
         setPoints(value);
     }
 
-    function changeDescription(value: any) {
-        if (editorRef.current) {
-            console.log(editorRef.current.getContent());
-          }
-    }
+
+    const onFinish = (values: any) => {
+        console.log('Success:', values);
+    };
 
     function cancelPost() {
         alert("Are you sure you would like to discard this assignment?");
     }
-    function checkForms(output: Array<any>) {
-        console.log(output);
-        var name, description, badges, points, date, time, files;
-        [name, description, badges, points, date, time, files] = output;
-        if (name == null || name == "") {
-            alert("Must Complete 'Assignment Name' Field'");
-            return false;
-        }
-        if (description == null || description == "") {
-            alert("Must Complete 'Assignment Description' Field'");
-            return false;
-        }
-        // No requirement for bagdes
-    
-        if (points == null || points == NaN) {
-            alert("Must Complete 'Points' Field'");
-            return false;
-        }
-        if (date == null) {
-            alert("Must Complete 'Date' Field'");
-            return false;
-        }
-        if (time == null) {
-            alert("Must Complete 'Time' Field'");
-            return false;
-        }
-        if (files == null || files == []) {
-            alert("Must Complete 'Files' Field'");
-            return false;
-        } else {
-            files.forEach((file: any) => {
-                if (file.label == null || file.label == "") {
-                    alert("Must Complete 'Files' Field'");
-                    return false;
-                }
-                if (file.value == null || file.value == "") {
-                    alert("Must Complete 'Files' Field'");
-                    return false;
-                }
-                if (file.id == null || file.id == NaN || file.id < 0) {
-                    alert("Must Complete 'Files' Field'");
-                    return false;
-                }
-            });
-        }
-        return true;
-    }
+    const [visible, setVisible] = useState(false);
+    const showDrawer = () => {
+        setVisible(true);
+      };
+      const onClose = () => {
+        setVisible(false);
+      };
 
-    const submitPost = (output: any) => () => {
-        const op = checkForms(output);
-        if (op) {
-            alert("Assignment Posted!");
-        }
-    }
+    const badgelist = [];
+
 
     console.log(description);
+    type SizeType = Parameters<typeof Form>[0]['size'];
+    const [componentSize, setComponentSize] = useState<SizeType | 'default'>('default');
+    const onFormLayoutChange = ({ size }: { size: SizeType }) => {
+      setComponentSize(size);
+    };
 
     const format = 'HH:mm';
     return (<>
-        <Row>
-            <Col span={12} offset={6}>
-                <Divider orientation="left">Assignment Name</Divider>
-                <input type="text" value={name} onChange={changeName}/>
+    <Layout className={styles.Home}>
+        <Layout.Content className={styles.Content}>
+            <Form
+                wrapperCol={{ span: 24 }}
+                layout="vertical"
+                onFinish={onFinish}
+                initialValues={{name: "namey",
+                                description: "n/a",
+                                points: 0,
+                                selectedBadge: 0,
+                                date: moment(),
+                                time: moment()}}
+                onValuesChange={onFormLayoutChange}
+                form={form}
+            >
 
-                <Divider orientation="left">Assignment Description</Divider>
-                <Editor
-                    onInit={(evt, editor: any) => editorRef.current = editor}
-                    initialValue="<p>This is the initial content of the editor.</p>"
-                    onChange={changeDescription}
-                    init={{
-                    height: 500,
-                    menubar: false,
-                    plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
-                    ],
-                    toolbar: 'undo redo | formatselect | ' +
-                    'bold italic backcolor | alignleft aligncenter ' +
-                    'alignright alignjustify | bullist numlist outdent indent | ' +
-                    'removeformat | code |help',
-                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-                    }}
-                />
+                    <Divider orientation="left">Description</Divider>
+                    <Form.Item label="Assignment Name" name="name">
+                        <Input type="text" value={name} onChange={changeName}/>
+                    </Form.Item>
+                    <Form.Item label="Assignment Description" name="description">
+                        <ReactQuill theme="snow" value={description} />
+                    </Form.Item>
 
-                <Divider orientation="left">Point Value</Divider>
-                <InputNumber min={1} max={1000} defaultValue={0} onChange={changePoints} />
+                    <Divider orientation="left">Rewards</Divider>
+                    <Row justify="center">
+                        
+                        <Form.Item label="Point Value" name="points">
+                            <InputNumber min={1} max={1000} defaultValue={0} />
+                        </Form.Item>
+                    </Row>
+                    <Row justify="center">
+                        <Button type="primary" onClick={showDrawer}>Select Badge</Button>
+                        <Form.Item name="selectedBadge">
+                                <Drawer title="Basic Drawer"
+                                    placement="bottom"
+                                    onClose={onClose}
+                                    visible={visible} 
+                                    height={500}>
 
-                <Divider orientation="left">Add Badge Rewards</Divider>
-                <BadgesSelector badges={badges} selected={selectedBadges} setSelectedBadges={setSelectedBadges}/><br/>
-                <BadgesDisplay badges={badges} selected={selectedBadges}/><br/>
 
-                <Divider orientation="left">Due Date and Time</Divider>
-                <DatePicker onChange={changeDate}/>
-                <TimePicker defaultValue={moment('23:59', format)} 
-                            format={format} 
-                            onChange={changeTime}/>
+                                    <Radio.Group style={{ width: '100%' }}> 
+                                        {available_badges.map((badge: any) => (
+                                            <Radio value={badge.id}><Avatar size={64} icon={<UserOutlined />} /> {badge.label}</Radio>
+                                        ))}
+                                    </Radio.Group>
+                                </Drawer>
+                        </Form.Item>
+                    </Row>
 
-                <Divider orientation="left">Add File Requirements</Divider>
-                <Button onClick={() => removeLastFile()} disabled={files.length == 1}>-</Button>
-                <Button onClick={() => addNewFile()} disabled={files.length == 3}> + </Button>
-                <RequiredFileList files={files} setFiles={setFiles}/>
-                <Button onClick={cancelPost}> Cancel </Button>
-                <Button onClick={submitPost(output)} > Post </Button>
-            </Col>
-        </Row>
+
+
+                    {/* <Avatar size={64} icon={available_badges[form.getFieldValue("selectedBadge")].img}/> {available_badges[form.getFieldValue("selectedBadge")].label}   */}
+
+                    <Divider orientation="left">Due Date and Time</Divider>
+                    <Row justify="center">
+                        <Form.Item
+                                    label="Date"
+                                    name="date"
+                                    rules={[{ required: true,
+                                            message: 'Please input your Username!',
+                                            type: 'object' }]}
+                        >
+                            <DatePicker onChange={changeDate}/>
+                        </Form.Item>
+                        <Form.Item
+                                    label="Time"
+                                    name="time"
+                                    rules={[{ required: true,
+                                            message: 'Please input your Username!',
+                                            type: 'object' }]}
+                        >
+                            <TimePicker defaultValue={moment()} 
+                                        format={format} 
+                                        onChange={changeTime}/>
+                        </Form.Item>
+                    </Row>
+                    
+
+                    <Divider orientation="left"> File Requirements </Divider>
+
+                    <Row justify="center">
+                        <Button onClick={() => removeLastFile()} disabled={files.length == 1}>-</Button>
+                        <Button onClick={() => addNewFile()} disabled={files.length == 3}> + </Button>
+                    </Row>
+
+                    <RequiredFileList files={files} setFiles={setFiles}/>
+
+                    <Row justify="center">
+                        <Button onClick={cancelPost}> Cancel </Button>      
+                        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                            <Button type="primary" htmlType="submit">
+                            Submit
+                            </Button>
+                        </Form.Item>
+                    </Row>
+                </Form>
+            </Layout.Content>
+        </Layout>
         </>
     );
 }
@@ -224,19 +230,28 @@ function RequiredFileList(props: any) {
     }
 
     const listItems =  files.map((file: any, index: number) =>
+    
         <>
-        <Form>
-            <label>
-                File Label: 
-                <input type="text" value={file.label} onChange={onLabelChange(index)}/>
-            </label>
-            <br/>
-            <label>
-                Accepted Submission Type: 
-                <Select options={accepted_filetypes} onChange={onValueChange(index)}/> 
-            </label>
-        </Form>
-        <Divider/>
+        <Row>
+            <Col span={6} >
+                
+                <Row justify="center" align="middle" style={{ height: "100%" }}><b>File #{index + 1}</b></Row>
+            </Col>
+
+            <Col span={1}><Divider type="vertical" style={{ height: "100%" }}/></Col>
+
+            <Col span={17}>
+                <Form.Item label="File Label" name={"filename" + index}>
+                    <Input type="text" value={"filename" + index} />
+                </Form.Item>
+                <Form.Item label="Accepted Submission Type" name={"filetype" + index}>
+                    <Select options={accepted_filetypes} name={"filetype" + index}/> 
+                </Form.Item>
+            </Col>
+
+        </Row>
+        <Divider></Divider>
+
         </>
     );
 
@@ -246,66 +261,7 @@ function RequiredFileList(props: any) {
     );
 };
 
-function BadgesSelector(props: any) {
 
-    const [visible, setVisible] = useState(false);
-    const showDrawer = () => {
-      setVisible(true);
-    };
-    const onClose = () => {
-      setVisible(false);
-    };
-    return (
-      <>
-        <Button type="primary" onClick={showDrawer}>
-          Open
-        </Button>
-        <Drawer title="Basic Drawer" placement="bottom" onClose={onClose} visible={visible} height={500}>
-            <BadgesCheckbox badges={props.badges} 
-                            selected={props.selectedBadges} 
-                            setSelectedBadges={props.setSelectedBadges}/>
-        </Drawer>
-      </>
-    );
-};
 
-function BadgesCheckbox(props: any) {
-    function onChange(checkedValues: any) {
-        props.setSelectedBadges(checkedValues);
-    }
-    const badgelist = []
-    const rowlen = 3;
-    for (let row = 0; row < props.badges.length; row += rowlen) {
-        badgelist.push(
-            <Row> 
-                {props.badges.slice(row, Math.min(props.badges.length, row+rowlen)).map((badge: any) => (
-                        <Col span={8}>
-                            <Checkbox value={badge.id}><Avatar size={64} icon={<UserOutlined />} /> {badge.label}</Checkbox>
-                        </Col>
-                ))}
-            </Row>
-        );
-
-    }
-
-    return (
-        <Checkbox.Group style={{ width: '100%' }} onChange={onChange}> {badgelist} </Checkbox.Group>
-    );
-}
-
-function BadgesDisplay(props: any) {
-    const selectedBadges = props.selected;
-    const badgeList = props.badges;
-    const listItems =  selectedBadges.map((badgeID: number) =>
-        <>
-            <Avatar size={64} icon={<UserOutlined />} /> {badgeList[badgeID].label}
-        </>
-    );
-
-    return  (<>
-        {listItems}
-        </>
-    );
-}
 
 export default CreateAssignment
