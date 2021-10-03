@@ -1,6 +1,6 @@
-import React, { useContext } from 'react';
-import AuthContext from './context/AuthContext';
+import React from 'react';
 import {BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
+import {useAppSelector} from "./redux/store";
 import NavBar from './scenes/NavBar';
 import Home from "./scenes/Home";
 import Login from "./scenes/Login";
@@ -13,17 +13,16 @@ import Account from 'scenes/Account';
 import './App.css';
 
 function App(props: any) {
-    const user = useContext(AuthContext);
+    const authenticated = useAppSelector((state) => state.user.authenticated);
 
     return (
         <BrowserRouter>
             <Switch>
                 <Route path="/login">
-                    {user.token ? <Redirect to="/home" /> : <Login /> }
-                    <Login />
+                    {authenticated ? <Redirect to="/home" /> : <Login /> }
                 </Route>
 
-                {!user.token ? <Redirect to="/login" /> : <>
+                {!authenticated ? <Redirect to="/login" /> : <>
                     <Route path="/announcements">
                         <NavBar content={<Announcements />} />
                     </Route>
