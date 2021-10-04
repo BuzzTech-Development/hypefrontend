@@ -1,9 +1,21 @@
+import { Button } from 'antd';
 import React from 'react';
+import { withRouter } from "react-router-dom";
 
-const Assignments = () => {
+const Assignments = (props: any) => {
+    const createAssignment = () => {
+        props.history.push('/assignments/create')
+    }
+
+    /* IF USER IS A TEACHER
     return (
-        <h2>Assignments</h2>
+        <Button onClick={createAssignment}>Create an assignment</Button>
+    )
+    */
+
+    return (
+        <></>
     )
 }
 
-export default Assignments;
+export default withRouter(Assignments);

@@ -3,12 +3,13 @@ import {BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
 import {useAppSelector} from "./redux/store";
 import NavBar from './scenes/NavBar';
 import Home from "./scenes/Home";
-import Login from "./scenes/Login";
-import Announcements from 'scenes/Announcements';
-import Calendar from 'scenes/Calendar';
-import Assignments from 'scenes/Assignments';
-import Progress from 'scenes/Progress';
-import Account from 'scenes/Account';
+import Login from './scenes/Login';
+import Announcements from './scenes/Announcements';
+import Calendar from './scenes/Calendar';
+import CreateAssignment from './scenes/CreateAssignment';
+import Assignments from './scenes/Assignments';
+import Progress from './scenes/Progress';
+import Account from './scenes/Account';
 
 import './App.css';
 
@@ -18,28 +19,39 @@ function App(props: any) {
     return (
         <BrowserRouter>
             <Switch>
+                <Route exact path ="/">
+                    {authenticated ? <Redirect to="/home" /> : <Redirect to="/login" />}
+                </Route>
+
                 <Route path="/login">
                     {authenticated ? <Redirect to="/home" /> : <Login /> }
                 </Route>
 
+                <Route path="/assignments/create">
+                    <NavBar content={<CreateAssignment />} />
+                </Route>
+
                 {!authenticated ? <Redirect to="/login" /> : <>
+                    <Route path="/home">
+                        <NavBar content={<Home />} />
+                    </Route>
                     <Route path="/announcements">
                         <NavBar content={<Announcements />} />
                     </Route>
                     <Route path="/calendar">
                         <NavBar content={<Calendar />} />
                     </Route>
-                    <Route path="/assignments">
+                    <Route exact path="/assignments">
                         <NavBar content={<Assignments />} />
+                    </Route>
+                    <Route path="/assignments/create">
+                        <NavBar content={<CreateAssignment />} />
                     </Route>
                     <Route path="/progress">
                         <NavBar content={<Progress />} />
                     </Route>
                     <Route path="/account">
                         <NavBar content={<Account />} />
-                    </Route>
-                    <Route path="/">
-                        <NavBar content={<Home />} />
                     </Route>
                 </>}
             </Switch>
