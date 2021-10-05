@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
-import Select from 'react-select';
 import 'reactjs-popup/dist/index.css';
-import {Button, Col, Form, Drawer, Radio, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber, Layout} from "antd";
+import {Button, Col, Form, Drawer, Select, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber, Layout} from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import styles from './Home.module.css';
@@ -11,6 +10,7 @@ import 'react-quill/dist/quill.snow.css';
 
 
 import {useAppDispatch} from "redux/store";
+import { isNullOrUndefined } from 'util';
 
 
 const accepted_filetypes = [
@@ -82,7 +82,25 @@ const CreateAssignment = () => {
 
 
     const onFinish = (values: any) => {
-        console.log('Success:', values);
+        const fileList: any[] = [];
+        var new_values = {
+                        name: values.name,
+                        description: values.description,
+                        points: values.points,
+                        selectedBadge: values.selectedBadge,
+                        date: values.date,
+                        time: values.time,
+                        files: fileList
+        }
+        fileList.push({name: values.filename0, type: values.filetype0 })
+        if (values.hasOwnProperty('filename1')) {
+            fileList.push({name: values.filename1, type: values.filetype1})
+        }
+        if (values.hasOwnProperty('filename2')) {
+            fileList.push({name: values.filename2, type: values.filetype2})
+        }
+
+        console.log('Success:', new_values);
     };
 
     function cancelPost() {
@@ -117,7 +135,7 @@ const CreateAssignment = () => {
                 initialValues={{name: "namey",
                                 description: "n/a",
                                 points: 0,
-                                selectedBadge: 0,
+                                selectedBadge: null,
                                 date: moment(),
                                 time: moment()}}
                 onValuesChange={onFormLayoutChange}
@@ -125,10 +143,16 @@ const CreateAssignment = () => {
             >
 
                     <Divider orientation="left">Description</Divider>
-                    <Form.Item label="Assignment Name" name="name">
+                    <Form.Item label="Assignment Name"
+                                name="name"
+                                rules={[{ required: true,
+                                    message: 'Please input an Assignment Name!'}]}>
                         <Input type="text" value={name} onChange={changeName}/>
                     </Form.Item>
-                    <Form.Item label="Assignment Description" name="description">
+                    <Form.Item label ="Assignment Description"
+                                name ="description"
+                                rules={[{ required: true,
+                                    message: 'Please input and Assignment Description!'}]}>
                         <ReactQuill theme="snow" value={description} />
                     </Form.Item>
 
@@ -136,31 +160,23 @@ const CreateAssignment = () => {
                     <Row justify="center">
                         
                         <Form.Item label="Point Value" name="points">
-                            <InputNumber min={1} max={1000} defaultValue={0} />
+                            <InputNumber min={1} max={1000}/>
                         </Form.Item>
                     </Row>
                     <Row justify="center">
-                        <Button type="primary" onClick={showDrawer}>Select Badge</Button>
-                        <Form.Item name="selectedBadge">
-                                <Drawer title="Basic Drawer"
-                                    placement="bottom"
-                                    onClose={onClose}
-                                    visible={visible} 
-                                    height={500}>
-
-
-                                    <Radio.Group style={{ width: '100%' }}> 
-                                        {available_badges.map((badge: any) => (
-                                            <Radio value={badge.id}><Avatar size={64} icon={<UserOutlined />} /> {badge.label}</Radio>
-                                        ))}
-                                    </Radio.Group>
-                                </Drawer>
+                        <Form.Item label="Select a badge" name="selectedBadge">
+                            <Select>
+                                {available_badges.map((badge: any) => (<>
+                                                    <Select.Option value={badge.id}><Avatar size={64} icon={<UserOutlined />} /> {badge.label}</Select.Option>
+                                                    </>
+                                ))}
+                            </Select>
                         </Form.Item>
                     </Row>
 
 
 
-                    {/* <Avatar size={64} icon={available_badges[form.getFieldValue("selectedBadge")].img}/> {available_badges[form.getFieldValue("selectedBadge")].label}   */}
+                    {/* <Avatar size={64} icon={<UserOutlined />}/> {available_badges[form.getFieldValue("selectedBadge")].label}   */}
 
                     <Divider orientation="left">Due Date and Time</Divider>
                     <Row justify="center">
@@ -168,8 +184,7 @@ const CreateAssignment = () => {
                                     label="Date"
                                     name="date"
                                     rules={[{ required: true,
-                                            message: 'Please input your Username!',
-                                            type: 'object' }]}
+                                            message: 'Please input a due date!' }]}
                         >
                             <DatePicker onChange={changeDate}/>
                         </Form.Item>
@@ -177,8 +192,7 @@ const CreateAssignment = () => {
                                     label="Time"
                                     name="time"
                                     rules={[{ required: true,
-                                            message: 'Please input your Username!',
-                                            type: 'object' }]}
+                                            message: 'Please input a due time!' }]}
                         >
                             <TimePicker defaultValue={moment()} 
                                         format={format} 
@@ -214,20 +228,7 @@ const CreateAssignment = () => {
 
 function RequiredFileList(props: any) {
     const files = props.files;
-    const setFiles = props.setFiles;
 
-
-    const onLabelChange = (index: number) =>  (event: any) => {
-        const filesCopy = [...files];
-        filesCopy[index].label = event.target.value;
-        setFiles(filesCopy);
-    }
-
-    const onValueChange = (index: number) => (value: any) => {
-        const filesCopy = [...files];
-        filesCopy[index].value = value.value;
-        setFiles(filesCopy);
-    }
 
     const listItems =  files.map((file: any, index: number) =>
     
@@ -241,11 +242,18 @@ function RequiredFileList(props: any) {
             <Col span={1}><Divider type="vertical" style={{ height: "100%" }}/></Col>
 
             <Col span={17}>
-                <Form.Item label="File Label" name={"filename" + index}>
+                <Form.Item label="File Label"
+                            name={"filename" + index}
+                            rules={[{ required: true,
+                                message: 'Please input a file label!'
+                                 }]}>
                     <Input type="text" value={"filename" + index} />
                 </Form.Item>
-                <Form.Item label="Accepted Submission Type" name={"filetype" + index}>
-                    <Select options={accepted_filetypes} name={"filetype" + index}/> 
+                <Form.Item label="Accepted Submission Type" 
+                            name={"filetype" + index}
+                            rules={[{ required: true,
+                                message: 'Please input a file type'}]}>
+                    <Select options={accepted_filetypes}/> 
                 </Form.Item>
             </Col>
 
