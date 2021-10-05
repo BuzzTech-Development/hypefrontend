@@ -7,7 +7,8 @@ class ApiWrapper{
 
     ENDPOINTS = {
         tokenAuth: 'token-auth/',
-        user: 'api/user/'
+        user: 'api/user/',
+        meetings: 'api/meetings/'
     }
 
     private static getToken() {
@@ -48,6 +49,12 @@ class ApiWrapper{
 
     async getUserDetail(): Promise<UserDetail> {
         const response = await this.instance.get(this.ENDPOINTS.user);
+        return response.data;
+    }
+
+    async getMeetings(cohortId: number): Promise<any> {
+        const params = { cohort: cohortId };
+        const response = await this.instance.get(this.ENDPOINTS.meetings, { params });
         return response.data;
     }
 }
