@@ -7,7 +7,7 @@ import styles from './Home.module.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-
+import apiInstance from "utils/api";
 
 import {useAppDispatch} from "redux/store";
 import { isNullOrUndefined } from 'util';
@@ -100,7 +100,9 @@ const CreateAssignment = () => {
             fileList.push({name: values.filename2, type: values.filetype2})
         }
 
-        console.log('Success:', new_values);
+        // console.log('Success:', new_values);
+        const result = apiInstance.createAssignment(new_values);
+        console.log("Result: ", result);
     };
 
     function cancelPost() {
