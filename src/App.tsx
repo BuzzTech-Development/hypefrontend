@@ -27,10 +27,6 @@ function App(props: any) {
                     {authenticated ? <Redirect to="/home" /> : <Login /> }
                 </Route>
 
-                <Route path="/assignments/create">
-                    <NavBar content={<CreateAssignment />} />
-                </Route>
-
                 {!authenticated ? <Redirect to="/login" /> : <>
                     <Route path="/home">
                         <NavBar content={<Home />} />

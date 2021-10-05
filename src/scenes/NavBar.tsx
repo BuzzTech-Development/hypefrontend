@@ -99,7 +99,7 @@ const NavBar = (props: any) => {
                         {selectedTab && selectedTab.title}
                     </span>
                 </Layout.Header>
-                <Layout.Content className={styles.Content}>
+                <Layout.Content className={styles.Content} style={{width: '100%'}}>
                     {props.content}
                 </Layout.Content>
                 <Layout.Footer className={styles.Footer}>HYPE - Hope for Youth Program</Layout.Footer>

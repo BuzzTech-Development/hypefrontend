@@ -56,6 +56,7 @@ const CreateAssignment = (props: any) => {
             })
         }
 
+        // will want to be able to include attachments to assignment (ex: starter code)
         const outData = {
             name: values.name,
             // HTML INSERTION PROBABLY POSSIBLE HERE, SHOULD SANITIZE
