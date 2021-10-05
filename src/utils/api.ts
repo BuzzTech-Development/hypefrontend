@@ -1,5 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 import { UserDetail } from "../redux/userSlice";
+import {Meeting} from "../redux/meetingsSlice";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
@@ -52,7 +53,7 @@ class ApiWrapper{
         return response.data;
     }
 
-    async getMeetings(cohortId: number): Promise<any> {
+    async getMeetings(cohortId: number): Promise<Meeting[]> {
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.meetings, { params });
         return response.data;
