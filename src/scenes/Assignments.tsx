@@ -142,6 +142,7 @@ function AssignmentList(props: any) {
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(-1)}
             >
+                {/* link styling is messing with text alignment */}
                 <Link to={{pathname: `assignments/${assignment.id}`}} style={{color: 'black'}}>
                     <div style={{textAlign: 'left'}}>
                         <b>{assignment.name}</b>

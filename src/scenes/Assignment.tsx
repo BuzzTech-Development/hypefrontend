@@ -1,4 +1,4 @@
-import { PageHeader } from 'antd';
+import { PageHeader, Divider } from 'antd';
 import React from 'react';
 import { withRouter, useParams, Link } from "react-router-dom";
 import moment from 'moment';
@@ -22,7 +22,9 @@ const Assignment = (props: any) => {
     }
 
     return (<>
-        <PageHeader title={assignment.name} />
+        <Divider orientation='left'>
+            <PageHeader title={assignment.name} />
+        </Divider>
     </>)
 }
 
