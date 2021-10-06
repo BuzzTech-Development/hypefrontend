@@ -4,8 +4,9 @@ class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
     instance: AxiosInstance;
 
-    ENPOINTS = {
-        tokenAuth: 'token-auth/'
+    ENDPOINTS = {
+        tokenAuth: 'token-auth/',
+        assignments: 'assignments/'
     }
 
     private static getToken() {
@@ -36,10 +37,16 @@ class ApiWrapper{
     }
 
     async login(payload: { username: string, password: string }) {
-        const response = await this.instance.post(this.ENPOINTS.tokenAuth, payload);
+        const response = await this.instance.post(this.ENDPOINTS.tokenAuth, payload);
         const token = response.data;
         ApiWrapper.storeToken(token);
         this.setTokenAuth(token);
+    }
+
+    async createAssignment(payload: Object) {
+        const response = await this.instance.post(this.ENDPOINTS.assignments, payload);
+        const result = response.data;
+        return result;
     }
 }
 
