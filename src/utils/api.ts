@@ -9,7 +9,8 @@ class ApiWrapper{
     ENDPOINTS = {
         tokenAuth: 'token-auth/',
         user: 'api/user/',
-        meetings: 'api/meetings/'
+        meetings: 'api/meetings/',
+        assignments: 'assignments/',
     }
 
     private static getToken() {
@@ -57,6 +58,12 @@ class ApiWrapper{
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.meetings, { params });
         return response.data;
+    }
+
+    async createAssignment(payload: Object) {
+        const response = await this.instance.post(this.ENDPOINTS.assignments, payload);
+        const result = response.data;
+        return result;
     }
 }
 
