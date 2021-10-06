@@ -3,7 +3,7 @@ import 'reactjs-popup/dist/index.css';
 import {Button, Col, Form, Drawer, Select, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber, Layout} from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import styles from './Home.module.css';
+import styles from './Home/Home.module.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
