@@ -8,7 +8,7 @@ import {
 
 import {useAppDispatch, useAppSelector} from "./redux/store";
 import {getMeetings} from "./redux/meetingsSlice";
-import Home from "./scenes/Home";
+import Home from "./scenes/Home/Home";
 import Login from "./scenes/Login";
 
 import './App.css';

@@ -1,6 +1,7 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 
 import apiInstance from "utils/api";
+import {RootState} from "./store";
 
 export interface Meeting {
     id: number;
@@ -31,5 +32,7 @@ const meetingsSlice = createSlice({
         })
     }
 })
+
+export const meetingsSelectors = meetingsAdapter.getSelectors<RootState>(state => state.meetings)
 
 export default meetingsSlice.reducer;
