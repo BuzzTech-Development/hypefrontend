@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
     BrowserRouter,
     Redirect,
@@ -6,7 +6,9 @@ import {
     Switch
 } from "react-router-dom";
 
-import Home from "./scenes/Home";
+import {useAppDispatch, useAppSelector} from "./redux/store";
+import {getMeetings} from "./redux/meetingsSlice";
+import Home from "./scenes/Home/Home";
 import Login from "./scenes/Login";
 import CreateAssignment from "./scenes/CreateAssignment";
 import {useAppSelector} from "./redux/store";
@@ -15,6 +17,15 @@ import './App.css';
 
 function App() {
     const authenticated = useAppSelector((state) => state.user.authenticated);
+    const currentCohort = useAppSelector((state) => state.user.currentCohort);
+
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (authenticated && currentCohort) {
+            dispatch(getMeetings(currentCohort));
+        }
+    }, [authenticated, currentCohort])
 
     return (
         <BrowserRouter>

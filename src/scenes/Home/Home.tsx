@@ -1,7 +1,7 @@
 import React, {ReactNode, useState} from 'react';
 import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
 
-import {Calendar, Layout, Menu, Typography} from 'antd';
+import {Layout, Menu} from 'antd';
 import {
     CalendarOutlined,
     HomeOutlined,
@@ -15,6 +15,7 @@ import {
 import { useAppDispatch } from 'redux/store';
 import { logout } from 'redux/userSlice';
 
+import Calendar from './scenes/Calendar';
 import styles from './Home.module.css';
 
 interface ApplicationTab {
