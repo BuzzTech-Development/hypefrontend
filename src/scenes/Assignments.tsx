@@ -99,13 +99,8 @@ const Assignments = (props: any) => {
         props.history.push('/assignments/create')
     }
 
-    /* IF USER IS A TEACHER
-    return (
-        <Button onClick={createAssignment}>Create an assignment</Button>
-    )
-    */
-
     return (<Space direction='vertical' size='large' style={{width: '80%'}}>
+        <Button onClick={createAssignment}>Create an assignment</Button>
         {assignmentLists[0].length === 0 ? <></> : <AssignmentList assignments={assignmentLists[0]} header={'Current Assignments'} />}
         {assignmentLists[1].length === 0 ? <></> : <AssignmentList assignments={assignmentLists[1]} header={'Overdue Assignments'} />}
         {assignmentLists[2].length === 0 ? <></> : <AssignmentList assignments={assignmentLists[2]} header={'Undated Assignments'} />}
