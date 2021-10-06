@@ -1,13 +1,15 @@
 import { Button, List, Space } from 'antd';
-import React from 'react';
-import { withRouter } from "react-router-dom";
+import React, { useState } from 'react';
+import { withRouter, Link } from "react-router-dom";
 import moment from 'moment';
 
 const Assignments = (props: any) => {
     // hard-coded assignment list
+    // should instead fetch assignment name, id, points, due date for each
     const assignments = [
         {
             name: 'Exam 1',
+            id: 913252,
             description: '<p>This exam is intended to monitor your comprehension over the first few weeks of this course. This exam will cover content through Chapter 7 of the textbook.</p><p>This exam is strictly <b>CLOSED-NOTES</b>. Making <i>any</i> attempt to collaborate with others will be viewed as an academic infraction and treated accordingly.</p><br><p><b>Good luck!</b></p>',
             points: 100,
             badge: null,
@@ -20,6 +22,7 @@ const Assignments = (props: any) => {
         },
         {
             name: 'Homework 1',
+            id: 743423,
             description: '<p>For this assignment, you are only expected to show proof of concept for working with React. Create a very simple webpage using React components and serve it using Node.</p><p>You must also submit a text file explaining your process for designing your webpage, as well as any difficults you encountered.</p>',
             points: 25,
             badge: null,
@@ -37,6 +40,7 @@ const Assignments = (props: any) => {
         },
         {
             name: 'Homework 2',
+            id: 866844,
             description: '<p>For this homework, we want to assess the growth of your Python skills. You are given are excerpt from <i>Gulliver\'s Travels</i> by Jonathan Swift.</p><p>Design an efficient algorithm for counting the number of times that each word appears in the excerpt. Submit your solution as a zip file.</p>',
             points: 40,
             badge: null,
@@ -49,6 +53,7 @@ const Assignments = (props: any) => {
         },
         {
             name: 'Hot Air Balloon',
+            id: 574648,
             description: '<p>By now, your group has completed a few sprints and should have a good understanding of what has and has not been working for your team. As a group, decide what what <b>wind</b> has been pushing your team forward and what <b>sandbags</b> you have faced. Also, note what rainy days and sunny days you expect to face during the next sprint.</p>',
             points: 30,
             badge: null,
@@ -61,6 +66,7 @@ const Assignments = (props: any) => {
         },
         {
             name: 'Course Feedback',
+            id: 167531,
             description: '<p>While it\'s true that the teachers of this course are constantly evaluating your work, it\' also important for the students to evaluate the teachers on occasion. Submit a Word document explaining how you have felt about the course so far and what actions you think the teachers should take in the future to improve the course.</p><p>There is no required length for this assignment, although we expect most submissions to be about a page.</p>',
             points: 10,
             badge: null,
@@ -109,21 +115,41 @@ const Assignments = (props: any) => {
 function AssignmentList(props: any) {
     const assignments = props.assignments;
     const header = props.header;
+    // probably need to localize these times
     const dueDates = assignments.map((assignment: any) => assignment.dueDate ? assignment.dueDate.format('MMMM DD') : null)
     const dueTimes = assignments.map((assignment: any) => assignment.dueDate ? assignment.dueDate.format('LT') : null)
+    const [hover, setHover] = useState(-1);
+    const nonhoverStyle = {
+        borderTop: '1px solid black',
+    }
+    const hoverStyle = {
+        borderTop: '1px solid black',
+        backgroundColor: '#DBF3FA',
+    }
+    const hoverBottomStyle = {
+        borderTop: '1px solid black',
+        backgroundColor: '#DBF3FA',
+        borderRadius: '0 0 1em 1em'
+    }
 
     return (<List size='large' bordered style={{borderRadius: '1em'}}>
         <div className='ant-list-header' style={{backgroundColor: '#a9a9a9', borderRadius: '1em 1em 0 0', borderBottom: '1px solid black'}}>
             <b>{header}</b>
         </div>
         {assignments.map((assignment: any, i: any) =>(
-            <List.Item key={i} style={{borderTop: '1px solid black'}}>
-                <div style={{textAlign: 'left'}}>
-                    <b>{assignment.name}</b>
-                </div>
-                {assignment.dueDate === null ? <></> : <div style={{textAlign: 'right'}}>
-                    <b>Due</b> {dueDates[i]} at {dueTimes[i]} 
-                </div>}
+            <List.Item key={i}
+                style={hover === i ? (i === assignments.length ? hoverBottomStyle : hoverStyle) : nonhoverStyle}
+                onMouseEnter={() => setHover(i)}
+                onMouseLeave={() => setHover(-1)}
+            >
+                <Link to={{pathname: `assignments/${assignment.id}`}} style={{color: 'black'}}>
+                    <div style={{textAlign: 'left'}}>
+                        <b>{assignment.name}</b>
+                    </div>
+                    {assignment.dueDate === null ? <></> : <div style={{textAlign: 'right'}}>
+                        <b>Due</b> {dueDates[i]} at {dueTimes[i]} 
+                    </div>}
+                </Link>
             </List.Item>
         ))}
     </List>)

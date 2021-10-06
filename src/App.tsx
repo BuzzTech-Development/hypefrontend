@@ -8,6 +8,7 @@ import Announcements from './scenes/Announcements';
 import Calendar from './scenes/Calendar';
 import CreateAssignment from './scenes/CreateAssignment';
 import Assignments from './scenes/Assignments';
+import Assignment from 'scenes/Assignment';
 import Progress from './scenes/Progress';
 import Account from './scenes/Account';
 
@@ -40,8 +41,11 @@ function App(props: any) {
                     <Route exact path="/assignments">
                         <NavBar content={<Assignments />} />
                     </Route>
-                    <Route path="/assignments/create">
+                    <Route exact path="/assignments/create">
                         <NavBar content={<CreateAssignment />} />
+                    </Route>
+                    <Route exact path="/assignments/:id">
+                        <NavBar content={<Assignment />} />
                     </Route>
                     <Route path="/progress">
                         <NavBar content={<Progress />} />
