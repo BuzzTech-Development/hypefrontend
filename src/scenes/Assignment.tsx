@@ -22,7 +22,7 @@ const Assignment = (props: any) => {
     }
 
     return (<>
-        <PageHeader title={assignment.name} style={{textAlign: 'left', alignSelf: 'left', backgroundColor: 'red'}}/>
+        <PageHeader title={assignment.name} />
     </>)
 }
 
