@@ -10,28 +10,27 @@ import {useAppDispatch, useAppSelector} from "./redux/store";
 import {getMeetings} from "./redux/meetingsSlice";
 import Home from "./scenes/Home/Home";
 import Login from "./scenes/Login";
-import CreateAssignment from "./scenes/CreateAssignment";
 
 import './App.css';
+import {getAssignments} from "./redux/assignmentSlice";
 
 function App() {
     const authenticated = useAppSelector((state) => state.user.authenticated);
     const currentCohort = useAppSelector((state) => state.user.currentCohort);
-
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         if (authenticated && currentCohort) {
             dispatch(getMeetings(currentCohort));
         }
+        if (authenticated) {
+            dispatch(getAssignments());
+        }
     }, [authenticated, currentCohort])
 
     return (
         <BrowserRouter>
             <Switch>
-                <Route path="/assignment/create">
-                    <CreateAssignment/>
-                </Route>
                 <Route path="/login">
                      {authenticated ? <Redirect to="/" /> : <Login />}
                 </Route>

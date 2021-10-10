@@ -3,15 +3,13 @@ import 'reactjs-popup/dist/index.css';
 import {Button, Col, Form, Drawer, Select, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber, Layout} from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import styles from './Home/Home.module.css';
+import styles from '../../Home.module.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-import apiInstance from "utils/api";
-
-import {useAppDispatch} from "redux/store";
-import { isNullOrUndefined } from 'util';
-
+import {useAppDispatch, useAppSelector} from "redux/store";
+import {Assignment, createAssignment} from "../../../../redux/assignmentSlice";
+import {ActiveView} from "./type";
 
 const accepted_filetypes = [
     {value: 'pdf', label: 'PDF'},
@@ -34,8 +32,13 @@ const available_badges = [
     {id: 8, label: 'Ninth Badge', img: 'something'}
 ]
 
+interface CreateAssignmentProps {
+    onChangeView: (activeView: ActiveView) => void;
+}
 
-const CreateAssignment = () => {
+const CreateAssignment = ({onChangeView}: CreateAssignmentProps) => {
+
+    const dispatch = useAppDispatch();
 
     const [name, setName] = useState("");
 
@@ -83,14 +86,15 @@ const CreateAssignment = () => {
 
     const onFinish = (values: any) => {
         const fileList: any[] = [];
-        var new_values = {
-                        name: values.name,
-                        description: values.description,
-                        points: values.points,
-                        selectedBadge: values.selectedBadge,
-                        date: values.date,
-                        time: values.time,
-                        files: fileList
+        const assignment: Assignment = {
+            name: values.name,
+            date: values.date.format("YYYY-MM-DD"),
+            time: values.time.format("hh:mm"),
+            description: values.description,
+            points: values.points,
+            selectedBadge: values.selectedBadge,
+            graded: false,
+            grade: 0
         }
         fileList.push({name: values.filename0, type: values.filetype0 })
         if (values.hasOwnProperty('filename1')) {
@@ -99,15 +103,9 @@ const CreateAssignment = () => {
         if (values.hasOwnProperty('filename2')) {
             fileList.push({name: values.filename2, type: values.filetype2})
         }
-
-        // console.log('Success:', new_values);
-        const result = apiInstance.createAssignment(new_values);
-        console.log("Result: ", result);
+        dispatch(createAssignment(assignment));
     };
 
-    function cancelPost() {
-        alert("Are you sure you would like to discard this assignment?");
-    }
     const [visible, setVisible] = useState(false);
     const showDrawer = () => {
         setVisible(true);
@@ -134,8 +132,8 @@ const CreateAssignment = () => {
                 wrapperCol={{ span: 24 }}
                 layout="vertical"
                 onFinish={onFinish}
-                initialValues={{name: "namey",
-                                description: "n/a",
+                initialValues={{name: "",
+                                description: "",
                                 points: 0,
                                 selectedBadge: null,
                                 date: moment(),
@@ -213,7 +211,7 @@ const CreateAssignment = () => {
                     <RequiredFileList files={files} setFiles={setFiles}/>
 
                     <Row justify="center">
-                        <Button onClick={cancelPost}> Cancel </Button>      
+                        <Button onClick={() => onChangeView('mainView')}> Cancel </Button>
                         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                             <Button type="primary" htmlType="submit">
                             Submit
@@ -270,8 +268,5 @@ function RequiredFileList(props: any) {
         </>
     );
 };
-
-
-
 
 export default CreateAssignment

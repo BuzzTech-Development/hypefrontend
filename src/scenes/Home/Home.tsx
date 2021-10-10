@@ -17,6 +17,9 @@ import { logout } from 'redux/userSlice';
 
 import Calendar from './scenes/Calendar';
 import styles from './Home.module.css';
+import ViewAssignments from "./scenes/assignments/ViewAssignments";
+import CreateAssignment from "./scenes/assignments/CreateAssignment";
+import Assignments from "./scenes/assignments/Assignments";
 
 interface ApplicationTab {
     title: string;
@@ -61,7 +64,7 @@ const Home = ({ location, history }: RouteComponentProps) => {
             key: "assignments",
             path: "/assignments",
             icon: <UnorderedListOutlined />,
-            content: <h2>Assignments</h2>,
+            content: <Assignments />,
         },
         {
             title: "Progress",
