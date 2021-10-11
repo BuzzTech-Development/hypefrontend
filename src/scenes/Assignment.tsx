@@ -19,16 +19,6 @@ const Assignment = (props: any) => {
             label: 'completed_exam_1',
             extension: 'pdf',
             type: 'PDF'
-        },
-        {
-            label: 'other stuff',
-            extension: 'docx',
-            type: 'DOCX'
-        },
-        {
-            label: 'idk mayne',
-            extension: 'image',
-            type: 'Image'
         }]
     }
     const [errors, setErrors] = useState(Array(assignment.files.length).fill(''))
