@@ -11,6 +11,7 @@ import {getMeetings} from "./redux/meetingsSlice";
 import Home from "./scenes/Home/Home";
 import Login from "./scenes/Login";
 import CreateAssignment from "./scenes/CreateAssignment";
+import CohortView from "./scenes/Home/scenes/Students";
 
 import './App.css';
 

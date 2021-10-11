@@ -9,7 +9,8 @@ import {
     NotificationOutlined,
     TrophyOutlined,
     UnorderedListOutlined,
-    UserOutlined
+    UserOutlined,
+    TeamOutlined
 } from "@ant-design/icons";
 
 import { useAppDispatch } from 'redux/store';
@@ -17,6 +18,7 @@ import { logout } from 'redux/userSlice';
 
 import Calendar from './scenes/Calendar';
 import styles from './Home.module.css';
+import Students from './scenes/Students';
 
 interface ApplicationTab {
     title: string;
@@ -27,57 +29,111 @@ interface ApplicationTab {
     content: ReactNode;
 }
 
+// For debugging, to switch between student and teacher view
+const isTeacher = true;
+
 const Home = ({ location, history }: RouteComponentProps) => {
     const dispatch = useAppDispatch();
 
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
 
-    const tabs: ApplicationTab[] = [
-        {
-            title: "Home",
-            key: "home",
-            path: "/",
-            exact: true,
-            icon: <HomeOutlined />,
-            content: <h2>Home</h2>,
-        },
-        {
-            title: "Announcements",
-            key: "announcements",
-            path: "/announcements",
-            icon: <NotificationOutlined />,
-            content: <h2>Announcements</h2>,
-        },
-        {
-            title: "Calendar",
-            key: "calendar",
-            path: "/calendar",
-            icon: <CalendarOutlined />,
-            content: <Calendar />,
-        },
-        {
-            title: "Assignments",
-            key: "assignments",
-            path: "/assignments",
-            icon: <UnorderedListOutlined />,
-            content: <h2>Assignments</h2>,
-        },
-        {
-            title: "Progress",
-            key: "progress",
-            path: "/progress",
-            icon: <TrophyOutlined />,
-            content: <h2>Progress</h2>,
-        },
-        {
-            title: "Account",
-            key: "account",
-            path: "/account",
-            icon: <UserOutlined />,
-            content: <h2>Account</h2>,
-        }
-    ]
+    var tabs: ApplicationTab[];
+    if (!isTeacher) {
+        tabs = [
+            {
+                title: "Home",
+                key: "home",
+                path: "/",
+                exact: true,
+                icon: <HomeOutlined />,
+                content: <h2>Home</h2>,
+            },
+            {
+                title: "Announcements",
+                key: "announcements",
+                path: "/announcements",
+                icon: <NotificationOutlined />,
+                content: <h2>Announcements</h2>,
+            },
+            {
+                title: "Calendar",
+                key: "calendar",
+                path: "/calendar",
+                icon: <CalendarOutlined />,
+                content: <Calendar />,
+            },
+            {
+                title: "Assignments",
+                key: "assignments",
+                path: "/assignments",
+                icon: <UnorderedListOutlined />,
+                content: <h2>Assignments</h2>,
+            },
+            {
+                title: "Progress",
+                key: "progress",
+                path: "/progress",
+                icon: <TrophyOutlined />,
+                content: <h2>Progress</h2>,
+            },
+            {
+                title: "Account",
+                key: "account",
+                path: "/account",
+                icon: <UserOutlined />,
+                content: <h2>Account</h2>,
+            }
+        ]
+    
+    } else {
+        tabs = [
+            {
+                title: "Home",
+                key: "home",
+                path: "/",
+                exact: true,
+                icon: <HomeOutlined />,
+                content: <h2>Home</h2>,
+            },
+            {
+                title: "Announcements",
+                key: "announcements",
+                path: "/announcements",
+                icon: <NotificationOutlined />,
+                content: <h2>Announcements</h2>,
+            },
+            {
+                title: "Calendar",
+                key: "calendar",
+                path: "/calendar",
+                icon: <CalendarOutlined />,
+                content: <Calendar />,
+            },
+            {
+                title: "Assignments",
+                key: "assignments",
+                path: "/assignments",
+                icon: <UnorderedListOutlined />,
+                content: <h2>Assignments</h2>,
+            },
+            {
+                title: "Students",
+                key: "progress",
+                path: "/students",
+                icon: <TeamOutlined />,
+                content: <Students />,
+            },
+            {
+                title: "Account",
+                key: "account",
+                path: "/account",
+                icon: <UserOutlined />,
+                content: <h2>Account</h2>,
+            }
+        ]
+    
+    }
 
     const selectedTab = tabs.find(
         tab => matchPath(location.pathname, { path: tab.path, exact: tab.exact || false })
