@@ -28,7 +28,7 @@ function App(props: any) {
                     {authenticated ? <Redirect to="/home" /> : <Login /> }
                 </Route>
 
-                {!authenticated ? <Redirect to="/login" /> : <>
+                {!authenticated ? <Redirect to="/login" /> : <Switch>
                     <Route path="/home">
                         <NavBar content={<Home />} />
                     </Route>
@@ -53,7 +53,7 @@ function App(props: any) {
                     <Route path="/account">
                         <NavBar content={<Account />} />
                     </Route>
-                </>}
+                </Switch>}
             </Switch>
         </BrowserRouter>
     )
