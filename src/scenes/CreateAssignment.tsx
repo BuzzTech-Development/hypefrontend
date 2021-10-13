@@ -7,6 +7,8 @@ import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import {useAppDispatch} from "../redux/store";
+import {createAssignment} from "../redux/assignmentSlice";
 
 const accepted_filetypes = [
     {value: 'pdf', label: 'PDF'},
@@ -33,6 +35,7 @@ const available_badges = [
 const CreateAssignment = (props: any) => {
     const [files, setFiles] = useState(1);
     const [visible, setVisible] = useState(false);
+    const dispatch = useAppDispatch();
 
     const onFinish = (values: any) => {
         // validate date and time
@@ -57,16 +60,21 @@ const CreateAssignment = (props: any) => {
         }
 
         // will want to be able to include attachments to assignment (ex: starter code)
-        const outData = {
+        const assignment = {
             name: values.name,
-            // HTML INSERTION PROBABLY POSSIBLE HERE, SHOULD SANITIZE
-            description: values.description,
+            id: null,
+            createdAt: moment().toISOString(),
+            description: values.description, // HTML INSERTION PROBABLY POSSIBLE HERE, SHOULD SANITIZE
             points: values.points,
             badge: null,
-            dueDate: dateTime,
-            files: files
+            dueDate: dateTime.toISOString(),
+            graded: false,
+            grade: null,
+            numFiles: 1
         }
-        console.log('Success:', outData);
+        console.log('Success:', assignment);
+        dispatch(createAssignment(assignment))
+
         // DO SOMETHING WITH ASSIGNMENT DATA
     };
 

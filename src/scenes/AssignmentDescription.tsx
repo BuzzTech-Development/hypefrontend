@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { withRouter, useParams } from "react-router-dom";
 import moment from 'moment';
 
-const Assignment = (props: any) => {
+const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
     // hard-coded assignment
     // should be fetched using id
@@ -15,13 +15,9 @@ const Assignment = (props: any) => {
         points: 100,
         badge: null,
         dueDate: moment().add(1, 'weeks').add(3, 'hours'),
-        files: [{
-            label: 'completed_exam_1',
-            extension: 'pdf',
-            type: 'PDF'
-        }]
+        numFiles: 5
     }
-    const [errors, setErrors] = useState(Array(assignment.files.length).fill(''))
+    const [errors, setErrors] = useState(Array(assignment.numFiles).fill(''))
     const dueDate = assignment.dueDate ? assignment.dueDate.format('MMMM DD') : null
     const dueTime = assignment.dueDate ? assignment.dueDate.format('LT') : null
     const tableSpace = {
@@ -47,7 +43,7 @@ const Assignment = (props: any) => {
 
     const submitAssignment = () => {
         let valid = true;
-        for (let i = 0; i < assignment.files.length; i++) {
+        for (let i = 0; i < assignment.numFiles; i++) {
             if (errors[i] !== '') {
                 valid = false;
                 break;
@@ -68,19 +64,23 @@ const Assignment = (props: any) => {
         <Space direction='horizontal' size='large'>
             <div><b>Due:</b> {dueDate} at {dueTime}</div>
             <div><b>Points:</b> {assignment.points}</div>
-            <div><b>Required Files:</b> {assignment.files.length}</div>
+            <div><b>Required Files:</b> {assignment.numFiles}</div>
             {assignment.badge ? <div><b>Badge:</b> {assignment.badge}</div> : <></>}
         </Space>
         <Divider />
         <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>
-        <table>
+        <Upload maxCount={assignment.numFiles} onChange={(info: any) => checkFileType(info, 0)}>
+            <Button icon={<UploadOutlined />}>Upload</Button>
+        </Upload>
+        {/*
+            <table>
             <tr>
                 {assignment.files.map(file => {
                     return <>
                         <td>{file.label}</td>
                         <td style={tableSpace}></td>
                     </>
-                })}            
+                })}
             </tr>
             <tr>
                 {assignment.files.map((file, i) => {
@@ -92,7 +92,7 @@ const Assignment = (props: any) => {
                         </td>
                         <td style={tableSpace}></td>
                     </>
-                })}            
+                })}
             </tr>
             <tr>
                 {assignment.files.map((file, i) => {
@@ -100,21 +100,11 @@ const Assignment = (props: any) => {
                         <td style={{wordWrap: 'break-word'}}>{errors[i]}</td>
                         <td style={tableSpace}></td>
                     </>
-                })}            
+                })}
             </tr>
         </table>
-        {/*<Row gutter={30} style={{width: '100%'}}>
-            {assignment.files.map((file, i) => {
-                return <Col><Space direction='vertical'>
-                    <div>{file.label}</div>
-                    <Upload maxCount={1} onChange={checkFileType}>
-                        <Button icon={<UploadOutlined />}>Upload</Button>
-                    </Upload>
-                    <div style={{wordWrap: 'break-word'}}>{errors[i]}</div>
-                </Space></Col>
-            })}
-        </Row>*/}
+        */}
     </Space>)
 }
 
-export default withRouter(Assignment);
+export default withRouter(AssignmentDescription);

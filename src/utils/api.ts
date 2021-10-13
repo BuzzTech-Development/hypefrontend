@@ -1,11 +1,17 @@
 import axios, { AxiosInstance } from "axios";
+import { UserDetail } from "../redux/userSlice";
+import {Meeting} from "../redux/meetingsSlice";
+import {Assignment} from "../redux/assignmentSlice";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
     instance: AxiosInstance;
 
-    ENPOINTS = {
-        tokenAuth: 'token-auth/'
+    ENDPOINTS = {
+        tokenAuth: 'token-auth/',
+        user: 'api/user/',
+        meetings: 'api/meetings/',
+        assignments: 'api/assignments/',
     }
 
     private static getToken() {
@@ -21,6 +27,7 @@ class ApiWrapper{
     }
 
     setTokenAuth(token: string) {
+        console.log(token);
         this.instance.defaults.headers.common.Authorization = `JWT ${token}`;
     }
 
@@ -35,11 +42,35 @@ class ApiWrapper{
         })
     }
 
-    async login(payload: { username: string, password: string }) {
-        const response = await this.instance.post(this.ENPOINTS.tokenAuth, payload);
-        const token = response.data;
+    async login(payload: { username: string, password: string }): Promise<UserDetail> {
+        const response = await this.instance.post(this.ENDPOINTS.tokenAuth, payload);
+        const token: string = response.data.token;
         ApiWrapper.storeToken(token);
         this.setTokenAuth(token);
+        return this.getUserDetail();
+    }
+
+    async getUserDetail(): Promise<UserDetail> {
+        const response = await this.instance.get(this.ENDPOINTS.user);
+        return response.data;
+    }
+
+    async getMeetings(cohortId: number): Promise<Meeting[]> {
+        const params = { cohort: cohortId };
+        const response = await this.instance.get(this.ENDPOINTS.meetings, { params });
+        return response.data;
+    }
+
+    async getAssignments(): Promise<Assignment[]> {
+        const params = {};
+        const response = await this.instance.get(this.ENDPOINTS.assignments, { params });
+        return response.data;
+    }
+
+    async createAssignment(payload: Assignment) {
+        const response = await this.instance.post(this.ENDPOINTS.assignments, payload);
+        const result = response.data;
+        return payload;
     }
 }
 

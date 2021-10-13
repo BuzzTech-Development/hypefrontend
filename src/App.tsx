@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
-import {useAppSelector} from "./redux/store";
+import {useAppSelector, useAppDispatch} from "./redux/store";
 import NavBar from './scenes/NavBar';
 import Home from "./scenes/Home";
 import Login from './scenes/Login';
@@ -8,14 +8,27 @@ import Announcements from './scenes/Announcements';
 import Calendar from './scenes/Calendar';
 import CreateAssignment from './scenes/CreateAssignment';
 import Assignments from './scenes/Assignments';
-import Assignment from 'scenes/Assignment';
+import Assignment from 'scenes/AssignmentDescription';
 import Progress from './scenes/Progress';
 import Account from './scenes/Account';
 
 import './App.css';
+import {getAssignments} from "./redux/assignmentSlice";
+import {getMeetings} from "./redux/meetingsSlice";
 
 function App(props: any) {
     const authenticated = useAppSelector((state) => state.user.authenticated);
+    const currentCohort = useAppSelector((state) => state.user.currentCohort);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+        if (authenticated && currentCohort) {
+            dispatch(getMeetings(currentCohort));
+        }
+        if (authenticated) {
+            dispatch(getAssignments());
+        }
+    }, [authenticated, currentCohort])
 
     return (
         <BrowserRouter>
