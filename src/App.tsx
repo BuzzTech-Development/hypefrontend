@@ -41,10 +41,10 @@ function App(props: any) {
                     <Route exact path="/assignments">
                         <NavBar content={<Assignments />} />
                     </Route>
-                    <Route exact path="/assignments/create">
+                    <Route path="/assignments/create">
                         <NavBar content={<CreateAssignment />} />
                     </Route>
-                    <Route exact path="/assignments/:id">
+                    <Route path="/assignments/:id">
                         <NavBar content={<Assignment />} />
                     </Route>
                     <Route path="/progress">
