@@ -6,11 +6,9 @@ import {Assignment, assignmentsSelectors} from "../redux/assignmentSlice";
 import store from "../redux/store";
 
 const Assignments = (props: any) => {
-    // hard-coded assignment list
-    // should instead fetch assignment name, id, points, due date for each
     const assignments: Assignment[] = assignmentsSelectors.selectAll(store.getState());
 
-    const createLists = (assignments: any) => {
+    const createLists = (assignments: Assignment[]) => {
         // get current, overdue, and undated assignments
         assignments.sort(function(a: any, b: any) {
             if (a.dueDate === b.dueDate) return 0;
@@ -20,8 +18,8 @@ const Assignments = (props: any) => {
         });
         const dateTime = moment();
         const current = assignments.filter((v: any) => v.dueDate > dateTime);
-        const overdue = assignments.filter((v: any) => v.dueDate !== null && v.dueDate <= dateTime);
-        const undated = assignments.filter((v: any) => v.dueDate === null);
+        const overdue = assignments.filter((v: any) => v.dueDate && v.dueDate <= dateTime);
+        const undated = assignments.filter((v: any) => !v.dueDate);
         return [current, overdue, undated];
     }
     const assignmentLists = createLists(assignments);
@@ -42,8 +40,8 @@ function AssignmentList(props: any) {
     const assignments = props.assignments;
     const header = props.header;
     // probably need to localize these times
-    const dueDates = assignments.map((assignment: any) => assignment.dueDate ? assignment.dueDate.format('MMMM DD') : null)
-    const dueTimes = assignments.map((assignment: any) => assignment.dueDate ? assignment.dueDate.format('LT') : null)
+    const dueDates = assignments.map((assignment: any) => assignment.dueDate !== '' ? moment(assignment.dueDate).format('MMMM DD') : null)
+    const dueTimes = assignments.map((assignment: any) => assignment.dueDate !== '' ? moment(assignment.dueDate).format('LT') : null)
     const [hover, setHover] = useState(-1);
     const nonhoverStyle = {
         borderTop: '1px solid black',
@@ -68,8 +66,8 @@ function AssignmentList(props: any) {
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(-1)}
             >
-                {/* link styling is messing with text alignment */}
-                <Link to={{pathname: `assignments/${assignment.id}`}} style={{color: 'black'}}>
+                {/* switch the index to id once we set that up */}
+                <Link to={{pathname: `assignments/${i}`}} style={{color: 'black'}}>
                     <div style={{textAlign: 'left'}}>
                         <b>{assignment.name}</b>
                     </div>

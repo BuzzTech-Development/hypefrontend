@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { UserDetail } from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
 import {Assignment} from "../redux/assignmentSlice";
+import moment from "moment";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
@@ -68,6 +69,8 @@ class ApiWrapper{
     }
 
     async createAssignment(payload: Assignment) {
+        payload.createdAt = (payload.createdAt as moment.Moment).toISOString();
+        payload.dueDate = (payload.dueDate as moment.Moment).toISOString();
         const response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         const result = response.data;
         return payload;

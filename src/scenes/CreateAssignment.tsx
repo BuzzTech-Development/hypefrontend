@@ -8,14 +8,14 @@ import moment from 'moment';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import {useAppDispatch} from "../redux/store";
-import {createAssignment} from "../redux/assignmentSlice";
+import {createAssignment, Assignment} from "../redux/assignmentSlice";
 
 const accepted_filetypes = [
-    {value: 'pdf', label: 'PDF'},
-    {value: 'docx', label: 'DOCX'},
+    {value: 'pdf', label: 'pdf'},
+    {value: 'docx', label: 'docx'},
     {value: 'zip', label: 'zip'},
-    {value: 'image', label: 'Image'},
-    {value: 'text', label: 'Text'}
+    {value: 'png', label: 'png'},
+    {value: 'txt', label: 'txt'}
 ]
 
 // TODO: move the actual badges somewhere else
@@ -30,7 +30,6 @@ const available_badges = [
     {id: 7, label: 'Eighth Badge', img: 'something'},
     {id: 8, label: 'Ninth Badge', img: 'something'}
 ]
-
 
 const CreateAssignment = (props: any) => {
     const [files, setFiles] = useState(1);
@@ -53,29 +52,31 @@ const CreateAssignment = (props: any) => {
         let i = 0;
         while (values['filelabel' + i]) {
             files.push({
-                label: values['filelabel' + i],
                 extension: values['filetype' + i]['value'],
                 type: values['filetype' + i]['label']
             })
+            i++;
         }
 
         // will want to be able to include attachments to assignment (ex: starter code)
-        const assignment = {
+        const assignment : Assignment = {
             name: values.name,
-            id: null,
-            createdAt: moment().toISOString(),
-            description: values.description, // HTML INSERTION PROBABLY POSSIBLE HERE, SHOULD SANITIZE
+            createdAt: moment(),
             points: values.points,
-            badge: null,
-            dueDate: dateTime.toISOString(),
+            dueDate: dateTime,
             graded: false,
-            grade: null,
-            numFiles: 1
+            numFiles: files.length
         }
-        console.log('Success:', assignment);
-        dispatch(createAssignment(assignment))
+        if (values.description) assignment.description = values.description; // HTML INSERTION PROBABLY POSSIBLE HERE, SHOULD SANITIZE
+        if (values.selectedBadge) assignment.badge = values.selectedBadge;
 
-        // DO SOMETHING WITH ASSIGNMENT DATA
+        dispatch(createAssignment(assignment));
+
+        // DISPATCH FILES TO TABLE
+        // TABLE SHOULD BE ONE ASSIGNMENT TO MANY FILES
+
+        console.log('Success:', assignment);
+        props.history.push('/assignments');
     };
 
     const cancelAssignment = () => {
@@ -91,8 +92,8 @@ const CreateAssignment = (props: any) => {
     return (<Form layout="vertical" onFinish={onFinish} initialValues={{
             description: '',
             points: 1,
-            date: moment(),
-            time: moment()}}>
+            date: moment().add(1, 'weeks'),
+            time: moment().endOf('day')}}>
         <Divider orientation="left">Description</Divider>
         <Form.Item label="Assignment Name" name="name" rules={[{ required: true, message:"Assignment name required." }]}>
             <Input type="text" placeholder="Assignment name" />
@@ -109,18 +110,18 @@ const CreateAssignment = (props: any) => {
         </Row>
         <Row justify="center">
             <Button type="primary" onClick={() => setVisible(true)}>Select Badge</Button>
-            <Form.Item name="selectedBadge">
-                    <Drawer title="Select a Badge" placement="bottom" onClose={() => setVisible(false)} visible={visible} height={500}>
-                        <Radio.Group> 
-                            {available_badges.map((badge: any) => (
-                                <Radio key={badge.id} value={badge.id}>
-                                    <Avatar size={64} icon={<UserOutlined />} />
-                                    {badge.label}
-                                </Radio>
-                            ))}
-                        </Radio.Group>
-                    </Drawer>
-            </Form.Item>
+            <Drawer title="Select a Badge" placement="bottom" onClose={() => setVisible(false)} visible={visible} height={500}>
+                <Form.Item name="selectedBadge">
+                    <Radio.Group> 
+                        {available_badges.map((badge: any) => (
+                            <Radio key={badge.id} value={badge.id}>
+                                <Avatar size={64} icon={<UserOutlined />} />
+                                {badge.label}
+                            </Radio>
+                        ))}
+                    </Radio.Group>
+                </Form.Item>
+            </Drawer>
         </Row>
 
         <Divider orientation="left">Due Date and Time</Divider>
@@ -129,7 +130,7 @@ const CreateAssignment = (props: any) => {
                 <DatePicker format="MM/DD/YYYY" disabledDate={disabledDate} />
             </Form.Item>
             <Form.Item label="Time" name="time" rules={[{ required: true, message: 'Due time required.', type: 'object' }]}>
-                <TimePicker format="HH:mm" />
+                <TimePicker format="HH:mm"/>
             </Form.Item>
         </Row>
         

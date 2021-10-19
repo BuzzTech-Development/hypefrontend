@@ -2,24 +2,16 @@ import { PageHeader, Divider, Upload, Space, Button } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import React, { useState } from 'react';
 import { withRouter, useParams } from "react-router-dom";
+import {Assignment, assignmentsSelectors} from "../redux/assignmentSlice";
+import store from "../redux/store";
 import moment from 'moment';
 
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
-    // hard-coded assignment
-    // should be fetched using id
-    const assignment = {
-        name: 'Exam 1',
-        id: 913252,
-        description: '<p>This exam is intended to monitor your comprehension over the first few weeks of this course. This exam will cover content through Chapter 7 of the textbook.</p><p>This exam is strictly <b>CLOSED-NOTES</b>. Making <i>any</i> attempt to collaborate with others will be viewed as an academic infraction and treated accordingly.</p><br><p><b>Good luck!</b></p>',
-        points: 100,
-        badge: null,
-        dueDate: moment().add(1, 'weeks').add(3, 'hours'),
-        numFiles: 5
-    }
+    const assignment: Assignment = assignmentsSelectors.selectAll(store.getState())[id];
     const [errors, setErrors] = useState(Array(assignment.numFiles).fill(''))
-    const dueDate = assignment.dueDate ? assignment.dueDate.format('MMMM DD') : null
-    const dueTime = assignment.dueDate ? assignment.dueDate.format('LT') : null
+    const dueDate = assignment.dueDate ? moment(assignment.dueDate).format('MMMM DD') : null
+    const dueTime = assignment.dueDate ? moment(assignment.dueDate).format('LT') : null
     const tableSpace = {
         width: '3em'
     }
@@ -65,11 +57,11 @@ const AssignmentDescription = (props: any) => {
             <div><b>Due:</b> {dueDate} at {dueTime}</div>
             <div><b>Points:</b> {assignment.points}</div>
             <div><b>Required Files:</b> {assignment.numFiles}</div>
-            {assignment.badge ? <div><b>Badge:</b> {assignment.badge}</div> : <></>}
+            {assignment.badge !== -1 ? <div><b>Badge:</b> {assignment.badge}</div> : <></>}
         </Space>
         <Divider />
-        <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>
-        <Upload maxCount={assignment.numFiles} onChange={(info: any) => checkFileType(info, 0)}>
+        {typeof assignment.description === 'undefined' ? <></> : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
+        <Upload maxCount={assignment.numFiles} onChange={(info: any) => checkFileType(info, 0)} style={tableSpace}>
             <Button icon={<UploadOutlined />}>Upload</Button>
         </Upload>
         {/*
