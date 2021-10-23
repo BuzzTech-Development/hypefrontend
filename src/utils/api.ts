@@ -43,6 +43,12 @@ class ApiWrapper{
         })
     }
 
+    makeUID() {
+        const min = 100000;
+        const max = 900000;
+        return Math.floor(min + Math.random() * max)
+    }
+
     async login(payload: { username: string, password: string }): Promise<UserDetail> {
         const response = await this.instance.post(this.ENDPOINTS.tokenAuth, payload);
         const token: string = response.data.token;
@@ -71,7 +77,12 @@ class ApiWrapper{
     async createAssignment(payload: Assignment) {
         payload.createdAt = (payload.createdAt as moment.Moment).toISOString();
         payload.dueDate = (payload.dueDate as moment.Moment).toISOString();
-        const response = await this.instance.post(this.ENDPOINTS.assignments, payload);
+        payload.id = this.makeUID();
+        let response = await this.instance.post(this.ENDPOINTS.assignments, payload);
+        while ((await this.instance.post(this.ENDPOINTS.assignments, payload)).status !== 400) {
+            payload.id = this.makeUID();
+            response = await this.instance.post(this.ENDPOINTS.assignments, payload);
+        }
         const result = response.data;
         return payload;
     }

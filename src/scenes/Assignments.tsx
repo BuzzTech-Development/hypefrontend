@@ -67,7 +67,7 @@ function AssignmentList(props: any) {
                 onMouseLeave={() => setHover(-1)}
             >
                 {/* switch the index to id once we set that up */}
-                <Link to={{pathname: `assignments/${i}`}} style={{color: 'black'}}>
+                <Link to={{pathname: `assignments/${assignment.id}`}} style={{color: 'black'}}>
                     <div style={{textAlign: 'left'}}>
                         <b>{assignment.name}</b>
                     </div>

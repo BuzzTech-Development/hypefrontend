@@ -35,7 +35,6 @@ const assignmentsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getAssignments.fulfilled, (state, action) => {
-                console.log(action.payload);
                 const data : Assignment[] = action.payload;
                 for (let i = 0; i < data.length; i++) {
                     data[i].createdAt = moment(data[i].createdAt);

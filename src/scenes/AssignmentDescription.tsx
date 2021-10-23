@@ -8,10 +8,10 @@ import moment from 'moment';
 
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
-    const assignment: Assignment = assignmentsSelectors.selectAll(store.getState())[id];
-    const [errors, setErrors] = useState(Array(assignment.numFiles).fill(''))
-    const dueDate = assignment.dueDate ? moment(assignment.dueDate).format('MMMM DD') : null
-    const dueTime = assignment.dueDate ? moment(assignment.dueDate).format('LT') : null
+    const assignment: Assignment | undefined = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
+    const [errors, setErrors] = useState(Array(assignment?.numFiles).fill(''))
+    const dueDate = assignment?.dueDate ? moment(assignment.dueDate).format('MMMM DD') : null
+    const dueTime = assignment?.dueDate ? moment(assignment.dueDate).format('LT') : null
     const tableSpace = {
         width: '3em'
     }
@@ -34,6 +34,7 @@ const AssignmentDescription = (props: any) => {
     }
 
     const submitAssignment = () => {
+        if (assignment === undefined) return;
         let valid = true;
         for (let i = 0; i < assignment.numFiles; i++) {
             if (errors[i] !== '') {
@@ -47,7 +48,7 @@ const AssignmentDescription = (props: any) => {
 
     return (<Space direction='vertical' style={{width: '100%', paddingLeft: '2em'}}>
         <Space direction='horizontal'>
-            <PageHeader title={assignment.name} style={{padding: '1em 0 0 0'}} />
+            <PageHeader title={assignment?.name} style={{padding: '1em 0 0 0'}} />
             <div style={{padding: '1em 0 0 0'}}>
                 <Button onClick={submitAssignment}>Submit Assignment</Button>
             </div>
@@ -55,13 +56,13 @@ const AssignmentDescription = (props: any) => {
         <Divider orientation='left' />
         <Space direction='horizontal' size='large'>
             <div><b>Due:</b> {dueDate} at {dueTime}</div>
-            <div><b>Points:</b> {assignment.points}</div>
-            <div><b>Required Files:</b> {assignment.numFiles}</div>
-            {assignment.badge !== -1 ? <div><b>Badge:</b> {assignment.badge}</div> : <></>}
+            <div><b>Points:</b> {assignment?.points}</div>
+            <div><b>Required Files:</b> {assignment?.numFiles}</div>
+            {assignment?.badge !== -1 ? <div><b>Badge:</b> {assignment?.badge}</div> : <></>}
         </Space>
         <Divider />
-        {typeof assignment.description === 'undefined' ? <></> : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
-        <Upload maxCount={assignment.numFiles} onChange={(info: any) => checkFileType(info, 0)} style={tableSpace}>
+        {typeof assignment?.description === 'undefined' ? <></> : <div dangerouslySetInnerHTML={{__html: assignment?.description}}></div>}
+        <Upload maxCount={assignment?.numFiles} onChange={(info: any) => checkFileType(info, 0)} style={tableSpace}>
             <Button icon={<UploadOutlined />}>Upload</Button>
         </Upload>
         {/*
