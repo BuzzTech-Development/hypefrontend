@@ -10,8 +10,8 @@ const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
     const assignment: Assignment | undefined = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
     const [errors, setErrors] = useState(Array(assignment?.numFiles).fill(''))
-    const dueDate = assignment?.dueDate ? moment(assignment.dueDate).format('MMMM DD') : null
-    const dueTime = assignment?.dueDate ? moment(assignment.dueDate).format('LT') : null
+    const dueDate = !assignment?.undated ? moment(assignment?.dueDate).format('MMMM DD') : null
+    const dueTime = !assignment?.undated ? moment(assignment?.dueDate).format('LT') : null
     const tableSpace = {
         width: '3em'
     }
@@ -55,7 +55,7 @@ const AssignmentDescription = (props: any) => {
         </Space>
         <Divider orientation='left' />
         <Space direction='horizontal' size='large'>
-            <div><b>Due:</b> {dueDate} at {dueTime}</div>
+            {assignment?.undated ? <></> : <div><b>Due:</b> {dueDate} at {dueTime}</div>}
             <div><b>Points:</b> {assignment?.points}</div>
             <div><b>Required Files:</b> {assignment?.numFiles}</div>
             {assignment?.badge !== -1 ? <div><b>Badge:</b> {assignment?.badge}</div> : <></>}

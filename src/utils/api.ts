@@ -79,7 +79,10 @@ class ApiWrapper{
         payload.dueDate = (payload.dueDate as moment.Moment).toISOString();
         payload.id = this.makeUID();
         let response = await this.instance.post(this.ENDPOINTS.assignments, payload);
-        while ((await this.instance.post(this.ENDPOINTS.assignments, payload)).status !== 400) {
+        // probably want some better logic here
+        let fails = 0;
+        while ((await this.instance.post(this.ENDPOINTS.assignments, payload)).status === 400 && fails < 10) {
+            fails++;
             payload.id = this.makeUID();
             response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         }

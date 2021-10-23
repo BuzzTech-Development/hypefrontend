@@ -17,9 +17,9 @@ const Assignments = (props: any) => {
             return a.dueDate > b.dueDate ? 1 : -1
         });
         const dateTime = moment();
-        const current = assignments.filter((v: any) => v.dueDate > dateTime);
-        const overdue = assignments.filter((v: any) => v.dueDate && v.dueDate <= dateTime);
-        const undated = assignments.filter((v: any) => !v.dueDate);
+        const current = assignments.filter((v: any) => !v.undated && v.dueDate > dateTime);
+        const overdue = assignments.filter((v: any) => !v.undated && v.dueDate <= dateTime);
+        const undated = assignments.filter((v: any) => v.undated);
         return [current, overdue, undated];
     }
     const assignmentLists = createLists(assignments);
@@ -71,7 +71,7 @@ function AssignmentList(props: any) {
                     <div style={{textAlign: 'left'}}>
                         <b>{assignment.name}</b>
                     </div>
-                    {assignment.dueDate === null ? <></> : <div style={{textAlign: 'right'}}>
+                    {assignment.undated ? <></> : <div style={{textAlign: 'right'}}>
                         <b>Due</b> {dueDates[i]} at {dueTimes[i]} 
                     </div>}
                 </Link>

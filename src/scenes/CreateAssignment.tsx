@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { withRouter } from "react-router-dom";
 import Select from 'react-select';
 import 'reactjs-popup/dist/index.css';
-import {Button, Col, Form, Drawer, Radio, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber } from "antd";
+import {Button, Col, Form, Drawer, Radio, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber, Checkbox } from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReactQuill from 'react-quill';
@@ -34,17 +34,21 @@ const available_badges = [
 const CreateAssignment = (props: any) => {
     const [files, setFiles] = useState(1);
     const [visible, setVisible] = useState(false);
+    const [undated, setUndated] = useState(false);
     const dispatch = useAppDispatch();
 
     const onFinish = (values: any) => {
         // validate date and time
-        const date = values.date.format('MM/DD/YYYY');
-        const time = values.time.format('HH:mm');
-        const dateTime = moment(date + ' ' + time, 'MM/DD/YYYY HH:mm');
-        if (dateTime < moment()) {
-            // probably want a better error message
-            alert("Due date cannot be before current time.");
-            return;
+        let dateTime = moment();
+        if (!undated) {
+            const date = values.date.format('MM/DD/YYYY');
+            const time = values.time.format('HH:mm');
+            dateTime = moment(date + ' ' + time, 'MM/DD/YYYY HH:mm');
+            if (dateTime < moment()) {
+                // probably want a better error message
+                alert("Due date cannot be before current time.");
+                return;
+            }
         }
 
         // populate files array
@@ -64,6 +68,7 @@ const CreateAssignment = (props: any) => {
             createdAt: moment(),
             points: values.points,
             dueDate: dateTime,
+            undated: undated,
             graded: false,
             numFiles: files.length
         }
@@ -126,13 +131,14 @@ const CreateAssignment = (props: any) => {
 
         <Divider orientation="left">Due Date and Time</Divider>
         <Row justify="center">
-            <Form.Item label="Date" name="date" rules={[{ required: true, message: 'Due date required.', type: 'object' }]}>
-                <DatePicker format="MM/DD/YYYY" disabledDate={disabledDate} />
+            <Form.Item label="Date" name="date" rules={[{ required: false, type: 'object' }]}>
+                <DatePicker format="MM/DD/YYYY" disabledDate={disabledDate} disabled={undated} />
             </Form.Item>
-            <Form.Item label="Time" name="time" rules={[{ required: true, message: 'Due time required.', type: 'object' }]}>
-                <TimePicker format="HH:mm"/>
+            <Form.Item label="Time" name="time" rules={[{ required: false, type: 'object' }]}>
+                <TimePicker format="HH:mm" disabled={undated} />
             </Form.Item>
         </Row>
+        <Checkbox onChange={() => setUndated(!undated)}>Undated</Checkbox>
         
         <Divider orientation="left">File Requirements</Divider>
         <Row justify="center">

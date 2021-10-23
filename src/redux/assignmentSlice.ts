@@ -11,6 +11,7 @@ export interface Assignment {
     points: number;
     badge?: number;
     dueDate: moment.Moment | string;
+    undated: boolean;
     graded: boolean;
     grade?: number;
     numFiles: number; // temp for files
