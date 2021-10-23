@@ -105,7 +105,7 @@ function CurrentView(props: any) {
 
     // Filter
     if (props.filter != "") {
-        const regexp = new RegExp(".*" + props.filter + ".*");
+        const regexp = new RegExp(".*" + props.filter + ".*", 'i');
         sub_students = sub_students.filter((student) => {
             if (regexp.test(student.fname) ||
                 regexp.test(student.lname) ||
