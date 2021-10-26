@@ -24,9 +24,7 @@ function App(props: any) {
     useEffect(() => {
         if (authenticated && currentCohort) {
             dispatch(getMeetings(currentCohort));
-        }
-        if (authenticated) {
-            dispatch(getAssignments());
+            dispatch(getAssignments(currentCohort));
         }
     }, [authenticated, currentCohort])
 

@@ -43,12 +43,6 @@ class ApiWrapper{
         })
     }
 
-    makeUID() {
-        const min = 100000;
-        const max = 900000;
-        return Math.floor(min + Math.random() * max)
-    }
-
     async login(payload: { username: string, password: string }): Promise<UserDetail> {
         const response = await this.instance.post(this.ENDPOINTS.tokenAuth, payload);
         const token: string = response.data.token;
@@ -68,22 +62,18 @@ class ApiWrapper{
         return response.data;
     }
 
-    async getAssignments(): Promise<Assignment[]> {
-        const params = {};
+    async getAssignments(cohortId: number): Promise<Assignment[]> {
+        const params = { }
         const response = await this.instance.get(this.ENDPOINTS.assignments, { params });
         return response.data;
     }
 
     async createAssignment(payload: Assignment) {
-        payload.createdAt = (payload.createdAt as moment.Moment).toISOString();
-        payload.dueDate = (payload.dueDate as moment.Moment).toISOString();
-        payload.id = this.makeUID();
         let response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         // probably want some better logic here
         let fails = 0;
-        while ((await this.instance.post(this.ENDPOINTS.assignments, payload)).status === 400 && fails < 10) {
+        while (response.status === 400 && fails < 10) {
             fails++;
-            payload.id = this.makeUID();
             response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         }
         const result = response.data;

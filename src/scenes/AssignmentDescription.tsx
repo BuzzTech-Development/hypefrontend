@@ -10,8 +10,15 @@ const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
     const assignment: Assignment | undefined = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
     const [errors, setErrors] = useState(Array(assignment?.numFiles).fill(''))
-    const dueDate = !assignment?.undated ? moment(assignment?.dueDate).format('MMMM DD') : null
-    const dueTime = !assignment?.undated ? moment(assignment?.dueDate).format('LT') : null
+    let dueDate;
+    let dueTime;
+    if (assignment && !assignment.undated) {
+        dueDate = new Date(assignment?.dueDate).toLocaleDateString("en-US", { day: 'numeric', month: 'long' })
+        dueTime = new Date(assignment?.dueDate).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'})
+    } else {
+        dueDate = null;
+        dueTime = null;
+    }
     const tableSpace = {
         width: '3em'
     }

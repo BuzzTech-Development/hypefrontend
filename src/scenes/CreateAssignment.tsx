@@ -42,7 +42,9 @@ const CreateAssignment = (props: any) => {
         let dateTime = moment();
         if (!undated) {
             const date = values.date.format('MM/DD/YYYY');
+            console.log(date);
             const time = values.time.format('HH:mm');
+            console.log(time);
             dateTime = moment(date + ' ' + time, 'MM/DD/YYYY HH:mm');
             if (dateTime < moment()) {
                 // probably want a better error message
@@ -65,9 +67,9 @@ const CreateAssignment = (props: any) => {
         // will want to be able to include attachments to assignment (ex: starter code)
         const assignment : Assignment = {
             name: values.name,
-            createdAt: moment(),
+            createdAt: moment().toISOString(),
             points: values.points,
-            dueDate: dateTime,
+            dueDate: dateTime.toISOString(),
             undated: undated,
             graded: false,
             numFiles: files.length

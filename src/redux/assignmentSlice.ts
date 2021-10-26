@@ -6,11 +6,11 @@ import moment from "moment";
 export interface Assignment {
     name: string;
     id?: number;
-    createdAt: moment.Moment | string;
+    createdAt: string;
     description?: string;
     points: number;
     badge?: number;
-    dueDate: moment.Moment | string;
+    dueDate: string;
     undated: boolean;
     graded: boolean;
     grade?: number;
@@ -21,7 +21,7 @@ const assignmentsAdapter = createEntityAdapter<Assignment>();
 
 export const getAssignments = createAsyncThunk(
     'GET_ASSIGNMENTS',
-    async () => apiInstance.getAssignments(),
+    async (cohortId: number) => apiInstance.getAssignments(cohortId),
 )
 
 export const createAssignment = createAsyncThunk(
@@ -36,12 +36,7 @@ const assignmentsSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(getAssignments.fulfilled, (state, action) => {
-                const data : Assignment[] = action.payload;
-                for (let i = 0; i < data.length; i++) {
-                    data[i].createdAt = moment(data[i].createdAt);
-                    data[i].dueDate = moment(data[i].dueDate);
-                }
-                assignmentsAdapter.setAll(state, data);
+                assignmentsAdapter.setAll(state, action.payload);
             })
             .addCase(createAssignment.fulfilled, (state, action) => {
                 assignmentsAdapter.addOne(state, action.payload)
