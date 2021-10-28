@@ -67,7 +67,7 @@ const CreateAssignment = (props: any) => {
         // will want to be able to include attachments to assignment (ex: starter code)
         const assignment : Assignment = {
             name: values.name,
-            created_at: moment().toISOString(),
+            creation_date: moment().toISOString(),
             points: values.points,
             due_date: dateTime.toISOString(),
             undated: undated,

@@ -6,7 +6,7 @@ import moment from "moment";
 export interface Assignment {
     name: string;
     id?: number;
-    created_at: string;
+    creation_date: string;
     description?: string;
     points: number;
     badge?: number;
