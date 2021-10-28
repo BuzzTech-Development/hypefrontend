@@ -22,16 +22,16 @@ const AssignmentList = (props: any) => {
 
     // get current, overdue, and undated assignments
     assignments.sort(function(a: Assignment, b: Assignment) {
-        if (a.dueDate === b.dueDate) return 0;
-        if (a.dueDate === "") return -1;
-        if (b.dueDate === "") return 1;
-        return new Date(a.dueDate) > new Date(b.dueDate) ? 1 : -1
+        if (a.due_date === b.due_date) return 0;
+        if (a.due_date === "") return -1;
+        if (b.due_date === "") return 1;
+        return new Date(a.due_date) > new Date(b.due_date) ? 1 : -1
     });
     const dateTime = new Date();
     const current = assignments.filter((v: Assignment) => {
-        return !v.undated && (new Date(v.dueDate) > dateTime)
+        return !v.undated && (new Date(v.due_date) > dateTime)
     });
-    const overdue = assignments.filter((v: Assignment) => !v.undated && (new Date(v.dueDate) <= dateTime));
+    const overdue = assignments.filter((v: Assignment) => !v.undated && (new Date(v.due_date) <= dateTime));
     const undated = assignments.filter((v: Assignment) => v.undated);
 
     return (<>
@@ -46,8 +46,8 @@ const AssignmentSubList = (props: any) => {
     const header = props.header;
 
     // probably need to localize these times
-    const dueDates = assignments.map((assignment: Assignment) => assignment.dueDate !== '' ? new Date(assignment.dueDate).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }) : null)
-    const dueTimes = assignments.map((assignment: Assignment) => assignment.dueDate !== '' ? new Date(assignment.dueDate).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'}) : null)
+    const dueDates = assignments.map((assignment: Assignment) => assignment.due_date !== '' ? new Date(assignment.due_date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }) : null)
+    const dueTimes = assignments.map((assignment: Assignment) => assignment.due_date !== '' ? new Date(assignment.due_date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'}) : null)
     const [hover, setHover] = useState(-1);
     const nonhoverStyle = {
         borderTop: '1px solid black',

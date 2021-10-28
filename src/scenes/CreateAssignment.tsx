@@ -67,12 +67,12 @@ const CreateAssignment = (props: any) => {
         // will want to be able to include attachments to assignment (ex: starter code)
         const assignment : Assignment = {
             name: values.name,
-            createdAt: moment().toISOString(),
+            created_at: moment().toISOString(),
             points: values.points,
-            dueDate: dateTime.toISOString(),
+            due_date: dateTime.toISOString(),
             undated: undated,
             graded: false,
-            numFiles: files.length
+            num_files: files.length
         }
         if (values.description) assignment.description = values.description; // HTML INSERTION PROBABLY POSSIBLE HERE, SHOULD SANITIZE
         if (values.selectedBadge) assignment.badge = values.selectedBadge;

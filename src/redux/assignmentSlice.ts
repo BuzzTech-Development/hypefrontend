@@ -6,15 +6,15 @@ import moment from "moment";
 export interface Assignment {
     name: string;
     id?: number;
-    createdAt: string;
+    created_at: string;
     description?: string;
     points: number;
     badge?: number;
-    dueDate: string;
+    due_date: string;
     undated: boolean;
     graded: boolean;
     grade?: number;
-    numFiles: number; // temp for files
+    num_files: number; // temp for files
 }
 
 const assignmentsAdapter = createEntityAdapter<Assignment>();

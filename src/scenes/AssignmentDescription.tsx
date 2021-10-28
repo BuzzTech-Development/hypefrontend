@@ -9,12 +9,12 @@ import moment from 'moment';
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
     const assignment: Assignment | undefined = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
-    const [errors, setErrors] = useState(Array(assignment?.numFiles).fill(''))
+    const [errors, setErrors] = useState(Array(assignment?.num_files).fill(''))
     let dueDate;
     let dueTime;
     if (assignment && !assignment.undated) {
-        dueDate = new Date(assignment?.dueDate).toLocaleDateString("en-US", { day: 'numeric', month: 'long' })
-        dueTime = new Date(assignment?.dueDate).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'})
+        dueDate = new Date(assignment?.due_date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' })
+        dueTime = new Date(assignment?.due_date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'})
     } else {
         dueDate = null;
         dueTime = null;
@@ -43,7 +43,7 @@ const AssignmentDescription = (props: any) => {
     const submitAssignment = () => {
         if (assignment === undefined) return;
         let valid = true;
-        for (let i = 0; i < assignment.numFiles; i++) {
+        for (let i = 0; i < assignment.num_files; i++) {
             if (errors[i] !== '') {
                 valid = false;
                 break;
@@ -64,12 +64,12 @@ const AssignmentDescription = (props: any) => {
         <Space direction='horizontal' size='large'>
             {assignment?.undated ? <></> : <div><b>Due:</b> {dueDate} at {dueTime}</div>}
             <div><b>Points:</b> {assignment?.points}</div>
-            <div><b>Required Files:</b> {assignment?.numFiles}</div>
+            <div><b>Required Files:</b> {assignment?.num_files}</div>
             {assignment?.badge !== -1 ? <div><b>Badge:</b> {assignment?.badge}</div> : <></>}
         </Space>
         <Divider />
         {typeof assignment?.description === 'undefined' ? <></> : <div dangerouslySetInnerHTML={{__html: assignment?.description}}></div>}
-        <Upload maxCount={assignment?.numFiles} onChange={(info: any) => checkFileType(info, 0)} style={tableSpace}>
+        <Upload maxCount={assignment?.num_files} onChange={(info: any) => checkFileType(info, 0)} style={tableSpace}>
             <Button icon={<UploadOutlined />}>Upload</Button>
         </Upload>
         {/*
