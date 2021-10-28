@@ -21,12 +21,14 @@ const assignmentsAdapter = createEntityAdapter<Assignment>();
 
 export const getAssignments = createAsyncThunk(
     'GET_ASSIGNMENTS',
-    async (cohortId: number) => apiInstance.getAssignments(cohortId),
+    async () => apiInstance.getAssignments(),
 )
 
 export const createAssignment = createAsyncThunk(
     'CREATE_ASSIGNMENT',
-    async (payload: Assignment) => apiInstance.createAssignment(payload),
+    async (payload: Assignment) => {
+        return apiInstance.createAssignment(payload);
+    },
 )
 
 const assignmentsSlice = createSlice({

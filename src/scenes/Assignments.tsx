@@ -1,30 +1,11 @@
 import { Button, List, Space } from 'antd';
 import React, { useState } from 'react';
 import { withRouter, Link } from "react-router-dom";
-import moment from 'moment';
 import {Assignment, assignmentsSelectors} from "../redux/assignmentSlice";
-import store from "../redux/store";
+import store, {useAppSelector} from "../redux/store";
 
 const Assignments = (props: any) => {
-    const assignments: Assignment[] = assignmentsSelectors.selectAll(store.getState());
-
-    const createLists = (assignments: Assignment[]) => {
-        // get current, overdue, and undated assignments
-        assignments.sort(function(a: Assignment, b: Assignment) {
-            if (a.dueDate === b.dueDate) return 0;
-            if (a.dueDate === "") return -1;
-            if (b.dueDate === "") return 1;
-            return new Date(a.dueDate) > new Date(b.dueDate) ? 1 : -1
-        });
-        const dateTime = new Date();
-        const current = assignments.filter((v: Assignment) => {
-            return !v.undated && (new Date(v.dueDate) > dateTime)
-        });
-        const overdue = assignments.filter((v: Assignment) => !v.undated && (new Date(v.dueDate) <= dateTime));
-        const undated = assignments.filter((v: Assignment) => v.undated);
-        return [current, overdue, undated];
-    }
-    const assignmentLists = createLists(assignments);
+    const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
 
     const createAssignment = () => {
         props.history.push('/assignments/create')
@@ -32,15 +13,38 @@ const Assignments = (props: any) => {
 
     return (<Space direction='vertical' size='large' style={{width: '80%'}}>
         <Button onClick={createAssignment}>Create an assignment</Button>
-        {assignmentLists[0].length === 0 ? <></> : <AssignmentList assignments={assignmentLists[0]} header={'Current Assignments'} />}
-        {assignmentLists[1].length === 0 ? <></> : <AssignmentList assignments={assignmentLists[1]} header={'Overdue Assignments'} />}
-        {assignmentLists[2].length === 0 ? <></> : <AssignmentList assignments={assignmentLists[2]} header={'Undated Assignments'} />}
+        {assignments.length === 0 ? <></> : <AssignmentList assignments={assignments}/>}
     </Space>)
 }
 
-function AssignmentList(props: any) {
+const AssignmentList = (props: any) => {
+    const assignments = props.assignments;
+
+    // get current, overdue, and undated assignments
+    assignments.sort(function(a: Assignment, b: Assignment) {
+        if (a.dueDate === b.dueDate) return 0;
+        if (a.dueDate === "") return -1;
+        if (b.dueDate === "") return 1;
+        return new Date(a.dueDate) > new Date(b.dueDate) ? 1 : -1
+    });
+    const dateTime = new Date();
+    const current = assignments.filter((v: Assignment) => {
+        return !v.undated && (new Date(v.dueDate) > dateTime)
+    });
+    const overdue = assignments.filter((v: Assignment) => !v.undated && (new Date(v.dueDate) <= dateTime));
+    const undated = assignments.filter((v: Assignment) => v.undated);
+
+    return (<>
+        {current.length === 0 ? <></> : <AssignmentSubList assignments={current} header={'Current Assignments'} />}
+        {overdue.length === 0 ? <></> : <AssignmentSubList assignments={overdue} header={'Overdue Assignments'} />}
+        {undated.length === 0 ? <></> : <AssignmentSubList assignments={undated} header={'Undated Assignments'} />}
+    </>)
+}
+
+const AssignmentSubList = (props: any) => {
     const assignments = props.assignments;
     const header = props.header;
+
     // probably need to localize these times
     const dueDates = assignments.map((assignment: Assignment) => assignment.dueDate !== '' ? new Date(assignment.dueDate).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }) : null)
     const dueTimes = assignments.map((assignment: Assignment) => assignment.dueDate !== '' ? new Date(assignment.dueDate).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'}) : null)

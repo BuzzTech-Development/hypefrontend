@@ -1,8 +1,7 @@
-import axios, { AxiosInstance } from "axios";
-import { UserDetail } from "../redux/userSlice";
+import axios, {AxiosInstance} from "axios";
+import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
 import {Assignment} from "../redux/assignmentSlice";
-import moment from "moment";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
@@ -62,13 +61,13 @@ class ApiWrapper{
         return response.data;
     }
 
-    async getAssignments(cohortId: number): Promise<Assignment[]> {
+    async getAssignments(): Promise<Assignment[]> {
         const params = { }
         const response = await this.instance.get(this.ENDPOINTS.assignments, { params });
         return response.data;
     }
 
-    async createAssignment(payload: Assignment) {
+    async createAssignment(payload: Assignment): Promise<Assignment> {
         let response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         // probably want some better logic here
         let fails = 0;
@@ -76,8 +75,7 @@ class ApiWrapper{
             fails++;
             response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         }
-        const result = response.data;
-        return payload;
+        return response.data;
     }
 }
 
