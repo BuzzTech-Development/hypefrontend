@@ -4,20 +4,16 @@ import {Button, Col, Avatar, Row, Input, Layout, Menu, Radio, Collapse, Descript
 import { UserOutlined, TeamOutlined, SwapOutlined, CloseOutlined,SearchOutlined} from '@ant-design/icons';
 
 import apiInstance from "utils/api";
+import { UserDetail } from 'redux/userSlice';
 
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
+import { CohortDetail } from 'redux/cohortSlice';
 
 const {Header, Footer, Sider,  Content} = Layout;
 const {Panel} = Collapse;
 
-const temp_students = [
-    {id: 0, lname: "Beans", fname: "Billy"},
-    {id: 1, lname: "Sausage", fname: "Sally"},
-    {id: 2, lname: "Lobster", fname: "Larry"},
-    {id: 3, lname: "Pancake", fname: "Peter"},
-    {id: 4, lname: "Macaroni", fname: "Mandy"}
-]
+
 
 const temp_cohorts = [
     {id: 0, name: "General", students: [0, 1, 2, 3, 4]},
@@ -32,7 +28,6 @@ const Students = () => {
     const [sort, setSort] = useState("lname");
     const [reversed, setReversed] = useState(false);
     const [filter, setFilter] = useState("");
-
 
     const handleClick = (e: any) => {
         console.log('click ', e.key);
@@ -94,23 +89,58 @@ const Students = () => {
 
 function CurrentView(props: any) {
 
+    const [students, setStudents] = useState<UserDetail []>([]);
+    const [cohorts, setCohorts] = useState<string []>([]);
+
+    const asyncGetStudents = async () => {
+        // Not sure what best practice is here
+        const t_students : UserDetail[] = await apiInstance.getStudents();
+        setStudents(t_students);
+    }
+
+    const asyncGetCohorts = async () => {
+        const t_cohorts : CohortDetail[] = await apiInstance.getCohorts();
+        setCohorts(t_cohorts.map((cohort) => cohort.name));
+    }
+    
+    if (students.length == 0) {
+        asyncGetStudents();
+    }
+    if (cohorts.length == 0) {
+        asyncGetCohorts();
+    }
+    
     const deleteCohort = () => {
         console.log("Delete Cohort");
     }
+    console.log(students)
 
     var output = (<></>);
     // Temp subset/sorted students 
-    var sub_students = [...temp_students];
-    var sub_cohorts = [...temp_cohorts];
+    var sub_students : UserDetail[] = [...students];
 
+    var sub_cohorts = cohorts.map((cohort, index) => {
+        var c_students : UserDetail[] = [];
+        students.forEach((student) => {
+            if (student.profile?.cohorts[0] == index + 1) {
+                c_students.push(student)
+            }
+        })
+        return {
+            students: c_students,
+            name: cohort
+        }
+    })
+
+    console.log(cohorts);
     // Filter
     if (props.filter != "") {
         const regexp = new RegExp(".*" + props.filter + ".*", 'i');
         sub_students = sub_students.filter((student) => {
-            if (regexp.test(student.fname) ||
-                regexp.test(student.lname) ||
-                regexp.test(student.fname + " " + student.lname) ||
-                regexp.test(student.lname + " " + student.fname)) {
+            if (regexp.test(student.first_name) ||
+                regexp.test(student.last_name) ||
+                regexp.test(student.first_name + " " + student.last_name) ||
+                regexp.test(student.last_name + " " + student.first_name)) {
                     return true;
                 } else {
                     return false;
@@ -127,15 +157,14 @@ function CurrentView(props: any) {
     }
     // Sort
     if (props.sort === "lname") {
-        sub_students = sub_students.sort((student1, student2) => {return student1.lname.localeCompare(student2.lname)});
+        sub_students = sub_students.sort((student1, student2) => {return student1.last_name.localeCompare(student2.last_name)});
     } else if (props.sort === "fname") {
-        sub_students = sub_students.sort((student1, student2) => {return student1.fname.localeCompare(student2.fname)});
+        sub_students = sub_students.sort((student1, student2) => {return student1.first_name.localeCompare(student2.first_name)});
     } else if (props.sort === "cohort") {
-        // TODO: change this from 'id' to some cohort identifier
         sub_students = sub_students.sort((student1, student2) => {
-            if (student1.id == student2.id) {
+            if (student1.profile?.cohorts[0] == student2.profile?.cohorts[0]) {
                 return 0;
-            } else if (student1.id < student2.id) {
+            } else if (student1.profile != null && student2.profile != null && student1.profile?.cohorts[0] < student2.profile?.cohorts[0]) {
                 return -1;
             } else {
                 return 1;
@@ -152,7 +181,7 @@ function CurrentView(props: any) {
     if (props.view == "student") {
         output = (<>
             <Collapse>
-                {sub_students.map((student) => student_panel(student))}
+                {sub_students.map((student) => student_panel(student, (student.profile == null ? "null" : cohorts[student.profile.cohorts[0] - 1]) ))}
             </Collapse>
 
         </>);
@@ -160,12 +189,12 @@ function CurrentView(props: any) {
         output = (<>
             <Collapse>
                 {sub_cohorts.map((cohort) => 
-                    <Panel key={cohort.id} header={cohort.name}>
+                    <Panel key={cohort.name} header={cohort.name}>
                         <Message to={cohort.name}/>
                         <Danger action="Delete Cohort" callback={deleteCohort} icon={<CloseOutlined/>}/>
                         <Collapse>
 
-                            {cohort.students.map((id) => student_panel(temp_students.find((t_student) => t_student.id === id)))}
+                            {cohort.students.map((student) => student_panel(student, cohort.name))}
                         </Collapse>
                     </Panel>
                 )}
@@ -175,24 +204,25 @@ function CurrentView(props: any) {
     return output;
 }
 
-const student_panel = (student: any) => {
+const student_panel = (student: any, cohortName: string) => {
     const deleteUser = () => {
         console.log("deleteus");
     }
     const changeCohort = () => {
         console.log("Change Cohort");
     }
+    console.log(cohortName)
     return (<>
             <Panel  key={student.id} 
-                    header={ (<><Avatar size="default" icon={<UserOutlined/>}/> <b> {student.fname} {student.lname} </b></>)}
+                    header={ (<><Avatar size="default" icon={<UserOutlined/>}/> <b> {student.first_name} {student.last_name} </b></>)}
             >
                 <Descriptions title="User Info" column={1} bordered>
-                    <Descriptions.Item label="Email">xXxf0rtn1t3_l0v3rxXx@hotmail.com</Descriptions.Item>
-                    <Descriptions.Item label="Cohort">Advanced Cohort</Descriptions.Item>
+                    <Descriptions.Item label="Email">{student.email}</Descriptions.Item>
+                    <Descriptions.Item label="Cohort">{cohortName}</Descriptions.Item>
                     <Descriptions.Item label="Guardian E-mail">mom@moms.com</Descriptions.Item>
 
                 </Descriptions>
-                <Message to={student.fname + " " + student.lname}/>
+                <Message to={student.first_name + " " + student.last_name}/>
                 <Button onClick={changeCohort} icon={<TeamOutlined/>}>Change Cohort</Button>
                 <Danger action="Delete User" callback={deleteUser} icon={<CloseOutlined/>}/>
 

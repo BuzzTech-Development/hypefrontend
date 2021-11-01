@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { UserDetail } from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
+import { CohortDetail } from "redux/cohortSlice";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
@@ -8,9 +9,12 @@ class ApiWrapper{
 
     ENDPOINTS = {
         tokenAuth: 'token-auth/',
-        user: 'api/user/',
+        users: 'api/user/',
+        students: 'api/user/students',
+        curr_user: 'api/user/curr',
         meetings: 'api/meetings/',
         assignments: 'assignments/',
+        cohorts: 'api/cohorts/'
     }
 
     private static getToken() {
@@ -50,13 +54,28 @@ class ApiWrapper{
     }
 
     async getUserDetail(): Promise<UserDetail> {
-        const response = await this.instance.get(this.ENDPOINTS.user);
+        const response = await this.instance.get(this.ENDPOINTS.curr_user);
+        return response.data;
+    }
+
+    async getUsers(): Promise<UserDetail[]>  {
+        const response = await this.instance.get(this.ENDPOINTS.users); 
+        return response.data;
+    }
+
+    async getStudents(): Promise<UserDetail[]> {
+        const response = await this.instance.get(this.ENDPOINTS.students); 
         return response.data;
     }
 
     async getMeetings(cohortId: number): Promise<Meeting[]> {
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.meetings, { params });
+        return response.data;
+    }
+
+    async getCohorts(): Promise<CohortDetail[]> {
+        const response = await this.instance.get(this.ENDPOINTS.cohorts);
         return response.data;
     }
 
