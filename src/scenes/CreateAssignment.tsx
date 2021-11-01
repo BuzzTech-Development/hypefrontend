@@ -1,24 +1,21 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
+import { withRouter } from "react-router-dom";
+import Select from 'react-select';
 import 'reactjs-popup/dist/index.css';
-import {Button, Col, Form, Drawer, Select, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber, Layout} from "antd";
+import {Button, Col, Form, Drawer, Radio, Avatar, Input, Row, Divider, DatePicker, TimePicker, InputNumber, Checkbox } from "antd";
 import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import styles from './Home/Home.module.css';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-
-import apiInstance from "utils/api";
-
-import {useAppDispatch} from "redux/store";
-import { isNullOrUndefined } from 'util';
-
+import {useAppDispatch} from "../redux/store";
+import {createAssignment, Assignment} from "../redux/assignmentSlice";
 
 const accepted_filetypes = [
-    {value: 'pdf', label: 'PDF'},
-    {value: 'docx', label: 'DOCX'},
+    {value: 'pdf', label: 'pdf'},
+    {value: 'docx', label: 'docx'},
     {value: 'zip', label: 'zip'},
-    {value: 'image', label: 'Image'},
-    {value: 'text', label: 'Text'}
+    {value: 'png', label: 'png'},
+    {value: 'txt', label: 'txt'}
 ]
 
 // TODO: move the actual badges somewhere else
@@ -34,244 +31,161 @@ const available_badges = [
     {id: 8, label: 'Ninth Badge', img: 'something'}
 ]
 
-
-const CreateAssignment = () => {
-
-    const [name, setName] = useState("");
-
-    const [form] = Form.useForm()
-
-    const [description, setDescription] = useState("<p>This is the initial content of the editor.</p>");
-
-    const [points, setPoints] = useState(0);
-
-    const [date, setDate] = useState(moment());
-    const [time, setTime] = useState(moment());
-
-    const [files, setFiles] = useState([{value: null, label: null, id: 0}]);
-
-
-
-    const addNewFile = () => {
-        setFiles(files => [...files, {value: null, label: null, id: files.length}]);
-    }
-
-    const removeLastFile = () => {
-        if (files.length == 1) {
-            alert("Cannot remove file requirement. Only one file remains.")
-        } else {
-            setFiles(files=> files.slice(0, files.length - 1))
-        }
-    }
-    
-    const changeName = (event: { target: HTMLInputElement; }) => {
-        setName(event.target.value);
-    }
-
-    const changeDate = (datey: any, dateString: any) => {
-        setDate(datey);
-    }
-
-    const changeTime = (timey: any, timeString: any) => {
-        setTime(timey);
-    }
-
-    function changePoints(value: any) {
-        setPoints(value);
-    }
-
+const CreateAssignment = (props: any) => {
+    const [files, setFiles] = useState(1);
+    const [visible, setVisible] = useState(false);
+    const [undated, setUndated] = useState(false);
+    const dispatch = useAppDispatch();
 
     const onFinish = (values: any) => {
-        const fileList: any[] = [];
-        var new_values = {
-                        name: values.name,
-                        description: values.description,
-                        points: values.points,
-                        selectedBadge: values.selectedBadge,
-                        date: values.date,
-                        time: values.time,
-                        files: fileList
-        }
-        fileList.push({name: values.filename0, type: values.filetype0 })
-        if (values.hasOwnProperty('filename1')) {
-            fileList.push({name: values.filename1, type: values.filetype1})
-        }
-        if (values.hasOwnProperty('filename2')) {
-            fileList.push({name: values.filename2, type: values.filetype2})
+        // validate date and time
+        let dateTime = moment();
+        if (!undated) {
+            const date = values.date.format('MM/DD/YYYY');
+            console.log(date);
+            const time = values.time.format('HH:mm');
+            console.log(time);
+            dateTime = moment(date + ' ' + time, 'MM/DD/YYYY HH:mm');
+            if (dateTime < moment()) {
+                // probably want a better error message
+                alert("Due date cannot be before current time.");
+                return;
+            }
         }
 
-        // console.log('Success:', new_values);
-        const result = apiInstance.createAssignment(new_values);
-        console.log("Result: ", result);
+        // populate files array
+        let files = [];
+        let i = 0;
+        while (values['filelabel' + i]) {
+            files.push({
+                extension: values['filetype' + i]['value'],
+                type: values['filetype' + i]['label']
+            })
+            i++;
+        }
+
+        // will want to be able to include attachments to assignment (ex: starter code)
+        const assignment : Assignment = {
+            name: values.name,
+            creation_date: moment().toISOString(),
+            points: values.points,
+            due_date: dateTime.toISOString(),
+            undated: undated,
+            graded: false,
+            num_files: files.length
+        }
+        if (values.description) assignment.description = values.description; // HTML INSERTION PROBABLY POSSIBLE HERE, SHOULD SANITIZE
+        if (values.selectedBadge) assignment.badge = values.selectedBadge;
+
+        dispatch(createAssignment(assignment));
+
+        // DISPATCH FILES TO TABLE
+        // TABLE SHOULD BE ONE ASSIGNMENT TO MANY FILES
+
+        console.log('Success:', assignment);
+        props.history.push('/assignments');
     };
 
-    function cancelPost() {
-        alert("Are you sure you would like to discard this assignment?");
+    const cancelAssignment = () => {
+        if (window.confirm("Are you sure you would like to discard this assignment?")) {
+            props.history.push('/assignments');
+        }
     }
-    const [visible, setVisible] = useState(false);
-    const showDrawer = () => {
-        setVisible(true);
-      };
-      const onClose = () => {
-        setVisible(false);
-      };
 
-    const badgelist = [];
+    function disabledDate(current: any) {
+        return current <= moment().subtract(1, 'days').endOf('day');
+    }
 
+    return (<Form layout="vertical" onFinish={onFinish} initialValues={{
+            description: '',
+            points: 1,
+            date: moment().add(1, 'weeks'),
+            time: moment().endOf('day')}}>
+        <Divider orientation="left">Description</Divider>
+        <Form.Item label="Assignment Name" name="name" rules={[{ required: true, message:"Assignment name required." }]}>
+            <Input type="text" placeholder="Assignment name" />
+        </Form.Item>
+        <Form.Item label="Assignment Description" name="description">
+            <ReactQuill theme="snow" />
+        </Form.Item>
 
-    console.log(description);
-    type SizeType = Parameters<typeof Form>[0]['size'];
-    const [componentSize, setComponentSize] = useState<SizeType | 'default'>('default');
-    const onFormLayoutChange = ({ size }: { size: SizeType }) => {
-      setComponentSize(size);
-    };
+        <Divider orientation="left">Rewards</Divider>
+        <Row justify="center">
+            <Form.Item label="Point Value" name="points" rules={[{ required: true, message:"Point value  required." }]}>
+                <InputNumber min={1} max={1000} />
+            </Form.Item>
+        </Row>
+        <Row justify="center">
+            <Button type="primary" onClick={() => setVisible(true)}>Select Badge</Button>
+            <Drawer title="Select a Badge" placement="bottom" onClose={() => setVisible(false)} visible={visible} height={500}>
+                <Form.Item name="selectedBadge">
+                    <Radio.Group> 
+                        {available_badges.map((badge: any) => (
+                            <Radio key={badge.id} value={badge.id}>
+                                <Avatar size={64} icon={<UserOutlined />} />
+                                {badge.label}
+                            </Radio>
+                        ))}
+                    </Radio.Group>
+                </Form.Item>
+            </Drawer>
+        </Row>
 
-    const format = 'HH:mm';
-    return (<>
-    <Layout className={styles.Home}>
-        <Layout.Content className={styles.Content}>
-            <Form
-                wrapperCol={{ span: 24 }}
-                layout="vertical"
-                onFinish={onFinish}
-                initialValues={{name: "namey",
-                                description: "n/a",
-                                points: 0,
-                                selectedBadge: null,
-                                date: moment(),
-                                time: moment()}}
-                onValuesChange={onFormLayoutChange}
-                form={form}
-            >
+        <Divider orientation="left">Due Date and Time</Divider>
+        <Row justify="center">
+            <Form.Item label="Date" name="date" rules={[{ required: false, type: 'object' }]}>
+                <DatePicker format="MM/DD/YYYY" disabledDate={disabledDate} disabled={undated} />
+            </Form.Item>
+            <Form.Item label="Time" name="time" rules={[{ required: false, type: 'object' }]}>
+                <TimePicker format="HH:mm" disabled={undated} />
+            </Form.Item>
+        </Row>
+        <Checkbox onChange={() => setUndated(!undated)}>Undated</Checkbox>
+        
+        <Divider orientation="left">File Requirements</Divider>
+        <Row justify="center">
+            <Button onClick={() => {setFiles(files - 1)}} disabled={files === 1}>-</Button>
+            <Button onClick={() => {setFiles(files + 1)}} disabled={files === 3}> + </Button>
+        </Row>
+        <RequiredFileList files={files} setFiles={setFiles}/>
 
-                    <Divider orientation="left">Description</Divider>
-                    <Form.Item label="Assignment Name"
-                                name="name"
-                                rules={[{ required: true,
-                                    message: 'Please input an Assignment Name!'}]}>
-                        <Input type="text" value={name} onChange={changeName}/>
-                    </Form.Item>
-                    <Form.Item label ="Assignment Description"
-                                name ="description"
-                                rules={[{ required: true,
-                                    message: 'Please input and Assignment Description!'}]}>
-                        <ReactQuill theme="snow" value={description} />
-                    </Form.Item>
-
-                    <Divider orientation="left">Rewards</Divider>
-                    <Row justify="center">
-                        
-                        <Form.Item label="Point Value" name="points">
-                            <InputNumber min={1} max={1000}/>
-                        </Form.Item>
-                    </Row>
-                    <Row justify="center">
-                        <Form.Item label="Select a badge" name="selectedBadge">
-                            <Select>
-                                {available_badges.map((badge: any) => (<>
-                                                    <Select.Option value={badge.id}><Avatar size={64} icon={<UserOutlined />} /> {badge.label}</Select.Option>
-                                                    </>
-                                ))}
-                            </Select>
-                        </Form.Item>
-                    </Row>
-
-
-
-                    {/* <Avatar size={64} icon={<UserOutlined />}/> {available_badges[form.getFieldValue("selectedBadge")].label}   */}
-
-                    <Divider orientation="left">Due Date and Time</Divider>
-                    <Row justify="center">
-                        <Form.Item
-                                    label="Date"
-                                    name="date"
-                                    rules={[{ required: true,
-                                            message: 'Please input a due date!' }]}
-                        >
-                            <DatePicker onChange={changeDate}/>
-                        </Form.Item>
-                        <Form.Item
-                                    label="Time"
-                                    name="time"
-                                    rules={[{ required: true,
-                                            message: 'Please input a due time!' }]}
-                        >
-                            <TimePicker defaultValue={moment()} 
-                                        format={format} 
-                                        onChange={changeTime}/>
-                        </Form.Item>
-                    </Row>
-                    
-
-                    <Divider orientation="left"> File Requirements </Divider>
-
-                    <Row justify="center">
-                        <Button onClick={() => removeLastFile()} disabled={files.length == 1}>-</Button>
-                        <Button onClick={() => addNewFile()} disabled={files.length == 3}> + </Button>
-                    </Row>
-
-                    <RequiredFileList files={files} setFiles={setFiles}/>
-
-                    <Row justify="center">
-                        <Button onClick={cancelPost}> Cancel </Button>      
-                        <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                            <Button type="primary" htmlType="submit">
-                            Submit
-                            </Button>
-                        </Form.Item>
-                    </Row>
-                </Form>
-            </Layout.Content>
-        </Layout>
-        </>
-    );
+        <Divider />
+        <Row justify="center">
+            <Button onClick={cancelAssignment}> Cancel </Button>      
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Button type="primary" htmlType="submit">Submit</Button>
+            </Form.Item>
+        </Row>
+    </Form>);
 }
 
 
 function RequiredFileList(props: any) {
     const files = props.files;
 
-
-    const listItems =  files.map((file: any, index: number) =>
-    
-        <>
-        <Row>
-            <Col span={6} >
-                
-                <Row justify="center" align="middle" style={{ height: "100%" }}><b>File #{index + 1}</b></Row>
+    const listItems = [];
+    for (var i = 0; i < files; i++) {
+        listItems.push(<Row key={i}>
+            <Col span={6}>
+                <Row justify="center" align="middle" style={{ height: "100%" }}><b>File #{i + 1}</b></Row>
             </Col>
 
             <Col span={1}><Divider type="vertical" style={{ height: "100%" }}/></Col>
 
             <Col span={17}>
-                <Form.Item label="File Label"
-                            name={"filename" + index}
-                            rules={[{ required: true,
-                                message: 'Please input a file label!'
-                                 }]}>
-                    <Input type="text" value={"filename" + index} />
+                <Form.Item label="File Label" name={"filelabel" + i} rules={[{ required: true, message:"File label required." }]}>
+                    <Input type="text" placeholder="File label" />
                 </Form.Item>
-                <Form.Item label="Accepted Submission Type" 
-                            name={"filetype" + index}
-                            rules={[{ required: true,
-                                message: 'Please input a file type'}]}>
-                    <Select options={accepted_filetypes}/> 
+                <Form.Item label="Accepted Submission Type" name={"filetype" + i} rules={[{ required: true, message:"File type required." }]}>
+                    <Select options={accepted_filetypes} name={"filetype" + i}/> 
                 </Form.Item>
             </Col>
+        </Row>);
+    }
 
-        </Row>
-        <Divider></Divider>
-
-        </>
-    );
-
-    return  (<>
+    return (<>
         {listItems}
-        </>
-    );
+    </>);
 };
 
-
-
-
-export default CreateAssignment
+export default withRouter(CreateAssignment);
