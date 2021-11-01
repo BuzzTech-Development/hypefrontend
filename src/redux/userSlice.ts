@@ -10,6 +10,7 @@ enum UserRole {
 }
 
 export interface UserDetail {
+    pk: number,
     username: string;
     first_name: string;
     last_name: string;

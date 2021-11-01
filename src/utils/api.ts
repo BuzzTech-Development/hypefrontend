@@ -79,6 +79,21 @@ class ApiWrapper{
         return response.data;
     }
 
+    async editUser(pk: number, payload: Object) {
+        const response = await this.instance.put(this.ENDPOINTS.users + pk + "/", payload)
+        return response.data;
+    }
+
+    async deleteUser(pk: number) {
+        const response = await this.instance.delete(this.ENDPOINTS.users + pk + "/")
+        return response.data;
+    }
+
+    async deleteCohort(id: number) {
+        const response = await this.instance.delete(this.ENDPOINTS.cohorts + id + "/")
+        return response.data;
+    }
+
     async createAssignment(payload: Object) {
         const response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         const result = response.data;
