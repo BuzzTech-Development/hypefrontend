@@ -1,8 +1,8 @@
 import React from 'react';
 import {Calendar as CalendarComponent} from 'antd';
 import { Moment } from 'moment';
-import {useAppSelector} from "../../../redux/store";
-import {Meeting, meetingsSelectors} from "../../../redux/meetingsSlice";
+import {useAppSelector} from "../redux/store";
+import {Meeting, meetingsSelectors} from "../redux/meetingsSlice";
 
 const Calendar = () => {
     const meetings = useAppSelector(meetingsSelectors.selectAll);

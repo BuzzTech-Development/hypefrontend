@@ -1,6 +1,7 @@
-import axios, { AxiosInstance } from "axios";
-import { UserDetail } from "../redux/userSlice";
+import axios, {AxiosInstance} from "axios";
+import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
+import {Assignment} from "../redux/assignmentSlice";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
@@ -10,7 +11,7 @@ class ApiWrapper{
         tokenAuth: 'token-auth/',
         user: 'api/user/',
         meetings: 'api/meetings/',
-        assignments: 'assignments/',
+        assignments: 'api/assignments/',
     }
 
     private static getToken() {
@@ -60,10 +61,21 @@ class ApiWrapper{
         return response.data;
     }
 
-    async createAssignment(payload: Object) {
-        const response = await this.instance.post(this.ENDPOINTS.assignments, payload);
-        const result = response.data;
-        return result;
+    async getAssignments(): Promise<Assignment[]> {
+        const params = { }
+        const response = await this.instance.get(this.ENDPOINTS.assignments, { params });
+        return response.data;
+    }
+
+    async createAssignment(payload: Assignment): Promise<Assignment> {
+        let response = await this.instance.post(this.ENDPOINTS.assignments, payload);
+        // probably want some better logic here
+        let fails = 0;
+        while (response.status === 400 && fails < 10) {
+            fails++;
+            response = await this.instance.post(this.ENDPOINTS.assignments, payload);
+        }
+        return response.data;
     }
 }
 
