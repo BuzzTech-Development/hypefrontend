@@ -83,10 +83,10 @@ const View = () => {
     const [valueB, setValueB] = useState("");
 
     const changeA = (e: any) => {
-        setValueA(e.value);
+        setValueA(e.target.value);
     }
     const changeB = (e: any) => {
-        setValueB(e.value);
+        setValueB(e.target.value);
     }
 
     const showModal = (attr: string) => () => {
@@ -120,7 +120,6 @@ const View = () => {
             } else if (selectedAttr == "password") {
                 temp_user["password"] = valueA;
             }
-
             setUser(temp_user);
             apiInstance.editUser(temp_user.pk, temp_user);
         }
@@ -134,14 +133,6 @@ const View = () => {
         return first.toUpperCase() + lower.slice(1);
     }
 
-    // const changeUsername = () => {
-
-    // }
-
-    // const changePrompt = () => {
-
-    // }
-    console.log(valueA, valueB);
     if (view === "info" && user != undefined) {
         return (<>
             <Row align="middle">
