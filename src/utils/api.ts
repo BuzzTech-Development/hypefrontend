@@ -77,6 +77,8 @@ class ApiWrapper{
         }
         return response.data;
     }
+
+    async submitAssignment(payload: Submission)
 }
 
 const apiInstance = new ApiWrapper();

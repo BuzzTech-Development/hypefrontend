@@ -1,7 +1,6 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import apiInstance from "utils/api";
 import {RootState} from "./store";
-import moment from "moment";
 
 export interface Assignment {
     name: string;
