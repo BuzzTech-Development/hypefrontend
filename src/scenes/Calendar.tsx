@@ -57,7 +57,7 @@ const Calendar = (props: any) => {
                         if (selectedDate === moment(meeting.date).format('YYYY-MM-DD')) {
                             return (<Link to={`/meetings/${meeting.id}`}>
                                 <Card hoverable>
-                                    <b>{meeting.name}</b><br/>Due at {moment(meeting.date).format('hh:mma')}
+                                    <b>{meeting.name}</b><br/>At {moment(meeting.date).format('hh:mma')}
                                 </Card>
                             </Link>)
                         }
