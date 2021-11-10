@@ -91,6 +91,8 @@ const View = () => {
 
     const showModal = (attr: string) => () => {
         setSelectedAttr(attr);
+        setValueA("")
+        setValueB("")
         setModalVisible(true);
     };
 
@@ -173,11 +175,13 @@ const View = () => {
                     type={selectedAttr === "password" ? "password" : ""}
                     placeholder={capitalize(selectedAttr)}
                     onChange={changeA}
+                    value={valueA}
                 />
                 <Input
                     type={selectedAttr === "password" ? "password" : ""}
                     placeholder={"Confirm " + capitalize(selectedAttr)}
                     onChange={changeB}
+                    value={valueB}
                 />
 
             </Modal>
