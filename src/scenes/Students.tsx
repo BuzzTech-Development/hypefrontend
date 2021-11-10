@@ -1,38 +1,31 @@
 import React, { useState} from 'react';
 import 'reactjs-popup/dist/index.css';
-import {Button, Col, Avatar, Row, Input, Layout, Menu, Radio, Collapse, Descriptions} from "antd";
+import {Button, Col, Avatar, Row, Input, Layout, Menu, Radio, Collapse, Descriptions, Modal, Checkbox} from "antd";
 import { UserOutlined, TeamOutlined, SwapOutlined, CloseOutlined,SearchOutlined} from '@ant-design/icons';
 
 import apiInstance from "utils/api";
+import { UserDetail } from 'redux/userSlice';
 
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
+import { CohortDetail } from 'redux/cohortSlice';
 
-const {Header, Footer, Sider,  Content} = Layout;
 const {Panel} = Collapse;
 
-const temp_students = [
-    {id: 0, lname: "Beans", fname: "Billy"},
-    {id: 1, lname: "Sausage", fname: "Sally"},
-    {id: 2, lname: "Lobster", fname: "Larry"},
-    {id: 3, lname: "Pancake", fname: "Peter"},
-    {id: 4, lname: "Macaroni", fname: "Mandy"}
-]
 
-const temp_cohorts = [
-    {id: 0, name: "General", students: [0, 1, 2, 3, 4]},
-    {id: 1, name: "Dum Dums", students: [0, 2, 4]},
-    {id: 2, name: "The Average", students: [2, 3, 4]},
-    {id: 3, name: "Loser", students: [3]},
-    {id: 4, name: "GENIUS SQUAD", students: [0, 1, 2]}
-]
+var view : string, setView : Function, 
+    sort : string, setSort : Function,
+    reversed : boolean, setReversed : Function,
+    filter : string, setFilter : Function,
+    students : UserDetail[], setStudents : Function,
+    cohorts : string[], setCohorts : Function;
+
 
 const Students = () => {
-    const [view, setView] = useState("student");
-    const [sort, setSort] = useState("lname");
-    const [reversed, setReversed] = useState(false);
-    const [filter, setFilter] = useState("");
-
+    [view, setView] = useState("student");
+    [sort, setSort] = useState("lname");
+    [reversed, setReversed] = useState(false);
+    [filter, setFilter] = useState("");
 
     const handleClick = (e: any) => {
         console.log('click ', e.key);
@@ -94,23 +87,55 @@ const Students = () => {
 
 function CurrentView(props: any) {
 
+    [students, setStudents] = useState<UserDetail []>([]);
+    [cohorts, setCohorts] = useState<string []>([]);
+
+    const asyncGetStudents = async () => {
+        // Not sure what best practice is here
+        const t_students : UserDetail[] = await apiInstance.getStudents();
+        setStudents(t_students);
+    }
+
+    const asyncGetCohorts = async () => {
+        const t_cohorts : CohortDetail[] = await apiInstance.getCohorts();
+        setCohorts(t_cohorts.map((cohort) => cohort.name));
+    }
+    
+    if (students.length === 0) {
+        asyncGetStudents();
+    }
+    if (cohorts.length === 0) {
+        asyncGetCohorts();
+    }
+    
     const deleteCohort = () => {
         console.log("Delete Cohort");
     }
 
     var output = (<></>);
     // Temp subset/sorted students 
-    var sub_students = [...temp_students];
-    var sub_cohorts = [...temp_cohorts];
+    var sub_students : UserDetail[] = [...students];
 
+    var sub_cohorts = cohorts.map((cohort, index) => {
+        var c_students : UserDetail[] = [];
+        students.forEach((student) => {
+            if (student.profile?.cohorts[0] === index + 1) {
+                c_students.push(student)
+            }
+        })
+        return {
+            students: c_students,
+            name: cohort
+        }
+    })
     // Filter
     if (props.filter != "") {
         const regexp = new RegExp(".*" + props.filter + ".*", 'i');
         sub_students = sub_students.filter((student) => {
-            if (regexp.test(student.fname) ||
-                regexp.test(student.lname) ||
-                regexp.test(student.fname + " " + student.lname) ||
-                regexp.test(student.lname + " " + student.fname)) {
+            if (regexp.test(student.first_name) ||
+                regexp.test(student.last_name) ||
+                regexp.test(student.first_name + " " + student.last_name) ||
+                regexp.test(student.last_name + " " + student.first_name)) {
                     return true;
                 } else {
                     return false;
@@ -127,15 +152,14 @@ function CurrentView(props: any) {
     }
     // Sort
     if (props.sort === "lname") {
-        sub_students = sub_students.sort((student1, student2) => {return student1.lname.localeCompare(student2.lname)});
+        sub_students = sub_students.sort((student1, student2) => {return student1.last_name.localeCompare(student2.last_name)});
     } else if (props.sort === "fname") {
-        sub_students = sub_students.sort((student1, student2) => {return student1.fname.localeCompare(student2.fname)});
+        sub_students = sub_students.sort((student1, student2) => {return student1.first_name.localeCompare(student2.first_name)});
     } else if (props.sort === "cohort") {
-        // TODO: change this from 'id' to some cohort identifier
         sub_students = sub_students.sort((student1, student2) => {
-            if (student1.id == student2.id) {
+            if (student1.profile?.cohorts[0] === student2.profile?.cohorts[0]) {
                 return 0;
-            } else if (student1.id < student2.id) {
+            } else if (student1.profile != null && student2.profile != null && student1.profile?.cohorts[0] < student2.profile?.cohorts[0]) {
                 return -1;
             } else {
                 return 1;
@@ -149,23 +173,35 @@ function CurrentView(props: any) {
         sub_cohorts.reverse();
     }
 
-    if (props.view == "student") {
+    if (props.view === "student") {
         output = (<>
             <Collapse>
-                {sub_students.map((student) => student_panel(student))}
+            {sub_students.map((student) => (
+                            <Panel  key={student.pk}
+                            header={ (<><Avatar size="default" icon={<UserOutlined/>}/> <b> {student.first_name} {student.last_name} </b></>)}
+                            >
+                                <StudentPanel student={student}/>
+                            </Panel>
+            ))}
             </Collapse>
 
         </>);
-    } else if (props.view == "cohort") {
+    } else if (props.view === "cohort") {
         output = (<>
             <Collapse>
                 {sub_cohorts.map((cohort) => 
-                    <Panel key={cohort.id} header={cohort.name}>
+                    <Panel key={cohort.name} header={cohort.name}>
                         <Message to={cohort.name}/>
                         <Danger action="Delete Cohort" callback={deleteCohort} icon={<CloseOutlined/>}/>
                         <Collapse>
 
-                            {cohort.students.map((id) => student_panel(temp_students.find((t_student) => t_student.id === id)))}
+                            {cohort.students.map((student) => (
+                            <Panel  key={student.pk}
+                            header={ (<><Avatar size="default" icon={<UserOutlined/>}/> <b> {student.first_name} {student.last_name} </b></>)}
+                            >
+                                <StudentPanel student={student}/>)
+                            </Panel>
+                            ))}
                         </Collapse>
                     </Panel>
                 )}
@@ -175,30 +211,58 @@ function CurrentView(props: any) {
     return output;
 }
 
-const student_panel = (student: any) => {
+const StudentPanel = (props: any) => {
+    const student = props.student;
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const cohortName = student.profile === null ? "none" : cohorts[student.profile.cohorts[0] -1];
+    
+    const showCohortModal = () => {
+      setIsModalVisible(true);
+    };
+    const handleCancel = () => {
+      setIsModalVisible(false);
+    };
     const deleteUser = () => {
         console.log("deleteus");
+        apiInstance.deleteUser(student.pk);
     }
+
     const changeCohort = () => {
-        console.log("Change Cohort");
+        var temp_students = [...students];
+        if (student.profile) {
+            student.profile.cohorts = selected_cohorts;
+        }
+
+        const student_idx = students.findIndex((curr) => curr.pk === student.pk);
+        temp_students[student_idx] = student;
+        setStudents(temp_students);
+
+        apiInstance.editUser(student.pk, student);
+        setIsModalVisible(false);
     }
+
+
+    var selected_cohorts: any[];
+    const options = cohorts.map((cohort, idx) => ( {"label": cohort, "value": (idx + 1)} ))
     return (<>
-            <Panel  key={student.id} 
-                    header={ (<><Avatar size="default" icon={<UserOutlined/>}/> <b> {student.fname} {student.lname} </b></>)}
-            >
-                <Descriptions title="User Info" column={1} bordered>
-                    <Descriptions.Item label="Email">xXxf0rtn1t3_l0v3rxXx@hotmail.com</Descriptions.Item>
-                    <Descriptions.Item label="Cohort">Advanced Cohort</Descriptions.Item>
+
+                <Descriptions  title="User Info" column={1} bordered>
+                    <Descriptions.Item label="Email">{student.email}</Descriptions.Item>
+                    <Descriptions.Item label="Cohort">{cohortName}</Descriptions.Item>
                     <Descriptions.Item label="Guardian E-mail">mom@moms.com</Descriptions.Item>
-
                 </Descriptions>
-                <Message to={student.fname + " " + student.lname}/>
-                <Button onClick={changeCohort} icon={<TeamOutlined/>}>Change Cohort</Button>
-                <Danger action="Delete User" callback={deleteUser} icon={<CloseOutlined/>}/>
-
-            </Panel>
+                <Message  to={student.first_name + " " + student.last_name}/>
+                <Button icon={<TeamOutlined/>} onClick={showCohortModal}>
+                    Change Cohort
+                </Button>
+                <Modal title="Change Cohort" visible={isModalVisible} onOk={changeCohort} onCancel={handleCancel}>
+                    <Checkbox.Group options={options} defaultValue={student.profile === null ? [] : student.profile.cohorts} onChange={ (selected) => selected_cohorts = selected}/>
+                </Modal>
+                <Danger  action="Delete User" callback={deleteUser} icon={<CloseOutlined/>}/>
     </>);
 }
+
 
 
 
