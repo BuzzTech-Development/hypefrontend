@@ -43,19 +43,25 @@ const Calendar = (props: any) => {
         <>
             <Modal title={moment(selectedDate).format('dddd[,] MMMM Do')} visible={isModalVisible} onOk={()=>setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
                     <h3>Assignments</h3>
-                    {assignments.filter(assignment => {
-                        return selectedDate === moment(assignment.due_date).format('YYYY-MM-DD');
-                    })
-                        .map(assignment => {
-                            return <Link to={`/assignments/${assignment.id}`}><Card hoverable><p><b>{assignment.name}</b></p><p>Due at {moment(assignment.due_date).format('hh:mma')}</p></Card></Link>
-                        })}
+                    {assignments.map(assignment => {
+                        if (selectedDate === moment(assignment.due_date).format('YYYY-MM-DD')) {
+                            return (<Link to={`/assignments/${assignment.id}`}>
+                                <Card hoverable>
+                                    <b>{assignment.name}</b><br/>Due at {moment(assignment.due_date).format('hh:mma')}
+                                </Card>
+                            </Link>)
+                        }
+                    })}
                     <h3>Meetings</h3>
-                    {meetings.filter(meeting => {
-                        return selectedDate === moment(meeting.date).format('YYYY-MM-DD');
-                    })
-                        .map(meeting => {
-                            return <Link to={`/meetings/${meeting.id}`}><Card hoverable><p><b>{meeting.name}</b></p><p>At {moment(meeting.date).format('hh:mma')}</p></Card></Link>
-                        })}
+                    {meetings.map(meeting => {
+                        if (selectedDate === moment(meeting.date).format('YYYY-MM-DD')) {
+                            return (<Link to={`/meetings/${meeting.id}`}>
+                                <Card hoverable>
+                                    <b>{meeting.name}</b><br/>Due at {moment(meeting.date).format('hh:mma')}
+                                </Card>
+                            </Link>)
+                        }
+                    })}
             </Modal>
             <CalendarComponent dateCellRender={dateCellRender} onSelect={onSelect}/>
         </>
