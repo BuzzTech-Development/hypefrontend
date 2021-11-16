@@ -2,6 +2,7 @@ import axios, {AxiosInstance} from "axios";
 import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
 import {Assignment} from "../redux/assignmentSlice";
+import {Submission} from "../redux/submissionSlice";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
@@ -12,6 +13,7 @@ class ApiWrapper{
         user: 'api/user/',
         meetings: 'api/meetings/',
         assignments: 'api/assignments/',
+        submissions: 'api/submissions/'
     }
 
     private static getToken() {
@@ -78,7 +80,16 @@ class ApiWrapper{
         return response.data;
     }
 
-    async submitAssignment(payload: Submission)
+    async getSubmissions(): Promise<Submission[]> {
+        const params = { }
+        const response = await this.instance.get(this.ENDPOINTS.submissions, { params });
+        return response.data;
+    }
+
+    async createSubmission(payload: Submission): Promise<Submission> {
+        const response = await this.instance.post(this.ENDPOINTS.submissions, payload);
+        return response.data;
+    }
 }
 
 const apiInstance = new ApiWrapper();

@@ -3,11 +3,17 @@ import React, {useState} from "react";
 import ReactQuill from "react-quill";
 import {Button, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
+import {useAppDispatch, useAppSelector} from "../redux/store";
+import {createSubmission, Submission} from "../redux/submissionSlice";
+import moment from "moment";
 
 const SubmitAssignment = (props: any) => {
     const {assignment} = props;
     const [description, setDescription] = useState('');
-    const [errors, setErrors] = useState(Array(assignment.num_files).fill(''))
+    const [errors, setErrors] = useState(Array(assignment.num_files).fill(''));
+    const dispatch = useAppDispatch();
+    const userId = useAppSelector((state) => state.user.userDetail?.id);
+    if (!userId) return null;
 
     const checkFileType = (info: any, i: any) => {
         return;
@@ -38,6 +44,14 @@ const SubmitAssignment = (props: any) => {
                 break;
             }
         }
+        const submission: Submission = {
+            assignment: assignment.id,
+            comments: description,
+            points: assignment.points,
+            student: userId,
+            time: moment().toISOString()
+        }
+        dispatch(createSubmission(submission));
         if (valid) alert("Assignment submitted!");
         else alert("Cannot submit assignment.");
     }
