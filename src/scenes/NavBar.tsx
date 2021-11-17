@@ -47,12 +47,13 @@ const NavBar = (props: any) => {
             path: "/assignments",
             icon: <UnorderedListOutlined />
         },
-        {
+        // view students only if student or parent
+        ...role === "STUDENT" || role === "PARENT" ? [{
             title: "Progress",
             key: "progress",
             path: "/progress",
             icon: <TrophyOutlined />
-        },
+        }] : [],
         // view students only if instructor
         ...role === "INSTRUCTOR" ? [{
             title: "Students",
