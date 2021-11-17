@@ -47,7 +47,7 @@ const NavBar = (props: any) => {
             path: "/assignments",
             icon: <UnorderedListOutlined />
         },
-        // view students only if student or parent
+        // view progress only if student or parent
         ...role === "STUDENT" || role === "PARENT" ? [{
             title: "Progress",
             key: "progress",
