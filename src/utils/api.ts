@@ -1,4 +1,4 @@
-import axios, {AxiosInstance} from "axios";
+import axios, {AxiosInstance, AxiosResponse} from "axios";
 import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
 import { CohortDetail } from "redux/cohortSlice";
@@ -10,6 +10,8 @@ class ApiWrapper{
 
     ENDPOINTS = {
         tokenAuth: 'token-auth/',
+        tokenRefresh: 'api-token-refresh/',
+        tokenVerify: 'api-token-verify/',
         users: 'api/user/',
         students: 'api/user/students',
         curr_user: 'api/user/curr',
@@ -21,6 +23,7 @@ class ApiWrapper{
     private static getToken() {
         return localStorage.getItem('token');
     }
+
 
     private static storeToken(token: string) {
         localStorage.setItem('token', token);
@@ -44,6 +47,33 @@ class ApiWrapper{
         this.instance = axios.create({
             baseURL: this.BASE_URL,
         })
+    }
+    // Not sure what this should return
+    async refreshToken() : Promise<UserDetail> {
+        const cachedToken = ApiWrapper.getToken();
+        const payload = {'token': cachedToken};
+        const response = await this.instance.post(this.ENDPOINTS.tokenRefresh, payload);
+        ApiWrapper.storeToken(response.data.token);
+        this.setTokenAuth(response.data.token);
+        return response.data;
+    }
+
+    // dealing with promises?
+    async verifyToken() : Promise<UserDetail>{
+        const cachedToken = ApiWrapper.getToken();
+        if (cachedToken === null || cachedToken === undefined || cachedToken === "") {
+            return Promise.reject("No token");
+        }
+        const payload = {'token': cachedToken};
+
+        return this.instance.post(this.ENDPOINTS.tokenVerify, payload).then((response) => {
+            if (response.status == 200) {
+                apiInstance.refreshToken();
+                return this.getUserDetail();
+            } else {
+                return Promise.reject("Invalid Token");
+            }
+        });
     }
 
     async login(payload: { username: string, password: string }): Promise<UserDetail> {

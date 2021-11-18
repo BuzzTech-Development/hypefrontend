@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
 import {useAppSelector, useAppDispatch} from "./redux/store";
 import NavBar from './scenes/NavBar';
@@ -15,13 +15,20 @@ import Account from './scenes/Account';
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
+import { refresh } from 'redux/userSlice';
+import apiInstance from 'utils/api';
 
 function App(props: any) {
+    const [loading, setLoading] = useState(true);
     const authenticated = useAppSelector((state) => state.user.authenticated);
     const currentCohort = useAppSelector((state) => state.user.currentCohort);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
+        if (loading) {
+            dispatch(refresh());
+            setLoading(false);
+        }
         if (authenticated && currentCohort) {
             dispatch(getMeetings(currentCohort));
         }
@@ -29,6 +36,7 @@ function App(props: any) {
             dispatch(getAssignments());
         }
     }, [authenticated, currentCohort])
+
 
     return (
         <BrowserRouter>
@@ -71,5 +79,6 @@ function App(props: any) {
         </BrowserRouter>
     )
 }
+
 
 export default App;
