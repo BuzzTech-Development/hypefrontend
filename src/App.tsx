@@ -15,6 +15,7 @@ import Account from './scenes/Account';
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
+import {getAnnouncements} from "./redux/announcementsSlice";
 
 function App(props: any) {
     const authenticated = useAppSelector((state) => state.user.authenticated);
@@ -24,6 +25,7 @@ function App(props: any) {
     useEffect(() => {
         if (authenticated && currentCohort) {
             dispatch(getMeetings(currentCohort));
+            dispatch(getAnnouncements(currentCohort));
         }
         if (authenticated) {
             dispatch(getAssignments());
