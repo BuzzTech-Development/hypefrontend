@@ -10,7 +10,7 @@ class ApiWrapper{
 
     ENDPOINTS = {
         tokenAuth: 'token-auth/',
-        user: 'api/user/',
+        user: 'api/users/',
         meetings: 'api/meetings/',
         assignments: 'api/assignments/',
         submissions: 'api/submissions/'

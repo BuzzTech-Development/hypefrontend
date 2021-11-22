@@ -12,8 +12,6 @@ const SubmitAssignment = (props: any) => {
     const [description, setDescription] = useState('');
     const [errors, setErrors] = useState(Array(assignment.num_files).fill(''));
     const dispatch = useAppDispatch();
-    const userId = useAppSelector((state) => state.user.userDetail?.id);
-    if (!userId) return null;
 
     const checkFileType = (info: any, i: any) => {
         return;
@@ -38,7 +36,7 @@ const SubmitAssignment = (props: any) => {
 
     const submitAssignment = () => {
         let valid = true;
-        for (let i = 0; i < assignment.num_files; i++) {
+        for (let i = 0; i < assignment.file_extensions.length; i++) {
             if (errors[i] !== '') {
                 valid = false;
                 break;
@@ -48,8 +46,7 @@ const SubmitAssignment = (props: any) => {
             assignment: assignment.id,
             comments: description,
             points: assignment.points,
-            student: userId,
-            time: moment().toISOString()
+            graded: false
         }
         dispatch(createSubmission(submission));
         if (valid) alert("Assignment submitted!");

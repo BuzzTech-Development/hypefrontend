@@ -7,7 +7,7 @@ import { UserOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import {useAppDispatch} from "../redux/store";
+import {useAppDispatch, useAppSelector} from "../redux/store";
 import {createAssignment, Assignment} from "../redux/assignmentSlice";
 
 const accepted_filetypes = [
@@ -36,6 +36,8 @@ const CreateAssignment = (props: any) => {
     const [visible, setVisible] = useState(false);
     const [undated, setUndated] = useState(false);
     const dispatch = useAppDispatch();
+    const cohort = useAppSelector(state => state.user.currentCohort);
+    const activeCohort = cohort ? cohort : 1;
 
     const onFinish = (values: any) => {
         // validate date and time
@@ -56,28 +58,24 @@ const CreateAssignment = (props: any) => {
         // populate files array
         let files = [];
         let i = 0;
-        while (values['filelabel' + i]) {
-            files.push({
-                extension: values['filetype' + i]['value'],
-                type: values['filetype' + i]['label']
-            })
+        while (values['filetype' + i]) {
+            files.push("." + values['filetype' + i]['value'])
             i++;
         }
 
         // will want to be able to include attachments to assignment (ex: starter code)
         const assignment : Assignment = {
             name: values.name,
-            creation_date: moment().toISOString(),
+            cohort: activeCohort,
             points: values.points,
-            due_date: dateTime.toISOString(),
-            undated: undated,
-            graded: false,
-            num_files: files.length
+            due_date: undated ? "" : dateTime.toISOString(),
+            file_extensions: files
         }
         if (values.description) assignment.description = values.description; // HTML INSERTION PROBABLY POSSIBLE HERE, SHOULD SANITIZE
         if (values.selectedBadge) assignment.badge = values.selectedBadge;
 
         dispatch(createAssignment(assignment));
+        //console.log(files);
 
         // DISPATCH FILES TO TABLE
         // TABLE SHOULD BE ONE ASSIGNMENT TO MANY FILES
@@ -173,9 +171,6 @@ function RequiredFileList(props: any) {
             <Col span={1}><Divider type="vertical" style={{ height: "100%" }}/></Col>
 
             <Col span={17}>
-                <Form.Item label="File Label" name={"filelabel" + i} rules={[{ required: true, message:"File label required." }]}>
-                    <Input type="text" placeholder="File label" />
-                </Form.Item>
                 <Form.Item label="Accepted Submission Type" name={"filetype" + i} rules={[{ required: true, message:"File type required." }]}>
                     <Select options={accepted_filetypes} name={"filetype" + i}/> 
                 </Form.Item>

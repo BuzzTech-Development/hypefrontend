@@ -6,9 +6,8 @@ import {Assignment} from "./assignmentSlice";
 export interface Submission {
     assignment: number;
     comments: string;
+    graded: boolean;
     points: number;
-    student: number;
-    time: string;
 }
 
 const submissionsAdapter = createEntityAdapter<Submission>();

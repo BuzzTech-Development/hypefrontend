@@ -5,15 +5,13 @@ import {RootState} from "./store";
 export interface Assignment {
     name: string;
     id?: number;
-    creation_date: string;
+    cohort: number;
+    creation_date?: string;
     description?: string;
     points: number;
     badge?: number;
     due_date: string;
-    undated: boolean;
-    graded: boolean;
-    grade?: number;
-    num_files: number; // temp for files
+    file_extensions: string[];
 }
 
 const assignmentsAdapter = createEntityAdapter<Assignment>();

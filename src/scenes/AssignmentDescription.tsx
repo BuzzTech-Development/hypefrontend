@@ -12,7 +12,7 @@ const AssignmentDescription = (props: any) => {
     if (!assignment) return (<></>);
     let dueDate;
     let dueTime;
-    if (!assignment.undated) {
+    if (assignment.due_date !== "") {
         dueDate = new Date(assignment.due_date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' })
         dueTime = new Date(assignment.due_date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'})
     } else {
@@ -29,13 +29,19 @@ const AssignmentDescription = (props: any) => {
         </Space>
         <Divider orientation='left' />
         <Space direction='horizontal' size='large'>
-            {assignment.undated ? <></> : <div><b>Due:</b> {dueDate} at {dueTime}</div>}
+            {assignment.due_date === "" ? null : <div><b>Due:</b> {dueDate} at {dueTime}</div>}
             <div><b>Points:</b> {assignment.points}</div>
-            <div><b>Required Files:</b> {assignment.num_files}</div>
-            {assignment.badge !== -1 ? <div><b>Badge:</b> {assignment.badge}</div> : <></>}
+            <div><b>Accepted File Types:</b>
+                <ul>
+                    {assignment.file_extensions.map(file => {
+                        return <li>{file}</li>
+                    })}
+                </ul>
+            </div>
+            {assignment.badge !== -1 ? <div><b>Badge:</b> {assignment.badge}</div> : null}
         </Space>
         <Divider />
-        {typeof assignment.description === 'undefined' ? <></> : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
+        {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
         {isSubmittingAssignment ? <SubmitAssignment assignment={assignment}/> : null}
         {/*
             <table>

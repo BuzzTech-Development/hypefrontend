@@ -29,10 +29,10 @@ const AssignmentList = (props: any) => {
     });
     const dateTime = new Date();
     const current = assignments.filter((v: Assignment) => {
-        return !v.undated && (new Date(v.due_date) > dateTime)
+        return v.due_date !== "" && (new Date(v.due_date) > dateTime)
     });
-    const overdue = assignments.filter((v: Assignment) => !v.undated && (new Date(v.due_date) <= dateTime));
-    const undated = assignments.filter((v: Assignment) => v.undated);
+    const overdue = assignments.filter((v: Assignment) => v.due_date !== "" && (new Date(v.due_date) <= dateTime));
+    const undated = assignments.filter((v: Assignment) => v.due_date === "");
 
     return (<>
         {current.length === 0 ? <></> : <AssignmentSubList assignments={current} header={'Current Assignments'} />}
@@ -77,7 +77,7 @@ const AssignmentSubList = (props: any) => {
                     <div style={{textAlign: 'left'}}>
                         <b>{assignment.name}</b>
                     </div>
-                    {assignment.undated ? <></> : <div style={{textAlign: 'right'}}>
+                    {assignment.due_date === "" ? <></> : <div style={{textAlign: 'right'}}>
                         <b>Due</b> {dueDates[i]} at {dueTimes[i]} 
                     </div>}
                 </Link>
