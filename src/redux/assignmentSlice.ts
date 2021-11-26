@@ -1,20 +1,17 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import apiInstance from "utils/api";
 import {RootState} from "./store";
-import moment from "moment";
 
 export interface Assignment {
     name: string;
     id?: number;
-    creation_date: string;
+    cohort: number;
+    creation_date?: string;
     description?: string;
     points: number;
     badge?: number;
     due_date: string;
-    undated: boolean;
-    graded: boolean;
-    grade?: number;
-    num_files: number; // temp for files
+    file_extensions: string[];
 }
 
 const assignmentsAdapter = createEntityAdapter<Assignment>();

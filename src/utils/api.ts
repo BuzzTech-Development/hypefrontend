@@ -3,6 +3,7 @@ import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
 import { CohortDetail } from "redux/cohortSlice";
 import {Assignment} from "../redux/assignmentSlice";
+import {Submission} from "../redux/submissionSlice";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
@@ -18,6 +19,7 @@ class ApiWrapper{
         meetings: 'api/meetings/',
         cohorts: 'api/cohorts/',
         assignments: 'api/assignments/',
+        submissions: 'api/submissions/'
     }
 
     private static getToken() {
@@ -140,6 +142,17 @@ class ApiWrapper{
             fails++;
             response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         }
+        return response.data;
+    }
+
+    async getSubmissions(): Promise<Submission[]> {
+        const params = { }
+        const response = await this.instance.get(this.ENDPOINTS.submissions, { params });
+        return response.data;
+    }
+
+    async createSubmission(payload: Submission): Promise<Submission> {
+        const response = await this.instance.post(this.ENDPOINTS.submissions, payload);
         return response.data;
     }
 }
