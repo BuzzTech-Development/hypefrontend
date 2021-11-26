@@ -11,12 +11,14 @@ import Assignments from './scenes/Assignments';
 import Assignment from 'scenes/AssignmentDescription';
 import Progress from './scenes/Progress';
 import Account from './scenes/Account';
+import Students from './scenes/Students';
 
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
 import { refresh } from 'redux/userSlice';
 import apiInstance from 'utils/api';
+
 
 function App(props: any) {
     const [loading, setLoading] = useState(true);

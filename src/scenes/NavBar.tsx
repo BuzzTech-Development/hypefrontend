@@ -1,11 +1,12 @@
 import React, {ReactNode, useState} from 'react';
 import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
 import { Layout, Menu } from 'antd';
-import { CalendarOutlined, HomeOutlined, LogoutOutlined, NotificationOutlined, TrophyOutlined, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
+import { CalendarOutlined, HomeOutlined, LogoutOutlined, NotificationOutlined, TeamOutlined, TrophyOutlined, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
 
 import { useAppDispatch } from 'redux/store';
 import { logout } from 'redux/userSlice';
 import styles from './Home.module.css';
+import Students from './Students';
 
 interface ApplicationTab {
     title: string;
