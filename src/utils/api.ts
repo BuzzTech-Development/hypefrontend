@@ -150,8 +150,8 @@ class ApiWrapper{
 
     async createSubmission(payload: Submission): Promise<Submission> {
         const response = await this.instance.post(this.ENDPOINTS.submissions, payload);
+        return response.data;
     }
-    
     async getAnnouncements(cohortId: number): Promise<Announcement[]> {
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.announcements, { params });
