@@ -4,12 +4,13 @@ import {Meeting} from "../redux/meetingsSlice";
 import { CohortDetail } from "redux/cohortSlice";
 import {Assignment} from "../redux/assignmentSlice";
 import {Submission} from "../redux/submissionSlice";
+import {Announcement} from "redux/announcementsSlice";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
     instance: AxiosInstance;
 
-    ENDPOINTS = {
+    readonly ENDPOINTS = {
         tokenAuth: 'token-auth/',
         tokenRefresh: 'api-token-refresh/',
         tokenVerify: 'api-token-verify/',
@@ -19,7 +20,8 @@ class ApiWrapper{
         meetings: 'api/meetings/',
         cohorts: 'api/cohorts/',
         assignments: 'api/assignments/',
-        submissions: 'api/submissions/'
+        submissions: 'api/submissions/',
+        announcements: 'api/announcements/'
     }
 
     private static getToken() {
@@ -87,12 +89,7 @@ class ApiWrapper{
     }
 
     async getUserDetail(): Promise<UserDetail> {
-        const response = await this.instance.get(this.ENDPOINTS.curr_user);
-        return response.data;
-    }
-
-    async getUsers(): Promise<UserDetail[]>  {
-        const response = await this.instance.get(this.ENDPOINTS.users); 
+        const response = await this.instance.get(this.ENDPOINTS.users);
         return response.data;
     }
 
@@ -153,6 +150,11 @@ class ApiWrapper{
 
     async createSubmission(payload: Submission): Promise<Submission> {
         const response = await this.instance.post(this.ENDPOINTS.submissions, payload);
+    }
+    
+    async getAnnouncements(cohortId: number): Promise<Announcement[]> {
+        const params = { cohort: cohortId };
+        const response = await this.instance.get(this.ENDPOINTS.announcements, { params });
         return response.data;
     }
 }

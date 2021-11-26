@@ -19,6 +19,7 @@ import {getMeetings} from "./redux/meetingsSlice";
 import { refresh } from 'redux/userSlice';
 import apiInstance from 'utils/api';
 
+import {getAnnouncements} from "./redux/announcementsSlice";
 
 function App(props: any) {
     const [loading, setLoading] = useState(true);
@@ -33,6 +34,7 @@ function App(props: any) {
         }
         if (authenticated && currentCohort) {
             dispatch(getMeetings(currentCohort));
+            dispatch(getAnnouncements(currentCohort));
         }
         if (authenticated) {
             dispatch(getAssignments());
