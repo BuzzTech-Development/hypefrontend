@@ -1,13 +1,14 @@
 import apiInstance from "../utils/api";
 import {RootState} from "./store";
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
-import {Assignment} from "./assignmentSlice";
 
 export interface Submission {
+    id: number;
     assignment: number;
     comments: string;
     graded: boolean;
     points: number;
+    files: any;
 }
 
 const submissionsAdapter = createEntityAdapter<Submission>();
@@ -19,9 +20,16 @@ export const getSubmissions = createAsyncThunk(
 
 export const createSubmission = createAsyncThunk(
     'CREATE_SUBMISSION',
-    async (payload: Submission) => {
+    async (payload: any) => {
         return apiInstance.createSubmission(payload);
     },
+)
+
+export const gradeSubmission = createAsyncThunk(
+    'GRADE_SUBMISSION',
+    async (payload: number) => {
+        return apiInstance.gradeSubmission(payload);
+    }
 )
 
 const submissionsSlice = createSlice({
@@ -35,6 +43,9 @@ const submissionsSlice = createSlice({
             })
             .addCase(createSubmission.fulfilled, (state, action) => {
                 submissionsAdapter.addOne(state, action.payload)
+            })
+            .addCase(gradeSubmission.fulfilled, (state, action) => {
+                submissionsAdapter.updateOne(state, {id: action.payload.id, changes: {graded: true, points: action.payload.points}})
             })
     }
 })

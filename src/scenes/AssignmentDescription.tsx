@@ -20,6 +20,16 @@ const AssignmentDescription = (props: any) => {
         dueTime = null;
     }
 
+    const FileList = ({fileTypes}: any) => {
+        if (fileTypes.length === 1) return <>{fileTypes[0]}</>
+        let stringList = "";
+        for (let i=0; i< fileTypes.length-1;i++) {
+            stringList += fileTypes[i] + ", ";
+        }
+        stringList += fileTypes[fileTypes.length-1];
+        return <>{stringList}</>;
+    }
+
     return (<Space direction='vertical' style={{width: '100%', paddingLeft: '2em'}}>
         <Space direction='horizontal'>
             <PageHeader title={assignment.name} style={{padding: '1em 0 0 0'}} />
@@ -31,12 +41,8 @@ const AssignmentDescription = (props: any) => {
         <Space direction='horizontal' size='large'>
             {assignment.due_date === "" ? null : <div><b>Due:</b> {dueDate} at {dueTime}</div>}
             <div><b>Points:</b> {assignment.points}</div>
-            <div><b>Accepted File Types:</b>
-                <ul>
-                    {assignment.file_extensions.map(file => {
-                        return <li>{file}</li>
-                    })}
-                </ul>
+            <div><b>Accepted File Types: </b>
+                <FileList fileTypes={assignment.file_extensions} />
             </div>
             {assignment.badge !== -1 ? <div><b>Badge:</b> {assignment.badge}</div> : null}
         </Space>

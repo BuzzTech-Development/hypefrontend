@@ -86,8 +86,13 @@ class ApiWrapper{
         return response.data;
     }
 
-    async createSubmission(payload: Submission): Promise<Submission> {
+    async createSubmission(payload: any): Promise<Submission> {
         const response = await this.instance.post(this.ENDPOINTS.submissions, payload);
+        return response.data;
+    }
+
+    async gradeSubmission(payload: number): Promise<Submission> {
+        const response = await this.instance.patch(this.ENDPOINTS.submissions, payload);
         return response.data;
     }
 }
