@@ -1,18 +1,19 @@
 import { Button, List, Space } from 'antd';
 import React, { useState } from 'react';
 import { withRouter, Link } from "react-router-dom";
+import { UserDetail, UserRole } from 'redux/userSlice';
 import {Assignment, assignmentsSelectors} from "../redux/assignmentSlice";
 import store, {useAppSelector} from "../redux/store";
 
 const Assignments = (props: any) => {
     const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
-
+    const user: UserDetail = props.user;
     const createAssignment = () => {
         props.history.push('/assignments/create')
     }
 
     return (<Space direction='vertical' size='large' style={{width: '80%'}}>
-        <Button onClick={createAssignment}>Create an assignment</Button>
+        {user?.profile?.role != UserRole.Student ? <></> : <Button onClick={createAssignment}>Create an assignment</Button>}
         {assignments.length === 0 ? <></> : <AssignmentList assignments={assignments}/>}
     </Space>)
 }

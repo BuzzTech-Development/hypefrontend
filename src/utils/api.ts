@@ -88,7 +88,7 @@ class ApiWrapper{
     }
 
     async getUserDetail(): Promise<UserDetail> {
-        const response = await this.instance.get(this.ENDPOINTS.users);
+        const response = await this.instance.get(this.ENDPOINTS.curr_user);
         return response.data;
     }
 
