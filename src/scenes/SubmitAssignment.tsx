@@ -1,19 +1,20 @@
-import {useParams, withRouter} from "react-router-dom";
+import {withRouter} from "react-router-dom";
 import React, {useState} from "react";
 import ReactQuill from "react-quill";
 import {Button, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
-import {useAppDispatch, useAppSelector} from "../redux/store";
+import {useAppDispatch} from "../redux/store";
 import {createSubmission, Submission} from "../redux/submissionSlice";
-import moment from "moment";
 
 const SubmitAssignment = (props: any) => {
     const {assignment} = props;
     const [description, setDescription] = useState('');
-    const [errors, setErrors] = useState(Array(assignment.num_files).fill(''));
+    const [fileList, updateFileList] = useState<any[]>([]);
+    //const [errors, setErrors] = useState(Array(assignment.num_files).fill(''));
     const dispatch = useAppDispatch();
 
     const checkFileType = (info: any, i: any) => {
+        console.log(info);
         return;
         // does not work until file extensions are fixed
         /*
@@ -35,6 +36,7 @@ const SubmitAssignment = (props: any) => {
     };
 
     const submitAssignment = () => {
+        /*
         let valid = true;
         for (let i = 0; i < assignment.file_extensions.length; i++) {
             if (errors[i] !== '') {
@@ -42,23 +44,41 @@ const SubmitAssignment = (props: any) => {
                 break;
             }
         }
-        const submission: Submission = {
-            assignment: assignment.id,
-            comments: description,
-            points: assignment.points,
-            graded: false
-        }
-        dispatch(createSubmission(submission));
-        if (valid) alert("Assignment submitted!");
-        else alert("Cannot submit assignment.");
+         */
+
+        const formData = new FormData();
+        formData.append('assignment', assignment.id);
+        formData.append('comments', description);
+        formData.append('points', assignment.points);
+        formData.append('graded', 'false');
+        fileList.forEach(file => {
+            formData.append('files', file);
+        });
+        dispatch(createSubmission(formData));
     }
 
+    const uploadProps = {
+        onRemove: (file: any) => {
+            const index = fileList.indexOf(file);
+            const newFileList = fileList.slice();
+            newFileList.splice(index, 1);
+            updateFileList(newFileList);
+        },
+        beforeUpload: (file: any) => {
+            updateFileList([...fileList, file]);
+            return false;
+        },
+        fileList,
+        maxCount: assignment.file_extensions.length,
+        style: tableSpace
+    };
+  
     return (
         <>
             <h3>Submission Comments</h3>
             <ReactQuill value={description} onChange={setDescription} />
             <br/>
-            <Upload maxCount={assignment.num_files} onChange={(info: any) => checkFileType(info, 0)} style={tableSpace}>
+            <Upload {...uploadProps}>
                 <Button icon={<UploadOutlined />}>Upload</Button>
             </Upload>
             <br/>

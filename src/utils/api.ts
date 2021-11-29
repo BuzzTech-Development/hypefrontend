@@ -14,9 +14,9 @@ class ApiWrapper{
         tokenAuth: 'token-auth/',
         tokenRefresh: 'api-token-refresh/',
         tokenVerify: 'api-token-verify/',
-        users: 'api/user/',
-        students: 'api/user/students/',
-        curr_user: 'api/user/curr/',
+        users: 'api/users/',
+        students: 'api/users/students/',
+        curr_user: 'api/users/curr/',
         meetings: 'api/meetings/',
         cohorts: 'api/cohorts/',
         assignments: 'api/assignments/',
@@ -148,10 +148,15 @@ class ApiWrapper{
         return response.data;
     }
 
-    async createSubmission(payload: Submission): Promise<Submission> {
+    async createSubmission(payload: any): Promise<Submission> {
         const response = await this.instance.post(this.ENDPOINTS.submissions, payload);
         return response.data;
     }
+
+    async gradeSubmission(payload: number): Promise<Submission> {
+        const response = await this.instance.patch(this.ENDPOINTS.submissions, payload);
+    }
+
     async getAnnouncements(cohortId: number): Promise<Announcement[]> {
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.announcements, { params });
