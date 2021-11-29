@@ -54,6 +54,12 @@ const NavBar = (props: any) => {
             icon: <TrophyOutlined />
         },
         {
+            title: "Students",
+            key: "students",
+            path: "/students",
+            icon: <TeamOutlined />
+        },
+        {
             title: "Account",
             key: "account",
             path: "/account",

@@ -75,6 +75,9 @@ function App(props: any) {
                     <Route path="/progress">
                         <NavBar content={<Progress />} />
                     </Route>
+                    <Route path="/students">
+                        <NavBar content={<Students />} />
+                    </Route>
                     <Route path="/account">
                         <NavBar content={<Account />} />
                     </Route>

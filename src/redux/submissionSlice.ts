@@ -4,9 +4,6 @@ import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolk
 
 export interface Submission {
     id: number;
-}
-
-export interface Submission {
     assignment: number;
     comments: string;
     graded: boolean;
