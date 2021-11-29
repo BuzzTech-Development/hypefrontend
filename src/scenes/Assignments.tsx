@@ -6,13 +6,14 @@ import store, {useAppSelector} from "../redux/store";
 
 const Assignments = (props: any) => {
     const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
 
     const createAssignment = () => {
         props.history.push('/assignments/create')
     }
 
     return (<Space direction='vertical' size='large' style={{width: '80%'}}>
-        <Button onClick={createAssignment}>Create an assignment</Button>
+        {role === "INSTRUCTOR" ? <Button onClick={createAssignment}>Create an assignment</Button> : <></>}
         {assignments.length === 0 ? <></> : <AssignmentList assignments={assignments}/>}
     </Space>)
 }

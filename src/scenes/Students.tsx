@@ -12,7 +12,6 @@ import { CohortDetail } from 'redux/cohortSlice';
 
 const {Panel} = Collapse;
 
-
 var view : string, setView : Function, 
     sort : string, setSort : Function,
     reversed : boolean, setReversed : Function,
