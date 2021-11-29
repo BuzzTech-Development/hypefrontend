@@ -7,6 +7,9 @@ import { useAppDispatch } from 'redux/store';
 import { logout } from 'redux/userSlice';
 import styles from './Home.module.css';
 import Students from './Students';
+import { UserDetail} from 'redux/userSlice';
+import apiInstance from "utils/api";
+import {UserRole} from 'redux/userSlice';
 
 interface ApplicationTab {
     title: string;
@@ -20,8 +23,16 @@ const NavBar = (props: any) => {
     const dispatch = useAppDispatch();
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
+    const user = props.user;
 
-    const tabs: ApplicationTab[] = [
+    // const asyncGetUser = async () => {
+    //     // Not sure what best practice is here
+    //     const t_user : UserDetail = await apiInstance.getUserDetail();
+    //     setUser(t_user);
+    // }
+    // asyncGetUser();
+    console.log(user);
+    var tabs: ApplicationTab[] = [
         {
             title: "Home",
             key: "home",
@@ -54,18 +65,23 @@ const NavBar = (props: any) => {
             icon: <TrophyOutlined />
         },
         {
-            title: "Students",
-            key: "students",
-            path: "/students",
-            icon: <TeamOutlined />
-        },
-        {
             title: "Account",
             key: "account",
             path: "/account",
             icon: <UserOutlined />
         }
     ]
+    if (user?.profile?.role === UserRole.Instructor || user?.profile?.role === UserRole.Admin) {
+        tabs.splice(tabs.length - 2, 0, 
+            {
+                title: "Students",
+                key: "students",
+                path: "/students",
+                icon: <TeamOutlined />
+            }
+            
+        )
+    }
 
     const selectedTab = tabs.find(
         tab => matchPath(props.location.pathname, { path: tab.path, exact: tab.exact || false })
