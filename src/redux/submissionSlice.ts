@@ -4,7 +4,7 @@ import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolk
 
 export interface Submission {
     id: number;
-import {Assignment} from "./assignmentSlice";
+}
 
 export interface Submission {
     assignment: number;
