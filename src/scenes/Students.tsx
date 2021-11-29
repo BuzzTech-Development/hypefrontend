@@ -93,7 +93,8 @@ function CurrentView(props: any) {
     const asyncGetStudents = async () => {
         // Not sure what best practice is here
         const t_students : UserDetail[] = await apiInstance.getStudents();
-        setStudents(t_students);
+        if (t_students.length != 0)
+            setStudents(t_students);
     }
 
     const asyncGetCohorts = async () => {
