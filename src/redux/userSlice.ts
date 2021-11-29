@@ -38,6 +38,11 @@ export const login = createAsyncThunk(
     async (payload: { username: string, password: string }) => apiInstance.login(payload),
 )
 
+export const refresh = createAsyncThunk(
+    'REFRESH',
+    async () => apiInstance.refreshToken()
+)
+
 const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -48,11 +53,18 @@ const userSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder.addCase(login.fulfilled, (state, action) => ({
+        builder
+        .addCase(login.fulfilled, (state, action) => ({
             ...state,
             authenticated: true,
             userDetail: action.payload,
             currentCohort: action.payload.profile?.cohorts[0],
+        }))
+        .addCase(refresh.fulfilled, (state, action) => ({
+            ...state,
+            authenticated: true,
+            userDetail: action.payload,
+            currentCohort: action.payload.profile?.cohorts[0]
         }))
     }
 });

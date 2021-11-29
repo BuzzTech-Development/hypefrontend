@@ -6,6 +6,7 @@ import userSlice from "./userSlice";
 import meetingsSlice from "./meetingsSlice";
 import assignmentSlice from "./assignmentSlice";
 import submissionSlice from "./submissionSlice";
+import announcementsSlice from "./announcementsSlice";
 
 const store = configureStore({
     reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
         meetings: meetingsSlice,
         assignments: assignmentSlice,
         submissions: submissionSlice,
+        announcements: announcementsSlice,
     },
     middleware: getDefaultMiddleware => getDefaultMiddleware().prepend(logger),
 })

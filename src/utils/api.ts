@@ -1,28 +1,33 @@
-import axios, {AxiosInstance} from "axios";
+import axios, {AxiosInstance, AxiosResponse} from "axios";
 import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
 import { CohortDetail } from "redux/cohortSlice";
 import {Assignment} from "../redux/assignmentSlice";
 import {Submission} from "../redux/submissionSlice";
+import {Announcement} from "redux/announcementsSlice";
 
 class ApiWrapper{
     BASE_URL = 'http://127.0.0.1:8000/';
     instance: AxiosInstance;
 
-    ENDPOINTS = {
+    readonly ENDPOINTS = {
         tokenAuth: 'token-auth/',
+        tokenRefresh: 'api-token-refresh/',
+        tokenVerify: 'api-token-verify/',
         users: 'api/users/',
-        students: 'api/user/students',
-        curr_user: 'api/user/curr',
+        students: 'api/users/students/',
+        curr_user: 'api/users/curr/',
         meetings: 'api/meetings/',
         cohorts: 'api/cohorts/',
         assignments: 'api/assignments/',
-        submissions: 'api/submissions/'
+        submissions: 'api/submissions/',
+        announcements: 'api/announcements/'
     }
 
     private static getToken() {
         return localStorage.getItem('token');
     }
+
 
     private static storeToken(token: string) {
         localStorage.setItem('token', token);
@@ -47,6 +52,33 @@ class ApiWrapper{
             baseURL: this.BASE_URL,
         })
     }
+    // Not sure what this should return
+    async refreshToken() : Promise<UserDetail> {
+        const cachedToken = ApiWrapper.getToken();
+        const payload = {'token': cachedToken};
+        const response = await this.instance.post(this.ENDPOINTS.tokenRefresh, payload);
+        ApiWrapper.storeToken(response.data.token);
+        this.setTokenAuth(response.data.token);
+        return response.data;
+    }
+
+    // dealing with promises?
+    async verifyToken() : Promise<UserDetail>{
+        const cachedToken = ApiWrapper.getToken();
+        if (cachedToken === null || cachedToken === undefined || cachedToken === "") {
+            return Promise.reject("No token");
+        }
+        const payload = {'token': cachedToken};
+
+        return this.instance.post(this.ENDPOINTS.tokenVerify, payload).then((response) => {
+            if (response.status == 200) {
+                apiInstance.refreshToken();
+                return this.getUserDetail();
+            } else {
+                return Promise.reject("Invalid Token");
+            }
+        });
+    }
 
     async login(payload: { username: string, password: string }): Promise<UserDetail> {
         const response = await this.instance.post(this.ENDPOINTS.tokenAuth, payload);
@@ -57,12 +89,7 @@ class ApiWrapper{
     }
 
     async getUserDetail(): Promise<UserDetail> {
-        const response = await this.instance.get(this.ENDPOINTS.curr_user);
-        return response.data;
-    }
-
-    async getUsers(): Promise<UserDetail[]>  {
-        const response = await this.instance.get(this.ENDPOINTS.users); 
+        const response = await this.instance.get(this.ENDPOINTS.users);
         return response.data;
     }
 
@@ -128,6 +155,11 @@ class ApiWrapper{
 
     async gradeSubmission(payload: number): Promise<Submission> {
         const response = await this.instance.patch(this.ENDPOINTS.submissions, payload);
+    }
+
+    async getAnnouncements(cohortId: number): Promise<Announcement[]> {
+        const params = { cohort: cohortId };
+        const response = await this.instance.get(this.ENDPOINTS.announcements, { params });
         return response.data;
     }
 }

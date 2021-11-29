@@ -72,7 +72,7 @@ const SubmitAssignment = (props: any) => {
         maxCount: assignment.file_extensions.length,
         style: tableSpace
     };
-
+  
     return (
         <>
             <h3>Submission Comments</h3>
