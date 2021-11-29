@@ -4,7 +4,7 @@ import ReactQuill from "react-quill";
 import {Button, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import {useAppDispatch} from "../redux/store";
-import {createSubmission, Submission} from "../redux/submissionSlice";
+import {createSubmission} from "../redux/assignmentSlice";
 
 const SubmitAssignment = (props: any) => {
     const {assignment} = props;
@@ -49,7 +49,6 @@ const SubmitAssignment = (props: any) => {
         const formData = new FormData();
         formData.append('assignment', assignment.id);
         formData.append('comments', description);
-        formData.append('points', assignment.points);
         formData.append('graded', 'false');
         fileList.forEach(file => {
             formData.append('files', file);
