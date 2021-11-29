@@ -1,6 +1,7 @@
 import axios, {AxiosInstance} from "axios";
 import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
+import { CohortDetail } from "redux/cohortSlice";
 import {Assignment} from "../redux/assignmentSlice";
 import {Submission} from "../redux/submissionSlice";
 
@@ -10,8 +11,11 @@ class ApiWrapper{
 
     ENDPOINTS = {
         tokenAuth: 'token-auth/',
-        user: 'api/users/',
+        users: 'api/users/',
+        students: 'api/user/students',
+        curr_user: 'api/user/curr',
         meetings: 'api/meetings/',
+        cohorts: 'api/cohorts/',
         assignments: 'api/assignments/',
         submissions: 'api/submissions/'
     }
@@ -53,7 +57,17 @@ class ApiWrapper{
     }
 
     async getUserDetail(): Promise<UserDetail> {
-        const response = await this.instance.get(this.ENDPOINTS.user);
+        const response = await this.instance.get(this.ENDPOINTS.curr_user);
+        return response.data;
+    }
+
+    async getUsers(): Promise<UserDetail[]>  {
+        const response = await this.instance.get(this.ENDPOINTS.users); 
+        return response.data;
+    }
+
+    async getStudents(): Promise<UserDetail[]> {
+        const response = await this.instance.get(this.ENDPOINTS.students); 
         return response.data;
     }
 
@@ -62,6 +76,27 @@ class ApiWrapper{
         const response = await this.instance.get(this.ENDPOINTS.meetings, { params });
         return response.data;
     }
+
+    async getCohorts(): Promise<CohortDetail[]> {
+        const response = await this.instance.get(this.ENDPOINTS.cohorts);
+        return response.data;
+    }
+
+    async editUser(pk: number, payload: Object) {
+        const response = await this.instance.put(this.ENDPOINTS.users + pk + "/", payload)
+        return response.data;
+    }
+
+    async deleteUser(pk: number) {
+        const response = await this.instance.delete(this.ENDPOINTS.users + pk + "/")
+        return response.data;
+    }
+
+    async deleteCohort(id: number) {
+        const response = await this.instance.delete(this.ENDPOINTS.cohorts + id + "/")
+        return response.data;
+    }
+
 
     async getAssignments(): Promise<Assignment[]> {
         const params = { }
