@@ -155,6 +155,7 @@ class ApiWrapper{
 
     async gradeSubmission(payload: number): Promise<Submission> {
         const response = await this.instance.patch(this.ENDPOINTS.submissions, payload);
+        return response.data;
     }
 
     async getAnnouncements(cohortId: number): Promise<Announcement[]> {
