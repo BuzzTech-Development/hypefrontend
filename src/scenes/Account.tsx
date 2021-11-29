@@ -59,9 +59,9 @@ const Account = () => {
                     <Menu.Item key="info" icon={<InfoOutlined />}>
                         Info
                     </Menu.Item>
-                    <Menu.Item key="settings" icon={<SettingOutlined />}>
+                    {/* <Menu.Item key="settings" icon={<SettingOutlined />}>
                         Settings
-                    </Menu.Item>
+                    </Menu.Item> */}
                 </Menu>
             </Row>
             <Row justify="center">
@@ -142,10 +142,9 @@ const View = () => {
                     <Avatar size={128} icon={<UserOutlined/>}></Avatar>
                 </Col>
                 <Col >
-                      <Upload {...props}>
-                            {/* Need to figure out how to use s3 with this */}
+                      {/* <Upload {...props}>
                             <Button icon={<UploadOutlined />}>Change Avatar</Button>
-                        </Upload>
+                        </Upload> */}
                 </Col>
             </Row>
             <Row>
@@ -160,7 +159,7 @@ const View = () => {
                     <Descriptions.Item label="Last Name">{user.last_name}</Descriptions.Item>
                     <Descriptions.Item label="E-Mail">{user.email}</Descriptions.Item>
                     <Descriptions.Item label="Role">{user.profile === null || user.profile === undefined ? "" : (user.profile.role as string)}</Descriptions.Item>
-                    <Descriptions.Item label="No. Of Badges">1234</Descriptions.Item>
+                    {/* <Descriptions.Item label="No. Of Badges">1234</Descriptions.Item> */}
                     <Descriptions.Item label="Password"> 
                     <Space align="center" size="large">
                         <Col>********</Col>

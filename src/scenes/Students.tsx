@@ -250,9 +250,9 @@ const StudentPanel = (props: any) => {
                 <Descriptions  title="User Info" column={1} bordered>
                     <Descriptions.Item label="Email">{student.email}</Descriptions.Item>
                     <Descriptions.Item label="Cohort">{cohortName}</Descriptions.Item>
-                    <Descriptions.Item label="Guardian E-mail">mom@moms.com</Descriptions.Item>
+                    {/* <Descriptions.Item label="Guardian E-mail">mom@moms.com</Descriptions.Item> */}
                 </Descriptions>
-                <Message  to={student.first_name + " " + student.last_name}/>
+                {/* <Message  to={student.first_name + " " + student.last_name}/> */}
                 <Button icon={<TeamOutlined/>} onClick={showCohortModal}>
                     Change Cohort
                 </Button>
