@@ -9,13 +9,14 @@
 
 .Header {
     height: 64px;
+    width: 100%;
     padding: 10px;
 
     color: white;
 
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: space-between;
 }
 
 .Logo {
@@ -31,6 +32,11 @@
 .Title {
     font-size: 18px;
     color: white;
+}
+
+.Select {
+    margin: 10px;
+    width: 200px;
 }
 
 .Content {

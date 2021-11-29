@@ -4,11 +4,12 @@ import {Button, Col, Avatar, Row, Input, Layout, Menu, Radio, Collapse, Descript
 import { UserOutlined, TeamOutlined, SwapOutlined, CloseOutlined,SearchOutlined} from '@ant-design/icons';
 
 import apiInstance from "utils/api";
-import { UserDetail } from 'redux/userSlice';
+import {Cohort, UserDetail} from 'redux/userSlice';
 
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
-import { CohortDetail } from 'redux/cohortSlice';
+import {useSelector} from "react-redux";
+import {useAppSelector} from "../redux/store";
 
 const {Panel} = Collapse;
 
@@ -88,24 +89,16 @@ const Students = () => {
 function CurrentView(props: any) {
 
     [students, setStudents] = useState<UserDetail []>([]);
-    [cohorts, setCohorts] = useState<string []>([]);
+    const cohorts = useAppSelector(state => state.user.userDetail?.profile?.cohorts || []);
 
     const asyncGetStudents = async () => {
         // Not sure what best practice is here
         const t_students : UserDetail[] = await apiInstance.getStudents();
         setStudents(t_students);
     }
-
-    const asyncGetCohorts = async () => {
-        const t_cohorts : CohortDetail[] = await apiInstance.getCohorts();
-        setCohorts(t_cohorts.map((cohort) => cohort.name));
-    }
     
     if (students.length === 0) {
         asyncGetStudents();
-    }
-    if (cohorts.length === 0) {
-        asyncGetCohorts();
     }
     
     const deleteCohort = () => {
@@ -118,11 +111,11 @@ function CurrentView(props: any) {
 
     var sub_cohorts = cohorts.map((cohort, index) => {
         var c_students : UserDetail[] = [];
-        students.forEach((student) => {
-            if (student.profile?.cohorts[0] === index + 1) {
-                c_students.push(student)
-            }
-        })
+        // students.forEach((student) => {
+        //     if (student.profile?.cohorts[0] === index + 1) {
+        //         c_students.push(student)
+        //     }
+        // })
         return {
             students: c_students,
             name: cohort
@@ -143,7 +136,7 @@ function CurrentView(props: any) {
         });
 
         sub_cohorts = sub_cohorts.filter((cohort) => {
-            if (regexp.test(cohort.name)) {
+            if (regexp.test(cohort.name.name)) {
                     return true;
                 } else {
                     return false;
@@ -190,8 +183,8 @@ function CurrentView(props: any) {
         output = (<>
             <Collapse>
                 {sub_cohorts.map((cohort) => 
-                    <Panel key={cohort.name} header={cohort.name}>
-                        <Message to={cohort.name}/>
+                    <Panel key={cohort.name.name} header={cohort.name.name}>
+                        <Message to={cohort.name.name}/>
                         <Danger action="Delete Cohort" callback={deleteCohort} icon={<CloseOutlined/>}/>
                         <Collapse>
 

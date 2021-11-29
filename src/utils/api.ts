@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, AxiosResponse} from "axios";
 import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
-import { CohortDetail } from "redux/cohortSlice";
+import { Cohort } from "redux/userSlice";
 import {Assignment} from "../redux/assignmentSlice";
 import {Submission} from "../redux/submissionSlice";
 import {Announcement} from "redux/announcementsSlice";
@@ -59,7 +59,7 @@ class ApiWrapper{
         const response = await this.instance.post(this.ENDPOINTS.tokenRefresh, payload);
         ApiWrapper.storeToken(response.data.token);
         this.setTokenAuth(response.data.token);
-        return response.data;
+        return this.getUserDetail();
     }
 
     // dealing with promises?
@@ -101,11 +101,6 @@ class ApiWrapper{
     async getMeetings(cohortId: number): Promise<Meeting[]> {
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.meetings, { params });
-        return response.data;
-    }
-
-    async getCohorts(): Promise<CohortDetail[]> {
-        const response = await this.instance.get(this.ENDPOINTS.cohorts);
         return response.data;
     }
 
