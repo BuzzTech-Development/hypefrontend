@@ -64,7 +64,7 @@ const SubmitAssignment = (props: any) => {
             updateFileList(newFileList);
         },
         beforeUpload: (file: any) => {
-            updateFileList([...fileList, file]);
+            updateFileList(oldArr => [...oldArr, file]);
             return false;
         },
         fileList,
