@@ -5,7 +5,6 @@ import { configureStore } from '@reduxjs/toolkit'
 import userSlice from "./userSlice";
 import meetingsSlice from "./meetingsSlice";
 import assignmentSlice from "./assignmentSlice";
-import submissionSlice from "./submissionSlice";
 import announcementsSlice from "./announcementsSlice";
 
 const store = configureStore({
@@ -13,7 +12,6 @@ const store = configureStore({
         user: userSlice,
         meetings: meetingsSlice,
         assignments: assignmentSlice,
-        submissions: submissionSlice,
         announcements: announcementsSlice,
     },
     middleware: getDefaultMiddleware => getDefaultMiddleware().prepend(logger),

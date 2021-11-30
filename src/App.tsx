@@ -20,6 +20,7 @@ import { refresh } from 'redux/userSlice';
 import apiInstance from 'utils/api';
 
 import {getAnnouncements} from "./redux/announcementsSlice";
+import Grades from "./scenes/Grades";
 
 function App(props: any) {
     const [loading, setLoading] = useState(true);
@@ -75,6 +76,9 @@ function App(props: any) {
                     </Route>
                     <Route path="/progress">
                         <NavBar content={<Progress />} user={currentUser}/>
+                    </Route>
+                    <Route path="/grades">
+                        <NavBar content={<Grades user={currentUser}/>} user={currentUser} />
                     </Route>
                     <Route path="/students">
                         <NavBar content={<Students />} user={currentUser}/>

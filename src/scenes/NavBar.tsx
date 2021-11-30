@@ -1,14 +1,21 @@
 import React, {ReactNode, useState} from 'react';
-import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
+import { matchPath, withRouter} from "react-router-dom";
 import { Layout, Menu } from 'antd';
-import { CalendarOutlined, HomeOutlined, LogoutOutlined, NotificationOutlined, TeamOutlined, TrophyOutlined, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
+import {
+    CalendarOutlined, FormOutlined,
+    HomeOutlined,
+    LogoutOutlined,
+    NotificationOutlined,
+    TeamOutlined,
+    TrophyOutlined,
+    UnorderedListOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 
 import { useAppDispatch } from 'redux/store';
 import { logout } from 'redux/userSlice';
 import styles from './Home.module.css';
 import Students from './Students';
-import { UserDetail} from 'redux/userSlice';
-import apiInstance from "utils/api";
 import {UserRole} from 'redux/userSlice';
 
 interface ApplicationTab {
@@ -25,13 +32,6 @@ const NavBar = (props: any) => {
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
     const user = props.user;
 
-    // const asyncGetUser = async () => {
-    //     // Not sure what best practice is here
-    //     const t_user : UserDetail = await apiInstance.getUserDetail();
-    //     setUser(t_user);
-    // }
-    // asyncGetUser();
-    console.log(user);
     var tabs: ApplicationTab[] = [
         {
             title: "Home",
@@ -63,6 +63,12 @@ const NavBar = (props: any) => {
             key: "progress",
             path: "/progress",
             icon: <TrophyOutlined />
+        },
+        {
+            title: "Grades",
+            key: "grades",
+            path: "/grades",
+            icon: <FormOutlined />
         },
         {
             title: "Account",
