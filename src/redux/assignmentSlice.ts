@@ -5,6 +5,7 @@ import {RootState} from "./store";
 export interface Submission {
     id: number;
     author: number;
+    time: string;
     assignment: number;
     comments: string;
     graded: boolean;

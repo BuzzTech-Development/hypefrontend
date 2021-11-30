@@ -58,7 +58,7 @@ class ApiWrapper{
         const response = await this.instance.post(this.ENDPOINTS.tokenRefresh, payload);
         ApiWrapper.storeToken(response.data.token);
         this.setTokenAuth(response.data.token);
-        return response.data;
+        return this.getUserDetail();
     }
 
     // dealing with promises?
