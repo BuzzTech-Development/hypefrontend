@@ -25,8 +25,8 @@ import Grades from "./scenes/Grades";
 function App(props: any) {
     const [loading, setLoading] = useState(true);
     const authenticated = useAppSelector((state) => state.user.authenticated);
-    const currentUser = useAppSelector((state) => state.user.userDetail);
     const currentCohort = useAppSelector((state) => state.user.currentCohort);
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -57,34 +57,34 @@ function App(props: any) {
 
                 {!authenticated ? <Redirect to="/login" /> : <Switch>
                     <Route path="/home">
-                        <NavBar content={<Home />} user={currentUser}/>
+                        <NavBar content={<Home />} />
                     </Route>
                     <Route path="/announcements">
-                        <NavBar content={<Announcements />} user={currentUser}/>
+                        <NavBar content={<Announcements />} />
                     </Route>
                     <Route path="/calendar">
-                        <NavBar content={<Calendar />} user={currentUser}/>
+                        <NavBar content={<Calendar />} />
                     </Route>
                     <Route exact path="/assignments">
-                        <NavBar content={<Assignments />} user={currentUser}/>
+                        <NavBar content={<Assignments />} />
                     </Route>
                     <Route path="/assignments/create">
-                        <NavBar content={<CreateAssignment />} user={currentUser}/>
+                        <NavBar content={<CreateAssignment />} />
                     </Route>
                     <Route path="/assignments/:id">
-                        <NavBar content={<Assignment user={currentUser} /> } user={currentUser}/>
+                        <NavBar content={<Assignment /> } />
                     </Route>
                     <Route path="/progress">
-                        <NavBar content={<Progress />} user={currentUser}/>
+                        <NavBar content={<Progress />} />
                     </Route>
                     <Route path="/grades">
-                        <NavBar content={<Grades user={currentUser}/>} user={currentUser} />
+                        <NavBar content={<Grades />} />
                     </Route>
                     <Route path="/students">
-                        <NavBar content={<Students />} user={currentUser}/>
+                        <NavBar content={<Students />} />
                     </Route>
                     <Route path="/account">
-                        <NavBar content={<Account />} user={currentUser}/>
+                        <NavBar content={<Account />} />
                     </Route>
                 </Switch>}
             </Switch>

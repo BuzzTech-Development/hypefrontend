@@ -2,12 +2,13 @@ import { PageHeader, Divider, Upload, Space, Button } from 'antd';
 import React, { useState } from 'react';
 import { withRouter, useParams } from "react-router-dom";
 import {Assignment, assignmentsSelectors} from "../redux/assignmentSlice";
-import store from "../redux/store";
+import store, {useAppSelector} from "../redux/store";
 import SubmitAssignment from "./SubmitAssignment";
 
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
     const assignment: Assignment | undefined = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false);
     if (!assignment) return (<></>);
     let dueDate;
@@ -34,7 +35,7 @@ const AssignmentDescription = (props: any) => {
         <Space direction='horizontal'>
             <PageHeader title={assignment.name} style={{padding: '1em 0 0 0'}} />
             <div style={{padding: '1em 0 0 0'}}>
-                <Button onClick={() => setIsSubmittingAssignment(true)}>Submit Assignment</Button>
+                {role !== "STUDENT" ? <></> : <Button onClick={() => setIsSubmittingAssignment(true)}>Submit Assignment</Button>}
             </div>
         </Space>
         <Divider orientation='left' />
