@@ -1,15 +1,16 @@
 import React from 'react';
 
-import {Button, Col, Form, Input, Row, Typography} from "antd";
+import {Button, Col, Form, Input, Row, Typography, Alert} from "antd";
 
-import {useAppDispatch} from "redux/store";
+import {useAppSelector, useAppDispatch} from "redux/store";
 import {login} from "redux/userSlice";
 
 const Login = () => {
     const dispatch = useAppDispatch();
 
+    const invalidCred = useAppSelector((state) => state.user.invalidCred);
     const onFinish = (values: { username: string, password: string }) => {
-        dispatch(login(values));
+        dispatch(login(values))
     }
 
     return (
@@ -17,6 +18,7 @@ const Login = () => {
             <Col>
                 <Form onFinish={onFinish}>
                     <Typography.Title level={2}>HYPE Login</Typography.Title>
+                    
                     <Form.Item
                         label="Username"
                         name="username"
@@ -31,7 +33,12 @@ const Login = () => {
                     >
                         <Input.Password />
                     </Form.Item>
+                    {invalidCred ? <Alert
+                        message="Invalid User Credentials"
+                        type="error"
+                    /> : <></>}
                     <Form.Item>
+                        
                         <Button type="primary" htmlType="submit">
                             Log In
                         </Button>

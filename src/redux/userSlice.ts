@@ -27,10 +27,12 @@ interface UserState {
     authenticated: boolean;
     userDetail?: UserDetail;
     currentCohort?: number;
+    invalidCred?: boolean;
 }
 
 const initialState: UserState = {
     authenticated: false,
+    invalidCred:  false
 }
 
 export const login = createAsyncThunk(
@@ -59,13 +61,21 @@ const userSlice = createSlice({
             authenticated: true,
             userDetail: action.payload,
             currentCohort: action.payload.profile?.cohorts[0],
+            invalidCred: false
+        }))
+        .addCase(login.rejected, (state, action) => ({
+            ...state,
+            authenticated: false,
+            invalidCred: true
         }))
         .addCase(refresh.fulfilled, (state, action) => ({
             ...state,
             authenticated: true,
             userDetail: action.payload,
-            currentCohort: action.payload.profile?.cohorts[0]
+            currentCohort: action.payload.profile?.cohorts[0],
+            invalidCred: false
         }))
+
     }
 });
 

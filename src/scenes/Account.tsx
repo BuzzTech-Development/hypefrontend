@@ -152,7 +152,7 @@ const View = () => {
                     <Descriptions.Item label="Username">
                         <Space align="center" size="large">
                             <Col> {user.username} </Col>
-                            <Col> <Button icon={<EditOutlined/>} onClick={showModal("username")}></Button> </Col>
+                            {/* <Col> <Button icon={<EditOutlined/>} onClick={showModal("username")}></Button> </Col> */}
                         </Space>
                     </Descriptions.Item>
                     <Descriptions.Item label="First Name">{user.first_name}</Descriptions.Item>

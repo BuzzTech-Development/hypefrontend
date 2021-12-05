@@ -82,10 +82,15 @@ class ApiWrapper{
 
     async login(payload: { username: string, password: string }): Promise<UserDetail> {
         const response = await this.instance.post(this.ENDPOINTS.tokenAuth, payload);
-        const token: string = response.data.token;
-        ApiWrapper.storeToken(token);
-        this.setTokenAuth(token);
-        return this.getUserDetail();
+        if (response.status == 200) {
+            const token: string = response.data.token;
+            ApiWrapper.storeToken(token);
+            this.setTokenAuth(token);
+            return this.getUserDetail();
+        } else {
+            return Promise.reject();
+        }
+
     }
 
     async getUserDetail(): Promise<UserDetail> {
@@ -161,6 +166,13 @@ class ApiWrapper{
     async getAnnouncements(cohortId: number): Promise<Announcement[]> {
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.announcements, { params });
+        return response.data;
+    }
+
+    async makeAnnouncement(cohortID: number, subject: string, text: string): Promise<Announcement> {
+        const params = {cohort: cohortID, subject: subject, text: text};
+        console.log(subject, text, cohortID);
+        const response = await this.instance.post(this.ENDPOINTS.announcements, params);
         return response.data;
     }
 }

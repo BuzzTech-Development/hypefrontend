@@ -56,18 +56,12 @@ const NavBar = (props: any) => {
             icon: <TrophyOutlined />
         }] : [],
         // view students only if instructor
-        ...role === "INSTRUCTOR" ? [{
+        ...role === "INSTRUCTOR" || role === "ADMIN" ? [{
             title: "Students",
             key: "students",
             path: "/students",
             icon: <TeamOutlined />
         }] : [],
-        {
-            title: "Students",
-            key: "students",
-            path: "/students",
-            icon: <TeamOutlined />
-        },
         {
             title: "Account",
             key: "account",

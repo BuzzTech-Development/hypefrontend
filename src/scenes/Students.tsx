@@ -191,7 +191,7 @@ function CurrentView(props: any) {
             <Collapse>
                 {sub_cohorts.map((cohort) => 
                     <Panel key={cohort.name} header={cohort.name}>
-                        <Message to={cohort.name}/>
+                        <Message to={cohort.name} cohort={cohorts.indexOf(cohort.name) + 1}/>
                         <Danger action="Delete Cohort" callback={deleteCohort} icon={<CloseOutlined/>}/>
                         <Collapse>
 
