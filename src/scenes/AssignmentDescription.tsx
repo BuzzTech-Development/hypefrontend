@@ -51,38 +51,6 @@ const AssignmentDescription = (props: any) => {
         <Divider />
         {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(assignment.description)}}></div>}
         {isSubmittingAssignment ? <SubmitAssignment assignment={assignment}/> : null}
-        {/*
-            <table>
-            <tr>
-                {assignment.files.map(file => {
-                    return <>
-                        <td>{file.label}</td>
-                        <td style={tableSpace}></td>
-                    </>
-                })}
-            </tr>
-            <tr>
-                {assignment.files.map((file, i) => {
-                    return <>
-                        <td>
-                            <Upload maxCount={1} onChange={(info: any) => checkFileType(info, i)}>
-                                <Button icon={<UploadOutlined />}>Upload</Button>
-                            </Upload>
-                        </td>
-                        <td style={tableSpace}></td>
-                    </>
-                })}
-            </tr>
-            <tr>
-                {assignment.files.map((file, i) => {
-                    return <>
-                        <td style={{wordWrap: 'break-word'}}>{errors[i]}</td>
-                        <td style={tableSpace}></td>
-                    </>
-                })}
-            </tr>
-        </table>
-        */}
     </Space>)
 }
 
