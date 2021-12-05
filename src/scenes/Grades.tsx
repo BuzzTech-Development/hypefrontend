@@ -13,7 +13,7 @@ const Grades = (props: any) => {
 
     const getMostRecentSubmission = (assignment: Assignment) => {
         const submissions = assignment.submissions.filter((submission: Submission) => submission.author === userId);
-        if (submissions.length == 0) return null;
+        if (submissions.length === 0) return null;
         return submissions[submissions.length-1];
     }
 

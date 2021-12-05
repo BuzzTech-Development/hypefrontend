@@ -5,6 +5,8 @@ import {Assignment, assignmentsSelectors} from "../redux/assignmentSlice";
 import store from "../redux/store";
 import SubmitAssignment from "./SubmitAssignment";
 
+const DOMPurify = require('dompurify')(window);
+
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
     const assignment: Assignment | undefined = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
@@ -47,7 +49,7 @@ const AssignmentDescription = (props: any) => {
             {assignment.badge !== -1 ? <div><b>Badge:</b> {assignment.badge}</div> : null}
         </Space>
         <Divider />
-        {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
+        {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(assignment.description)}}></div>}
         {isSubmittingAssignment ? <SubmitAssignment assignment={assignment}/> : null}
         {/*
             <table>
