@@ -1,86 +1,78 @@
 import { PageHeader, Divider, Upload, Space, Button } from 'antd';
-import React, { useState } from 'react';
-import { withRouter, useParams } from "react-router-dom";
-import {Assignment, assignmentsSelectors} from "../redux/assignmentSlice";
-import store from "../redux/store";
+import React, {useEffect, useState} from 'react';
+import {withRouter, useParams, Link} from "react-router-dom";
+import {Assignment, assignmentsSelectors, Submission} from "../redux/assignmentSlice";
+import store, {useAppSelector} from "../redux/store";
 import SubmitAssignment from "./SubmitAssignment";
+import SubmissionHistoryTable from "./SubmissionHistoryTable";
 
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
-    const assignment: Assignment | undefined = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
+    const assignment = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
+    const currentUser = useAppSelector((state) => state.user.userDetail);
+    const userId = currentUser?.pk;
+
     const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false);
-    if (!assignment) return (<></>);
-    let dueDate;
-    let dueTime;
-    if (assignment.due_date !== "") {
-        dueDate = new Date(assignment.due_date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' })
-        dueTime = new Date(assignment.due_date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'})
-    } else {
-        dueDate = null;
-        dueTime = null;
+    const [submitted, setSubmitted] = useState(false);
+    const [submissions, updateSubmissions] = useState<Submission[]>([]);
+
+    const formatDate = (date: string) => {
+        const day = date !== '' ? new Date(date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }): '';
+        const time = date !== '' ? new Date(date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'}) : '';
+        return day + " at " + time;
     }
 
-    const FileList = ({fileTypes}: any) => {
+    const createFileList = (fileTypes: any) => {
         if (fileTypes.length === 1) return <>{fileTypes[0]}</>
         let stringList = "";
         for (let i=0; i< fileTypes.length-1;i++) {
             stringList += fileTypes[i] + ", ";
         }
         stringList += fileTypes[fileTypes.length-1];
-        return <>{stringList}</>;
+        return stringList;
     }
+
+    const handleSubmit = () => {
+        setSubmitted(true);
+        setIsSubmittingAssignment(false);
+    }
+
+    useEffect(() => {
+        const submissions = assignment?.submissions.filter((submission: Submission) => submission.author === userId);
+        if (submissions && submissions.length > 0) {
+            setSubmitted(true)
+            updateSubmissions(submissions)
+        }
+
+    }, [assignment])
+
+    if (!assignment) return null;
+    const submitText = submitted ? "Resubmit Assignment" : "Submit Assignment";
 
     return (<Space direction='vertical' style={{width: '100%', paddingLeft: '2em'}}>
         <Space direction='horizontal'>
             <PageHeader title={assignment.name} style={{padding: '1em 0 0 0'}} />
             <div style={{padding: '1em 0 0 0'}}>
-                <Button onClick={() => setIsSubmittingAssignment(true)}>Submit Assignment</Button>
+                <Button onClick={() => setIsSubmittingAssignment(true)}>{submitText}</Button>
             </div>
         </Space>
         <Divider orientation='left' />
         <Space direction='horizontal' size='large'>
-            {assignment.due_date === "" ? null : <div><b>Due:</b> {dueDate} at {dueTime}</div>}
-            <div><b>Points:</b> {assignment.points}</div>
-            <div><b>Accepted File Types: </b>
-                <FileList fileTypes={assignment.file_extensions} />
+            {assignment.due_date === "" ? null : <div><b>Due:</b> {formatDate(assignment.due_date)}</div>}
+            <div><b>Points: </b>
+                {assignment.points}
             </div>
-            {assignment.badge !== -1 ? <div><b>Badge:</b> {assignment.badge}</div> : null}
+            <div><b>Accepted File Types: </b>
+                {createFileList(assignment.file_extensions)}
+            </div>
+            {assignment.badge !== -1 ? <div><b>Badge: </b>
+                {assignment.badge}
+            </div> : null}
         </Space>
         <Divider />
         {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
-        {isSubmittingAssignment ? <SubmitAssignment assignment={assignment}/> : null}
-        {/*
-            <table>
-            <tr>
-                {assignment.files.map(file => {
-                    return <>
-                        <td>{file.label}</td>
-                        <td style={tableSpace}></td>
-                    </>
-                })}
-            </tr>
-            <tr>
-                {assignment.files.map((file, i) => {
-                    return <>
-                        <td>
-                            <Upload maxCount={1} onChange={(info: any) => checkFileType(info, i)}>
-                                <Button icon={<UploadOutlined />}>Upload</Button>
-                            </Upload>
-                        </td>
-                        <td style={tableSpace}></td>
-                    </>
-                })}
-            </tr>
-            <tr>
-                {assignment.files.map((file, i) => {
-                    return <>
-                        <td style={{wordWrap: 'break-word'}}>{errors[i]}</td>
-                        <td style={tableSpace}></td>
-                    </>
-                })}
-            </tr>
-        </table>
-        */}
+        {isSubmittingAssignment ? <SubmitAssignment assignment={assignment} onSubmit={handleSubmit}/> : null}
+        {submitted ? <SubmissionHistoryTable submissions={submissions}/> : null}
     </Space>)
 }
 

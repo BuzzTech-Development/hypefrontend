@@ -7,7 +7,7 @@ import {useAppDispatch} from "../redux/store";
 import {createSubmission} from "../redux/assignmentSlice";
 
 const SubmitAssignment = (props: any) => {
-    const {assignment} = props;
+    const {assignment, onSubmit} = props;
     const [description, setDescription] = useState('');
     const [fileList, updateFileList] = useState<any[]>([]);
     //const [errors, setErrors] = useState(Array(assignment.num_files).fill(''));
@@ -54,6 +54,7 @@ const SubmitAssignment = (props: any) => {
             formData.append('files', file);
         });
         dispatch(createSubmission(formData));
+        onSubmit();
     }
 
     const uploadProps = {

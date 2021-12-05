@@ -7,7 +7,6 @@ import store, {useAppSelector} from "../redux/store";
 const Grades = (props: any) => {
     const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
     const [tableData, updateTableData] = useState<any[]>([]);
-    const [tableLoading, setTableLoading] = useState(true);
     const currentUser = props.user;
     const userId = currentUser?.pk;
 
