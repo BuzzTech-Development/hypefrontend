@@ -4,10 +4,10 @@ import ReactQuill from "react-quill";
 import {Button, Upload} from "antd";
 import {UploadOutlined} from "@ant-design/icons";
 import {useAppDispatch} from "../redux/store";
-import {createSubmission, Submission} from "../redux/submissionSlice";
+import {createSubmission} from "../redux/assignmentSlice";
 
 const SubmitAssignment = (props: any) => {
-    const {assignment} = props;
+    const {assignment, onSubmit} = props;
     const [description, setDescription] = useState('');
     const [fileList, updateFileList] = useState<any[]>([]);
     //const [errors, setErrors] = useState(Array(assignment.num_files).fill(''));
@@ -49,12 +49,12 @@ const SubmitAssignment = (props: any) => {
         const formData = new FormData();
         formData.append('assignment', assignment.id);
         formData.append('comments', description);
-        formData.append('points', assignment.points);
         formData.append('graded', 'false');
         fileList.forEach(file => {
             formData.append('files', file);
         });
         dispatch(createSubmission(formData));
+        onSubmit();
     }
 
     const uploadProps = {
@@ -65,7 +65,7 @@ const SubmitAssignment = (props: any) => {
             updateFileList(newFileList);
         },
         beforeUpload: (file: any) => {
-            updateFileList([...fileList, file]);
+            updateFileList(oldArr => [...oldArr, file]);
             return false;
         },
         fileList,

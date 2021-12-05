@@ -4,7 +4,7 @@ import ReactQuill from "react-quill";
 import {Button, InputNumber} from "antd";
 import {DownloadOutlined} from "@ant-design/icons";
 import {useAppDispatch} from "../redux/store";
-import {gradeSubmission} from "../redux/submissionSlice";
+import {gradeSubmission} from "../redux/assignmentSlice";
 
 const GradeAssignment = (props: any) => {
     const {assignment} = props;

@@ -64,7 +64,7 @@ const CreateAssignment = (props: any) => {
         }
 
         // will want to be able to include attachments to assignment (ex: starter code)
-        const assignment : Assignment = {
+        const assignment : any = {
             name: values.name,
             cohort: activeCohort,
             points: values.points,

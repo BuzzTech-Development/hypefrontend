@@ -1,12 +1,22 @@
 import React, {ReactNode, useState} from 'react';
-import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
+import { matchPath, withRouter} from "react-router-dom";
 import { Layout, Menu } from 'antd';
-import { CalendarOutlined, HomeOutlined, LogoutOutlined, NotificationOutlined, TeamOutlined, TrophyOutlined, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
+import {
+    CalendarOutlined, FormOutlined,
+    HomeOutlined,
+    LogoutOutlined,
+    NotificationOutlined,
+    TeamOutlined,
+    TrophyOutlined,
+    UnorderedListOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 
 import { useAppSelector, useAppDispatch } from 'redux/store';
 import { logout } from 'redux/userSlice';
 import styles from './Home.module.css';
 import Students from './Students';
+import {UserRole} from 'redux/userSlice';
 
 interface ApplicationTab {
     title: string;
@@ -21,8 +31,9 @@ const NavBar = (props: any) => {
     const dispatch = useAppDispatch();
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
+    const user = props.user;
 
-    const tabs: ApplicationTab[] = [
+    var tabs: ApplicationTab[] = [
         {
             title: "Home",
             key: "home",
@@ -63,10 +74,10 @@ const NavBar = (props: any) => {
             icon: <TeamOutlined />
         }] : [],
         {
-            title: "Students",
-            key: "students",
-            path: "/students",
-            icon: <TeamOutlined />
+            title: "Grades",
+            key: "grades",
+            path: "/grades",
+            icon: <FormOutlined />
         },
         {
             title: "Account",
@@ -75,6 +86,17 @@ const NavBar = (props: any) => {
             icon: <UserOutlined />
         }
     ]
+    if (user?.profile?.role === UserRole.Instructor || user?.profile?.role === UserRole.Admin) {
+        tabs.splice(tabs.length - 2, 0, 
+            {
+                title: "Students",
+                key: "students",
+                path: "/students",
+                icon: <TeamOutlined />
+            }
+            
+        )
+    }
 
     const selectedTab = tabs.find(
         tab => matchPath(props.location.pathname, { path: tab.path, exact: tab.exact || false })
