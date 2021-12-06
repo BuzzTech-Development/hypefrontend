@@ -12,7 +12,6 @@ import Assignment from 'scenes/AssignmentDescription';
 import Progress from './scenes/Progress';
 import Account from './scenes/Account';
 import Students from './scenes/Students';
-
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
@@ -27,6 +26,7 @@ function App(props: any) {
     const authenticated = useAppSelector((state) => state.user.authenticated);
     const currentUser = useAppSelector((state) => state.user.userDetail);
     const currentCohort = useAppSelector((state) => state.user.currentCohort);
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -77,12 +77,16 @@ function App(props: any) {
                     <Route path="/grades">
                         <NavBar content={<Grades student={currentUser}/>} user={currentUser} />
                     </Route>
-                    <Route path="/students">
-                        <NavBar content={<Students />} user={currentUser}/>
-                    </Route>
                     <Route path="/account">
                         <NavBar content={<Account />} user={currentUser}/>
                     </Route>
+
+                    {/* Routes reserved for instructors. */}
+                    {role !== "INSTRUCTOR" ? <Redirect to="/home" /> : <Switch>
+                        <Route path="/students">
+                            <NavBar content={<Students />} />
+                        </Route>
+                    </Switch>}
                 </Switch>}
             </Switch>
         </BrowserRouter>
