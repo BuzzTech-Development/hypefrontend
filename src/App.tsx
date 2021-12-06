@@ -40,7 +40,7 @@ function App(props: any) {
         if (authenticated) {
             dispatch(getAssignments());
         }
-    }, [authenticated, currentCohort])
+    }, [dispatch, loading, authenticated, currentCohort])
 
 
     return (

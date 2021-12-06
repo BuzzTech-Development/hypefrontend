@@ -8,7 +8,6 @@ import { UserDetail} from 'redux/userSlice';
 
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
-import { CohortDetail } from 'redux/cohortSlice';
 
 const {Panel} = Collapse;
 
