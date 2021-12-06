@@ -65,13 +65,15 @@ const NavBar = (props: any) => {
             key: "students",
             path: "/students",
             icon: <TeamOutlined />
-        }] : [],
-        {
-            title: "Grades",
-            key: "grades",
-            path: "/grades",
-            icon: <FormOutlined />
-        },
+        }] : [
+            {
+                title: "Grades",
+                key: "grades",
+                path: "/grades",
+                icon: <FormOutlined />
+            },
+        ],
+
         {
             title: "Account",
             key: "account",
@@ -79,7 +81,6 @@ const NavBar = (props: any) => {
             icon: <UserOutlined />
         }
     ]
-
 
     const selectedTab = tabs.find(
         tab => matchPath(props.location.pathname, { path: tab.path, exact: tab.exact || false })

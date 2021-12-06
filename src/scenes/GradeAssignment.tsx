@@ -5,9 +5,10 @@ import {Button, InputNumber} from "antd";
 import {DownloadOutlined} from "@ant-design/icons";
 import {useAppDispatch} from "../redux/store";
 import {gradeSubmission} from "../redux/assignmentSlice";
+import {getMostRecentSubmission} from "../utils/utils";
 
 const GradeAssignment = (props: any) => {
-    const {assignment} = props;
+    const {assignment, studentId, onSubmit} = props;
     const [comments, setComments] = useState('');
     const [points, setPoints] = useState(0)
     const dispatch = useAppDispatch();
@@ -17,8 +18,17 @@ const GradeAssignment = (props: any) => {
         width: '3em'
     };
 
+    const submission = getMostRecentSubmission(assignment, studentId);
+    console.log(studentId)
+    console.log(submission)
+
     const gradeAssignment = () => {
-        dispatch(gradeSubmission(points));
+        const payload = {
+            submissionId: submission?.id,
+            points: points,
+        }
+        dispatch(gradeSubmission(payload));
+        onSubmit(points);
     }
 
     const setGrade = (points: any) => {
@@ -27,7 +37,7 @@ const GradeAssignment = (props: any) => {
 
     return (
         <>
-            <DownloadOutlined>Download</DownloadOutlined>
+            <a href={submission?.files.length > 0 ? submission?.files[0].file : null}>Download</a>
             <br />
             <h3>Submission Comments</h3>
             <ReactQuill value={comments} onChange={setComments} />

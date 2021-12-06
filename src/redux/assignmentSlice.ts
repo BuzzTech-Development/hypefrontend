@@ -51,7 +51,7 @@ export const createSubmission = createAsyncThunk(
 
 export const gradeSubmission = createAsyncThunk(
     'GRADE_SUBMISSION',
-    async (payload: number) => {
+    async (payload: any) => {
         return apiInstance.gradeSubmission(payload);
     }
 )
@@ -79,7 +79,7 @@ const assignmentsSlice = createSlice({
             })
             .addCase(gradeSubmission.fulfilled, (state, action) => {
                 const assignment = {...state.entities[action.payload.assignment]};
-                const submissions = assignment.submissions?.filter((submission) => submission.id === action.payload.id);
+                const submissions = assignment.submissions?.filter((submission) => submission.id == action.payload.id);
                 if (submissions) {
                     submissions[0].graded = true;
                     submissions[0].points = action.payload.points;

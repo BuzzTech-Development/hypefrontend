@@ -14,7 +14,6 @@ const SubmitAssignment = (props: any) => {
     const dispatch = useAppDispatch();
 
     const checkFileType = (info: any, i: any) => {
-        console.log(info);
         return;
         // does not work until file extensions are fixed
         /*

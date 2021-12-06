@@ -1,20 +1,21 @@
 import {Button, List, Space, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
-import { withRouter, Link } from "react-router-dom";
+import { withRouter, Link, useParams } from "react-router-dom";
 import {Assignment, assignmentsSelectors, Submission} from "../redux/assignmentSlice";
 import store, {useAppSelector} from "../redux/store";
+import {getMostRecentSubmission} from "../utils/utils";
 
 const Grades = (props: any) => {
     const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
     const [tableData, updateTableData] = useState<any[]>([]);
-    const currentUser = props.user;
+    const currentUser = useAppSelector((state) => state.user.userDetail);
     const userId = currentUser?.pk;
-
-    const getMostRecentSubmission = (assignment: Assignment) => {
-        const submissions = assignment.submissions.filter((submission: Submission) => submission.author === userId);
-        if (submissions.length == 0) return null;
-        return submissions[submissions.length-1];
-    }
+    const { studentId } = useParams<{studentId? : any}>();
+    console.log(studentId)
+    const out = useParams();
+    const studList = useAppSelector((state) => state.user.students);
+    const retStud = studList?.filter((user) => user.pk == studentId)[0];
+    const student  = currentUser?.profile?.role === "STUDENT" ? props.student: retStud ;
 
     const formatDate = (date: string) => {
         const day = date !== '' ? new Date(date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }): '';
@@ -27,7 +28,7 @@ const Grades = (props: any) => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-            render: (text: any, record: any) => <Link to={`/assignments/${record.id}`}>{text}</Link>,
+            render: (text: any, record: any) => <Link to={`/assignments/${record.assignmentId}/${record.studentId}`}>{text}</Link>,
         },
         {
             title: 'Due Date',
@@ -49,17 +50,18 @@ const Grades = (props: any) => {
     useEffect(() => {
         const submitted = assignments.filter((v: Assignment) => {
             const submissions = v.submissions.filter((submission: Submission) =>
-                submission.author === userId
+                submission.author === userId || submission.author == studentId
             );
             return submissions.length != 0;
         });
 
         submitted.map((assignment: Assignment, i:any) => {
-            const submission = getMostRecentSubmission(assignment);
+            const submission = getMostRecentSubmission(assignment, student.pk);
             if (!submission) return null;
             const dataValue = {
                 key: i,
-                id: assignment.id,
+                assignmentId: assignment.id,
+                studentId: studentId,
                 name: assignment.name,
                 dueDate: formatDate(assignment.due_date),
                 submittedDate: formatDate(submission.time),

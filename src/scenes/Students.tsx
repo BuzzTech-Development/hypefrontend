@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import 'reactjs-popup/dist/index.css';
 import {Button, Col, Avatar, Row, Input, Layout, Menu, Radio, Collapse, Descriptions, Modal, Checkbox} from "antd";
-import { UserOutlined, TeamOutlined, SwapOutlined, CloseOutlined,SearchOutlined} from '@ant-design/icons';
+import { UserOutlined, TeamOutlined, SwapOutlined, CloseOutlined,SearchOutlined, FormOutlined} from '@ant-design/icons';
 
 import apiInstance from "utils/api";
 import { UserDetail } from 'redux/userSlice';
@@ -9,6 +9,8 @@ import { UserDetail } from 'redux/userSlice';
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
 import { CohortDetail } from 'redux/cohortSlice';
+import Grades from './Grades';
+import { Link } from 'react-router-dom';
 
 const {Panel} = Collapse;
 
@@ -27,12 +29,10 @@ const Students = () => {
     [filter, setFilter] = useState("");
 
     const handleClick = (e: any) => {
-        console.log('click ', e.key);
         setView(e.key);
     };
 
     const handleSortChange = (e: any) => {
-        console.log('Sort ', e.target.value);
         setSort(e.target.value);
     }
 
@@ -42,7 +42,6 @@ const Students = () => {
 
     const onSearch = (e: any) => {
         setFilter(e.target.value);
-        console.log(e.target.value);
     }
 
     return (<>
@@ -214,6 +213,7 @@ function CurrentView(props: any) {
 const StudentPanel = (props: any) => {
     const student = props.student;
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isGradesModalVisible, setGradesModalVisible] = useState(false);
 
     const cohortName = student.profile === null ? "none" : cohorts[student.profile.cohorts[0] -1];
     
@@ -224,8 +224,15 @@ const StudentPanel = (props: any) => {
       setIsModalVisible(false);
     };
     const deleteUser = () => {
-        console.log("deleteus");
         apiInstance.deleteUser(student.pk);
+    }
+
+    const showGradesModal = () => {
+        setGradesModalVisible(true);
+    }
+
+    const hideGradesModal = () => {
+        setGradesModalVisible(false);
     }
 
     const changeCohort = () => {
@@ -245,6 +252,7 @@ const StudentPanel = (props: any) => {
 
     var selected_cohorts: any[];
     const options = cohorts.map((cohort, idx) => ( {"label": cohort, "value": (idx + 1)} ))
+    const id = student.pk;
     return (<>
 
                 <Descriptions  title="User Info" column={1} bordered>
@@ -259,6 +267,12 @@ const StudentPanel = (props: any) => {
                 <Modal title="Change Cohort" visible={isModalVisible} onOk={changeCohort} onCancel={handleCancel}>
                     <Checkbox.Group options={options} defaultValue={student.profile === null ? [] : student.profile.cohorts} onChange={ (selected) => selected_cohorts = selected}/>
                 </Modal>
+                <Link to={`/students/${id}`}>
+                    <Button icon={<FormOutlined/>}>
+                        Show Grades
+                    </Button>
+                </Link>
+
                 <Danger  action="Delete User" callback={deleteUser} icon={<CloseOutlined/>}/>
     </>);
 }

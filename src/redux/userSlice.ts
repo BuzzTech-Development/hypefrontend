@@ -28,11 +28,13 @@ interface UserState {
     userDetail?: UserDetail;
     currentCohort?: number;
     invalidCred?: boolean;
+    students?: UserDetail[];
 }
 
 const initialState: UserState = {
     authenticated: false,
-    invalidCred:  false
+    invalidCred:  false,
+    students: []
 }
 
 export const login = createAsyncThunk(
@@ -43,6 +45,11 @@ export const login = createAsyncThunk(
 export const refresh = createAsyncThunk(
     'REFRESH',
     async () => apiInstance.refreshToken()
+)
+
+export const getStudents = createAsyncThunk(
+    'GETSTUDENTS',
+    async () => apiInstance.getStudents(),
 )
 
 const userSlice = createSlice({
@@ -67,6 +74,10 @@ const userSlice = createSlice({
             ...state,
             authenticated: false,
             invalidCred: true
+        }))
+        .addCase(getStudents.fulfilled, (state, action) => ({
+            ...state,
+            students: action.payload
         }))
         .addCase(refresh.fulfilled, (state, action) => ({
             ...state,

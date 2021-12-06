@@ -15,7 +15,6 @@ const Message = (props: any) => {
   
     const handleOk = (values: { subject: string, body: string }) => {
       // Send Message
-      console.log("id: ", cohortID);
       apiInstance.makeAnnouncement(cohortID, values.subject, values.body);
       setIsModalVisible(false);
     };

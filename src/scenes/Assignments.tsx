@@ -8,7 +8,6 @@ import store, {useAppSelector} from "../redux/store";
 const Assignments = (props: any) => {
     const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
     const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
-
     const createAssignment = () => {
         props.history.push('/assignments/create')
     }

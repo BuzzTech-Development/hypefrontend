@@ -11,11 +11,11 @@ import Assignments from './scenes/Assignments';
 import Assignment from 'scenes/AssignmentDescription';
 import Progress from './scenes/Progress';
 import Account from './scenes/Account';
-import Students from 'scenes/Students';
+import Students from './scenes/Students';
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
-import { refresh } from 'redux/userSlice';
+import { getStudents, refresh } from 'redux/userSlice';
 import apiInstance from 'utils/api';
 
 import {getAnnouncements} from "./redux/announcementsSlice";
@@ -37,6 +37,7 @@ function App(props: any) {
         if (authenticated && currentCohort) {
             dispatch(getMeetings(currentCohort));
             dispatch(getAnnouncements(currentCohort));
+            dispatch(getStudents());
         }
         if (authenticated) {
             dispatch(getAssignments());
@@ -71,17 +72,14 @@ function App(props: any) {
                     <Route path="/assignments/create">
                         <NavBar content={<CreateAssignment />} user={currentUser}/>
                     </Route>
-                    <Route path="/assignments/:id">
+                    <Route path="/assignments/:assignmentId/:studentId">
                         <NavBar content={<Assignment user={currentUser} /> } user={currentUser}/>
                     </Route>
-                    <Route path="/progress">
-                        <NavBar content={<Progress />} user={currentUser}/>
+                    <Route exact path="/grades">
+                        <NavBar content={<Grades student={currentUser}/>} user={currentUser} />
                     </Route>
-                    <Route path="/grades">
-                        <NavBar content={<Grades user={currentUser}/>} user={currentUser} />
-                    </Route>
-                    <Route path="/students">
-                        <NavBar content={<Students />} user={currentUser}/>
+                    <Route path="/students/:studentId">
+                        <NavBar content={<Grades student={currentUser}/>} user={currentUser} />
                     </Route>
                     <Route path="/account">
                         <NavBar content={<Account />} user={currentUser}/>

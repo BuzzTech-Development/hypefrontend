@@ -151,8 +151,8 @@ class ApiWrapper{
         return response.data;
     }
 
-    async gradeSubmission(payload: number): Promise<Submission> {
-        const response = await this.instance.patch(this.ENDPOINTS.submissions, payload);
+    async gradeSubmission(payload: any): Promise<Submission> {
+        const response = await this.instance.patch(this.ENDPOINTS.submissions + payload.submissionId + "/", payload.points);
         return response.data;
     }
 
@@ -164,7 +164,6 @@ class ApiWrapper{
 
     async makeAnnouncement(cohortID: number, subject: string, text: string): Promise<Announcement> {
         const params = {cohort: cohortID, subject: subject, text: text};
-        console.log(subject, text, cohortID);
         const response = await this.instance.post(this.ENDPOINTS.announcements, params);
         return response.data;
     }
