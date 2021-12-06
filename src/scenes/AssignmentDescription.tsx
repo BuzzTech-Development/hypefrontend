@@ -11,12 +11,10 @@ import SubmissionHistoryTable from "./SubmissionHistoryTable";
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
     const { studentId } = props;
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const assignment = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
     const currentUser = useAppSelector((state) => state.user.userDetail);
     const userId = currentUser?.pk;
-    const isTeacher = currentUser?.profile?.role == UserRole.Instructor;
-    console.log(isTeacher)
-
     const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [submissions, updateSubmissions] = useState<Submission[]>([]);
@@ -73,7 +71,7 @@ const AssignmentDescription = (props: any) => {
         <Space direction='horizontal'>
             <PageHeader title={assignment.name} style={{padding: '1em 0 0 0'}} />
             <div style={{padding: '1em 0 0 0'}}>
-                {isTeacher ? (
+                {role === "INSTRUCTOR" ? (
                     <Button onClick={() => setIsGradingAssignment(true)}>{gradeText}</Button>
                 ) : (
                     <Button onClick={() => setIsSubmittingAssignment(true)}>{submitText}</Button>
