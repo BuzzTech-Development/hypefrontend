@@ -72,7 +72,7 @@ const AssignmentDescription = (props: any) => {
             <PageHeader title={assignment.name} style={{padding: '1em 0 0 0'}} />
             <div style={{padding: '1em 0 0 0'}}>
                 {isTeacher ? (
-                    <Button onClick={() => setIsGradingAssignment(true)}>{gradeText}</Button>
+                    userId ? <Button onClick={() => setIsGradingAssignment(true)}>{gradeText}</Button> : <></>
                 ) : (
                     <Button onClick={() => setIsSubmittingAssignment(true)}>{submitText}</Button>
                 )}

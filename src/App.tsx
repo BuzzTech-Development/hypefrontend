@@ -72,7 +72,7 @@ function App(props: any) {
                     <Route path="/assignments/create">
                         <NavBar content={<CreateAssignment />} user={currentUser}/>
                     </Route>
-                    <Route path="/assignments/:assignmentId/:studentId">
+                    <Route path="/assignments/:assignmentId/:studentId?">
                         <NavBar content={<Assignment user={currentUser} /> } user={currentUser}/>
                     </Route>
                     <Route exact path="/grades">

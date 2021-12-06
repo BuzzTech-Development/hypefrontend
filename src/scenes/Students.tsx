@@ -2,13 +2,12 @@ import React, { useState} from 'react';
 import 'reactjs-popup/dist/index.css';
 import {Button, Col, Avatar, Row, Input, Layout, Menu, Radio, Collapse, Descriptions, Modal, Checkbox} from "antd";
 import { UserOutlined, TeamOutlined, SwapOutlined, CloseOutlined,SearchOutlined, FormOutlined} from '@ant-design/icons';
-
+import { useAppSelector } from 'redux/store';
 import apiInstance from "utils/api";
 import { UserDetail } from 'redux/userSlice';
-
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
-import { CohortDetail } from 'redux/cohortSlice';
+import { Cohort } from 'redux/userSlice';
 import Grades from './Grades';
 import { Link } from 'react-router-dom';
 
@@ -86,7 +85,7 @@ const Students = () => {
 function CurrentView(props: any) {
 
     [students, setStudents] = useState<UserDetail []>([]);
-    [cohorts, setCohorts] = useState<string []>([]);
+    const cohorts = useAppSelector(state => state.user.userDetail?.profile?.cohorts || []);
 
     const asyncGetStudents = async () => {
         // Not sure what best practice is here
@@ -94,17 +93,9 @@ function CurrentView(props: any) {
         if (t_students.length != 0)
             setStudents(t_students);
     }
-
-    const asyncGetCohorts = async () => {
-        const t_cohorts : CohortDetail[] = await apiInstance.getCohorts();
-        setCohorts(t_cohorts.map((cohort) => cohort.name));
-    }
     
     if (students.length === 0) {
         asyncGetStudents();
-    }
-    if (cohorts.length === 0) {
-        asyncGetCohorts();
     }
     
     const deleteCohort = () => {
@@ -118,7 +109,7 @@ function CurrentView(props: any) {
     var sub_cohorts = cohorts.map((cohort, index) => {
         var c_students : UserDetail[] = [];
         students.forEach((student) => {
-            if (student.profile?.cohorts[0] === index + 1) {
+            if (cohorts[0].id === index + 1) {
                 c_students.push(student)
             }
         })
@@ -142,7 +133,7 @@ function CurrentView(props: any) {
         });
 
         sub_cohorts = sub_cohorts.filter((cohort) => {
-            if (regexp.test(cohort.name)) {
+            if (regexp.test(cohort.name.name)) {
                     return true;
                 } else {
                     return false;
@@ -189,7 +180,7 @@ function CurrentView(props: any) {
         output = (<>
             <Collapse>
                 {sub_cohorts.map((cohort) => 
-                    <Panel key={cohort.name} header={cohort.name}>
+                    <Panel key={cohort.name.name} header={cohort.name}>
                         <Message to={cohort.name} cohort={cohorts.indexOf(cohort.name) + 1}/>
                         <Danger action="Delete Cohort" callback={deleteCohort} icon={<CloseOutlined/>}/>
                         <Collapse>
@@ -215,7 +206,10 @@ const StudentPanel = (props: any) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isGradesModalVisible, setGradesModalVisible] = useState(false);
 
-    const cohortName = student.profile === null ? "none" : cohorts[student.profile.cohorts[0] -1];
+    const cohorts = useAppSelector(state => state.user.userDetail?.profile?.cohorts || []);
+    const cohortId = useAppSelector(state => state.user.currentCohort);
+    const cohortName = cohortId ? cohorts.find(obj => { return obj.id === cohortId })?.name : 'none';
+    console.log(cohortName)
     
     const showCohortModal = () => {
       setIsModalVisible(true);

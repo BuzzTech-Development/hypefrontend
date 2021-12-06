@@ -1,4 +1,4 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {createAction, createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 
 import apiInstance from "utils/api";
 
@@ -7,6 +7,11 @@ export enum UserRole {
     Instructor = 'INSTRUCTOR',
     Student = 'STUDENT',
     Parent = 'PARENT',
+}
+
+export interface Cohort {
+    id: number;
+    name: string;
 }
 
 export interface UserDetail {
@@ -19,7 +24,7 @@ export interface UserDetail {
     date_joined: string;
     profile: null | {
         role: UserRole;
-        cohorts: number[];
+        cohorts: Cohort[];
     }
 }
 
@@ -33,8 +38,6 @@ interface UserState {
 
 const initialState: UserState = {
     authenticated: false,
-    invalidCred:  false,
-    students: []
 }
 
 export const login = createAsyncThunk(
@@ -52,6 +55,8 @@ export const getStudents = createAsyncThunk(
     async () => apiInstance.getStudents(),
 )
 
+export const selectCohort = createAction<number>('user/SELECT_COHORT');
+
 const userSlice = createSlice({
     name: 'user',
     initialState,
@@ -62,31 +67,31 @@ const userSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        builder
-        .addCase(login.fulfilled, (state, action) => ({
-            ...state,
-            authenticated: true,
-            userDetail: action.payload,
-            currentCohort: action.payload.profile?.cohorts[0],
-            invalidCred: false
-        }))
-        .addCase(login.rejected, (state, action) => ({
-            ...state,
-            authenticated: false,
-            invalidCred: true
-        }))
-        .addCase(getStudents.fulfilled, (state, action) => ({
+        builder.addCase(login.fulfilled, (state, action) => ({
+                ...state,
+                authenticated: true,
+                userDetail: action.payload,
+                currentCohort: action.payload.profile?.cohorts[0].id,
+            }));
+        builder.addCase(login.rejected, (state, action) => ({
+                ...state,
+                authenticated: false,
+                invalidCred: true
+            }));
+        builder.addCase(getStudents.fulfilled, (state, action) => ({
             ...state,
             students: action.payload
-        }))
-        .addCase(refresh.fulfilled, (state, action) => ({
+        }));
+        builder.addCase(refresh.fulfilled, (state, action) => ({
+                ...state,
+                authenticated: true,
+                userDetail: action.payload,
+                currentCohort: action.payload.profile?.cohorts[0].id
+            }))
+        builder.addCase(selectCohort, (state, action) => ({
             ...state,
-            authenticated: true,
-            userDetail: action.payload,
-            currentCohort: action.payload.profile?.cohorts[0],
-            invalidCred: false
+            currentCohort: action.payload,
         }))
-
     }
 });
 

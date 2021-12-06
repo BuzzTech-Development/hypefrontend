@@ -1,7 +1,7 @@
 import axios, {AxiosInstance, AxiosResponse} from "axios";
 import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
-import { CohortDetail } from "redux/cohortSlice";
+import { Cohort } from "redux/userSlice";
 import {Assignment, Submission} from "../redux/assignmentSlice";
 import {Announcement} from "redux/announcementsSlice";
 
@@ -108,7 +108,7 @@ class ApiWrapper{
         return response.data;
     }
 
-    async getCohorts(): Promise<CohortDetail[]> {
+    async getCohorts(): Promise<Cohort[]> {
         const response = await this.instance.get(this.ENDPOINTS.cohorts);
         return response.data;
     }
