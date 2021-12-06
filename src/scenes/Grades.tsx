@@ -64,7 +64,7 @@ const Grades = (props: any) => {
                 name: assignment.name,
                 dueDate: formatDate(assignment.due_date),
                 submittedDate: formatDate(submission.time),
-                grade: submission.graded ? submission.points / assignment.points : "Not yet graded"
+                grade: submission.graded ? ((submission.points / assignment.points * 100).toFixed(2)).toString() + '%' : "Not yet graded"
             }
             updateTableData(oldArray =>[...oldArray, dataValue])
         })
