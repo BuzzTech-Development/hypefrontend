@@ -1,12 +1,21 @@
 import React, {ReactNode, useState} from 'react';
 import { matchPath, RouteComponentProps, withRouter} from "react-router-dom";
 import { Layout, Menu, Select } from 'antd';
-import { CalendarOutlined, HomeOutlined, LogoutOutlined, NotificationOutlined, TeamOutlined, TrophyOutlined, UnorderedListOutlined, UserOutlined} from "@ant-design/icons";
-
-import {useAppDispatch, useAppSelector} from 'redux/store';
 import {logout, selectCohort} from 'redux/userSlice';
+import {
+    CalendarOutlined, FormOutlined,
+    HomeOutlined,
+    LogoutOutlined,
+    NotificationOutlined,
+    TeamOutlined,
+    TrophyOutlined,
+    UnorderedListOutlined,
+    UserOutlined
+} from "@ant-design/icons";
+import { useAppSelector, useAppDispatch } from 'redux/store';
 import styles from './Home.module.css';
 import Students from './Students';
+import {UserRole} from 'redux/userSlice';
 
 interface ApplicationTab {
     title: string;
@@ -17,6 +26,7 @@ interface ApplicationTab {
 }
 
 const NavBar = (props: any) => {
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const dispatch = useAppDispatch();
 
     const cohorts = useAppSelector(state => state.user.userDetail?.profile?.cohorts || []);
@@ -27,8 +37,9 @@ const NavBar = (props: any) => {
 
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
+    const user = props.user;
 
-    const tabs: ApplicationTab[] = [
+    var tabs: ApplicationTab[] = [
         {
             title: "Home",
             key: "home",
@@ -54,17 +65,18 @@ const NavBar = (props: any) => {
             path: "/assignments",
             icon: <UnorderedListOutlined />
         },
-        {
-            title: "Progress",
-            key: "progress",
-            path: "/progress",
-            icon: <TrophyOutlined />
-        },
-        {
+        // view students only if instructor
+        ...role === "INSTRUCTOR" ? [{
             title: "Students",
             key: "students",
             path: "/students",
             icon: <TeamOutlined />
+        }] : [],
+        {
+            title: "Grades",
+            key: "grades",
+            path: "/grades",
+            icon: <FormOutlined />
         },
         {
             title: "Account",

@@ -4,6 +4,7 @@ import {Meeting} from "../redux/meetingsSlice";
 import { Cohort } from "redux/userSlice";
 import {Assignment} from "../redux/assignmentSlice";
 import {Submission} from "../redux/submissionSlice";
+import { CohortDetail } from "redux/cohortSlice";
 import {Announcement} from "redux/announcementsSlice";
 
 class ApiWrapper{
@@ -126,7 +127,7 @@ class ApiWrapper{
         return response.data;
     }
 
-    async createAssignment(payload: Assignment): Promise<Assignment> {
+    async createAssignment(payload: any): Promise<Assignment> {
         let response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         // probably want some better logic here
         let fails = 0;
@@ -134,12 +135,6 @@ class ApiWrapper{
             fails++;
             response = await this.instance.post(this.ENDPOINTS.assignments, payload);
         }
-        return response.data;
-    }
-
-    async getSubmissions(): Promise<Submission[]> {
-        const params = { }
-        const response = await this.instance.get(this.ENDPOINTS.submissions, { params });
         return response.data;
     }
 

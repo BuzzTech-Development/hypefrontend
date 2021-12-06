@@ -12,7 +12,6 @@ import Assignment from 'scenes/AssignmentDescription';
 import Progress from './scenes/Progress';
 import Account from './scenes/Account';
 import Students from './scenes/Students';
-
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
@@ -20,11 +19,13 @@ import { refresh } from 'redux/userSlice';
 import apiInstance from 'utils/api';
 
 import {getAnnouncements} from "./redux/announcementsSlice";
+import Grades from "./scenes/Grades";
 
 function App(props: any) {
     const [loading, setLoading] = useState(true);
     const authenticated = useAppSelector((state) => state.user.authenticated);
     const currentCohort = useAppSelector((state) => state.user.currentCohort);
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
@@ -70,17 +71,24 @@ function App(props: any) {
                         <NavBar content={<CreateAssignment />} />
                     </Route>
                     <Route path="/assignments/:id">
-                        <NavBar content={<Assignment />} />
+                        <NavBar content={<Assignment /> } />
                     </Route>
                     <Route path="/progress">
                         <NavBar content={<Progress />} />
                     </Route>
-                    <Route path="/students">
-                        <NavBar content={<Students />} />
+                    <Route path="/grades">
+                        <NavBar content={<Grades />} />
                     </Route>
                     <Route path="/account">
                         <NavBar content={<Account />} />
                     </Route>
+
+                    {/* Routes reserved for instructors. */}
+                    {role !== "INSTRUCTOR" ? <Redirect to="/home" /> : <Switch>
+                        <Route path="/students">
+                            <NavBar content={<Students />} />
+                        </Route>
+                    </Switch>}
                 </Switch>}
             </Switch>
         </BrowserRouter>

@@ -2,7 +2,7 @@ import {createAction, createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 
 import apiInstance from "utils/api";
 
-enum UserRole {
+export enum UserRole {
     Admin = 'ADMIN',
     Instructor = 'INSTRUCTOR',
     Student = 'STUDENT',

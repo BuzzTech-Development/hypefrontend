@@ -13,7 +13,6 @@ import {useAppSelector} from "../redux/store";
 
 const {Panel} = Collapse;
 
-
 var view : string, setView : Function, 
     sort : string, setSort : Function,
     reversed : boolean, setReversed : Function,
@@ -94,7 +93,8 @@ function CurrentView(props: any) {
     const asyncGetStudents = async () => {
         // Not sure what best practice is here
         const t_students : UserDetail[] = await apiInstance.getStudents();
-        setStudents(t_students);
+        if (t_students.length != 0)
+            setStudents(t_students);
     }
     
     if (students.length === 0) {
@@ -243,9 +243,9 @@ const StudentPanel = (props: any) => {
                 <Descriptions  title="User Info" column={1} bordered>
                     <Descriptions.Item label="Email">{student.email}</Descriptions.Item>
                     <Descriptions.Item label="Cohort">{cohortName}</Descriptions.Item>
-                    <Descriptions.Item label="Guardian E-mail">mom@moms.com</Descriptions.Item>
+                    {/* <Descriptions.Item label="Guardian E-mail">mom@moms.com</Descriptions.Item> */}
                 </Descriptions>
-                <Message  to={student.first_name + " " + student.last_name}/>
+                {/* <Message  to={student.first_name + " " + student.last_name}/> */}
                 <Button icon={<TeamOutlined/>} onClick={showCohortModal}>
                     Change Cohort
                 </Button>
