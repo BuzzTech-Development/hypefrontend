@@ -4,7 +4,8 @@
 }
 
 .Sider {
-    height: 100vh;
+    height: 100%;
+    position: absolute;
 }
 
 .Header {
@@ -22,9 +23,9 @@
 }
 
 .Menu {
-    position: absolute;
+    position: relative;
     width: 100%;
-    top: 60px;
+    height: 100vh;
 }
 
 .Title {
