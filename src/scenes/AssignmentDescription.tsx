@@ -4,17 +4,25 @@ import {withRouter, useParams, Link} from "react-router-dom";
 import {Assignment, assignmentsSelectors, Submission} from "../redux/assignmentSlice";
 import store, {useAppSelector} from "../redux/store";
 import SubmitAssignment from "./SubmitAssignment";
+import {UserRole} from "../redux/userSlice";
+import GradeAssignment from "./GradeAssignment";
 import SubmissionHistoryTable from "./SubmissionHistoryTable";
 
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
+    const { studentId } = props;
     const assignment = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
     const currentUser = useAppSelector((state) => state.user.userDetail);
     const userId = currentUser?.pk;
+    const isTeacher = currentUser?.profile?.role == UserRole.Instructor;
+    console.log(isTeacher)
 
     const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [submissions, updateSubmissions] = useState<Submission[]>([]);
+    const [grade, setGrade] = useState(0);
+    const [graded, setGraded] = useState(false);
+    const [isGradingAssignment, setIsGradingAssignment] = useState(false);
 
     const formatDate = (date: string) => {
         const day = date !== '' ? new Date(date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }): '';
@@ -32,28 +40,44 @@ const AssignmentDescription = (props: any) => {
         return stringList;
     }
 
-    const handleSubmit = () => {
+    const handleStudentSubmit = () => {
         setSubmitted(true);
         setIsSubmittingAssignment(false);
     }
 
+    const handleTeacherSubmit = (grade: number) => {
+        setGrade(grade);
+        setGraded(true);
+        setIsGradingAssignment(false);
+    }
+
     useEffect(() => {
         const submissions = assignment?.submissions.filter((submission: Submission) => submission.author === userId);
-        if (submissions && submissions.length > 0) {
-            setSubmitted(true)
-            updateSubmissions(submissions)
+        if (assignment && submissions && submissions.length > 0) {
+            setSubmitted(true);
+            updateSubmissions(submissions);
+            const latestSubmission = submissions[submissions.length-1];
+            if (latestSubmission.graded) {
+                setGrade(latestSubmission.points / assignment.points);
+                setGraded(true);
+            }
         }
 
     }, [assignment])
 
     if (!assignment) return null;
     const submitText = submitted ? "Resubmit Assignment" : "Submit Assignment";
+    const gradeText = graded ? "Regrade Assignment" : "Grade Assignment";
 
     return (<Space direction='vertical' style={{width: '100%', paddingLeft: '2em'}}>
         <Space direction='horizontal'>
             <PageHeader title={assignment.name} style={{padding: '1em 0 0 0'}} />
             <div style={{padding: '1em 0 0 0'}}>
-                <Button onClick={() => setIsSubmittingAssignment(true)}>{submitText}</Button>
+                {isTeacher ? (
+                    <Button onClick={() => setIsGradingAssignment(true)}>{gradeText}</Button>
+                ) : (
+                    <Button onClick={() => setIsSubmittingAssignment(true)}>{submitText}</Button>
+                )}
             </div>
         </Space>
         <Divider orientation='left' />
@@ -71,7 +95,8 @@ const AssignmentDescription = (props: any) => {
         </Space>
         <Divider />
         {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
-        {isSubmittingAssignment ? <SubmitAssignment assignment={assignment} onSubmit={handleSubmit}/> : null}
+        {isSubmittingAssignment ? <SubmitAssignment assignment={assignment} onSubmit={handleStudentSubmit}/> : null}
+        {isTeacher && isGradingAssignment ? <GradeAssignment assignment={assignment} studentId={studentId} onSubmit={handleTeacherSubmit}/> : null }
         {submitted ? <SubmissionHistoryTable submissions={submissions}/> : null}
     </Space>)
 }

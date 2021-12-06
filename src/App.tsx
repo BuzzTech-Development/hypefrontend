@@ -74,11 +74,8 @@ function App(props: any) {
                     <Route path="/assignments/:id">
                         <NavBar content={<Assignment user={currentUser} /> } user={currentUser}/>
                     </Route>
-                    <Route path="/progress">
-                        <NavBar content={<Progress />} user={currentUser}/>
-                    </Route>
                     <Route path="/grades">
-                        <NavBar content={<Grades user={currentUser}/>} user={currentUser} />
+                        <NavBar content={<Grades student={currentUser}/>} user={currentUser} />
                     </Route>
                     <Route path="/students">
                         <NavBar content={<Students />} user={currentUser}/>

@@ -59,12 +59,6 @@ const NavBar = (props: any) => {
             icon: <UnorderedListOutlined />
         },
         {
-            title: "Progress",
-            key: "progress",
-            path: "/progress",
-            icon: <TrophyOutlined />
-        },
-        {
             title: "Grades",
             key: "grades",
             path: "/grades",
