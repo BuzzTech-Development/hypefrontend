@@ -36,19 +36,17 @@ const gradeToLetter = (grade: number) => {
     return 'F';
 }
 
+const formatDate = (date: string) => {
+    const day = date !== '' ? new Date(date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }): '';
+    const time = date !== '' ? new Date(date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'}) : '';
+    return day + " at " + time;
+}
+
 const SingleGrade = (props: any) => {
     const location = useLocation();
     const submission = props.submission;
     const [grade, setGrade] = useState(0);
     const letterGrade = gradeToLetter(grade);
-
-    /*useEffect(() => {
-        console.log(location.pathname)
-        return () => {
-            if (location.pathname !== '/home') setGrade(0);
-            else setGrade(parseFloat((((submission.points * 1.0) / submission.pointsPossible) * 100).toFixed(2)));
-        };
-    }, [location]);*/
 
     const visibleChange = (isVisible: boolean) => {
         if (isVisible) setGrade(parseFloat((((submission.points * 1.0) / submission.pointsPossible) * 100).toFixed(2)));
@@ -60,7 +58,6 @@ const SingleGrade = (props: any) => {
         <VisibilitySensor onChange={visibleChange}>
             <div style={{width: '50%', margin: '0 auto'}}>
                 <CircularProgressbar value={grade}
-                    text={`${grade}%`}
                     styles={buildStyles({
                         // Rotation of path and trail, in number of turns (0-1)
                         rotation: 0.25,
@@ -78,7 +75,7 @@ const SingleGrade = (props: any) => {
                         // pathTransition: 'none',
                     
                         // Colors
-                        pathColor: `rgba(62, 152, 199, 1)`,
+                        pathColor: `#124552`,
                         textColor: '#f88',
                         trailColor: '#d6d6d6',
                         backgroundColor: '#3e98c7',
@@ -103,12 +100,6 @@ const GradeSummary = (props: any) => {
         const submissions = assignment.submissions.filter((submission: Submission) => submission.author === userId);
         if (submissions.length === 0) return null;
         return submissions[submissions.length-1];
-    }
-
-    const formatDate = (date: string) => {
-        const day = date !== '' ? new Date(date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }): '';
-        const time = date !== '' ? new Date(date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'}) : '';
-        return day + " at " + time;
     }
 
     // most recent submission for all graded assignments
@@ -164,7 +155,7 @@ const RecentAnnouncements = (props: any) => {
     const recents = announcements.slice(0, numAnnouncements);
 
     return (<List size='large' bordered style={{borderRadius: '1em', width: '100%'}}>
-        <div className='ant-list-header' style={{backgroundColor: '#a9a9a9', borderRadius: '1em 1em 0 0', borderBottom: '1px solid black'}}>
+        <div className='ant-list-header' style={{backgroundColor: '#124552', borderRadius: '1em 1em 0 0', borderBottom: '1px solid black'}}>
             <b>Recent Announcements</b>
         </div>
         {recents.map((announcement: Announcement, i: any) =>(
@@ -175,10 +166,51 @@ const RecentAnnouncements = (props: any) => {
             >
                 <Link to={{pathname: `annoucements/${announcement.id}`}} style={{color: 'black', textAlign: 'left'}}>
                     <div>
-                        <b>{announcement.subject}</b> &nbsp; {announcement.created_at.slice(0, 10)}
+                        <b>{announcement.subject}</b> {announcement.created_at.slice(0, 10)}
                     </div>
                     <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(announcement.text)}}
                     style={{maxHeight: '1.15em', lineHeight: '1em', overflow: 'hidden', textOverflow: 'ellipsis'}}></div>
+                </Link>
+            </List.Item>
+        ))}
+    </List>)
+}
+
+const UpcomingAssignments = (props: any) => {
+    let assignments = props.assignments;
+    const [hover, setHover] = useState(-1);
+    const numAssignments = 3;
+
+    // only most recent assignments
+    assignments.sort(function(a: Assignment, b: Assignment) {
+        if (a.due_date === b.due_date) return 0;
+        if (a.due_date === "") return -1;
+        if (b.due_date === "") return 1;
+        return new Date(a.due_date) > new Date(b.due_date) ? 1 : -1
+    });
+    const dateTime = new Date();
+    const current = assignments.filter((v: Assignment) => {
+        return v.due_date !== "" && (new Date(v.due_date) > dateTime)
+    });
+    const recents = current.slice(0, numAssignments);
+
+    return (<List size='large' bordered style={{borderRadius: '1em', width: '100%'}}>
+        <div className='ant-list-header' style={{backgroundColor: '#124552', borderRadius: '1em 1em 0 0', borderBottom: '1px solid black'}}>
+            <b>Upcoming Assignments</b>
+        </div>
+        {recents.map((assignment: Assignment, i: any) =>(
+            <List.Item key={i}
+                style={hover === i ? (i === recents.length ? hoverBottomStyle : hoverStyle) : nonhoverStyle}
+                onMouseEnter={() => setHover(i)}
+                onMouseLeave={() => setHover(-1)}
+            >
+                <Link to={{pathname: `assignments/${assignment.id}`}} style={{color: 'black'}}>
+                    <div style={{textAlign: 'left'}}>
+                        <b>{assignment.name}</b>
+                    </div>
+                    <div style={{maxHeight: '1.15em', lineHeight: '1em', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                        <b>Due</b> {formatDate(assignment.due_date)}
+                    </div>
                 </Link>
             </List.Item>
         ))}
@@ -201,9 +233,12 @@ const Home = () => {
                 <GradeSummary assignments={assignments}/>
             </Col>
         </Row>
-        <Row style={rowStyle}>
-            <Col span={24}>
+        <Row style={rowStyle} gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            <Col span={12}>
                 <RecentAnnouncements announcements={announcements} />
+            </Col>
+            <Col span={12}>
+                <UpcomingAssignments assignments={assignments} />
             </Col>
         </Row>
     </div>)
