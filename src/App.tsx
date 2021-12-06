@@ -11,7 +11,11 @@ import Assignments from './scenes/Assignments';
 import Assignment from 'scenes/AssignmentDescription';
 import Progress from './scenes/Progress';
 import Account from './scenes/Account';
+<<<<<<< HEAD
 import Students from 'scenes/Students';
+=======
+import Students from './scenes/Students';
+>>>>>>> e8bf35dfd59eaa16c3407d2d213893d2a0c89d87
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
@@ -74,14 +78,8 @@ function App(props: any) {
                     <Route path="/assignments/:id">
                         <NavBar content={<Assignment user={currentUser} /> } user={currentUser}/>
                     </Route>
-                    <Route path="/progress">
-                        <NavBar content={<Progress />} user={currentUser}/>
-                    </Route>
                     <Route path="/grades">
-                        <NavBar content={<Grades user={currentUser}/>} user={currentUser} />
-                    </Route>
-                    <Route path="/students">
-                        <NavBar content={<Students />} user={currentUser}/>
+                        <NavBar content={<Grades student={currentUser}/>} user={currentUser} />
                     </Route>
                     <Route path="/account">
                         <NavBar content={<Account />} user={currentUser}/>

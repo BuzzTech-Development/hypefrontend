@@ -158,7 +158,11 @@ const View = () => {
                     <Descriptions.Item label="First Name">{user.first_name}</Descriptions.Item>
                     <Descriptions.Item label="Last Name">{user.last_name}</Descriptions.Item>
                     <Descriptions.Item label="E-Mail">{user.email}</Descriptions.Item>
+<<<<<<< HEAD
                     <Descriptions.Item label="Role">{user.profile === null || user.profile === undefined ? "" : (user.profile.role as string)}</Descriptions.Item>
+=======
+                    <Descriptions.Item label="Role">{user.profile === null || user.profile === undefined ? "" : user.profile.role[0] + user.profile.role.slice(1).toLowerCase()}</Descriptions.Item>
+>>>>>>> e8bf35dfd59eaa16c3407d2d213893d2a0c89d87
                     {/* <Descriptions.Item label="No. Of Badges">1234</Descriptions.Item> */}
                     <Descriptions.Item label="Password"> 
                     <Space align="center" size="large">
