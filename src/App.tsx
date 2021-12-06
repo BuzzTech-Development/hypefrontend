@@ -80,9 +80,6 @@ function App(props: any) {
                     <Route path="/grades">
                         <NavBar content={<Grades user={currentUser}/>} user={currentUser} />
                     </Route>
-                    <Route path="/students">
-                        <NavBar content={<Students />} user={currentUser}/>
-                    </Route>
                     <Route path="/account">
                         <NavBar content={<Account />} user={currentUser}/>
                     </Route>
