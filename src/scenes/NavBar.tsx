@@ -28,13 +28,9 @@ interface ApplicationTab {
 const NavBar = (props: any) => {
     const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const dispatch = useAppDispatch();
-
     const cohorts = useAppSelector(state => state.user.userDetail?.profile?.cohorts || []);
     const currentCohort = useAppSelector(state => state.user.currentCohort);
     const onSelectCohort = (cohortId: number) => dispatch(selectCohort(cohortId));
-
-    console.log(cohorts);
-
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
     const user = props.user;
@@ -128,7 +124,7 @@ const NavBar = (props: any) => {
                     </span>
                     <Select value={currentCohort} onSelect={onSelectCohort} className={styles.Select}>
                         {cohorts.map(cohort => (
-                            <Select.Option value={cohort.id}>{cohort.name}</Select.Option>
+                            <Select.Option key={cohort.id} value={cohort.id}>{cohort.name}</Select.Option>
                         ))}
                     </Select>
                 </Layout.Header>

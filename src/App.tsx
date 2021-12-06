@@ -73,9 +73,6 @@ function App(props: any) {
                     <Route path="/assignments/:id">
                         <NavBar content={<Assignment /> } />
                     </Route>
-                    <Route path="/progress">
-                        <NavBar content={<Progress />} />
-                    </Route>
                     <Route path="/grades">
                         <NavBar content={<Grades />} />
                     </Route>

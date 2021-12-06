@@ -88,6 +88,7 @@ const Students = () => {
 function CurrentView(props: any) {
 
     [students, setStudents] = useState<UserDetail []>([]);
+    console.log("snee", students)
     const cohorts = useAppSelector(state => state.user.userDetail?.profile?.cohorts || []);
 
     const asyncGetStudents = async () => {

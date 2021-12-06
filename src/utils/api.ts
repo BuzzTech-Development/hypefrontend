@@ -2,9 +2,7 @@ import axios, {AxiosInstance, AxiosResponse} from "axios";
 import {UserDetail} from "../redux/userSlice";
 import {Meeting} from "../redux/meetingsSlice";
 import { Cohort } from "redux/userSlice";
-import {Assignment} from "../redux/assignmentSlice";
-import {Submission} from "../redux/submissionSlice";
-import { CohortDetail } from "redux/cohortSlice";
+import {Assignment, Submission} from "../redux/assignmentSlice";
 import {Announcement} from "redux/announcementsSlice";
 
 class ApiWrapper{

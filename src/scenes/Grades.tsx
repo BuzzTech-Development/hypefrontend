@@ -57,7 +57,7 @@ const Grades = (props: any) => {
         });
 
         submitted.map((assignment: Assignment, i:any) => {
-            const submission = getMostRecentSubmission(assignment, student.pk);
+            const submission = getMostRecentSubmission(assignment);
             if (!submission) return null;
             const dataValue = {
                 key: i,

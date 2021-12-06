@@ -43,7 +43,6 @@ const formatDate = (date: string) => {
 }
 
 const SingleGrade = (props: any) => {
-    const location = useLocation();
     const submission = props.submission;
     const [grade, setGrade] = useState(0);
     const letterGrade = gradeToLetter(grade);
@@ -95,6 +94,7 @@ const GradeSummary = (props: any) => {
         );
         return submissions.length !== 0;
     });
+    if (submitted.length === 0) return <></>;
 
     const getMostRecentSubmission = (assignment: Assignment) => {
         const submissions = assignment.submissions.filter((submission: Submission) => submission.author === userId);
@@ -116,6 +116,7 @@ const GradeSummary = (props: any) => {
         }
         return dataValue;
     }).filter((submission: any) => { return submission !== null });
+    console.log(submissions)
 
     // calculate overall grade
     let totalPoints = 0;
