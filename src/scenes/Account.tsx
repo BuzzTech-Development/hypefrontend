@@ -4,7 +4,7 @@ import {Button, Col, Avatar, Row, Menu, Collapse, Descriptions, Upload, message,
 import { UserOutlined, UploadOutlined, InfoOutlined, SettingOutlined, EditOutlined, LockOutlined} from '@ant-design/icons';
 
 import apiInstance from "utils/api";
-import { UserDetail } from 'redux/userSlice';
+import { UserDetail} from 'redux/userSlice';
 
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
@@ -59,9 +59,9 @@ const Account = () => {
                     <Menu.Item key="info" icon={<InfoOutlined />}>
                         Info
                     </Menu.Item>
-                    <Menu.Item key="settings" icon={<SettingOutlined />}>
+                    {/* <Menu.Item key="settings" icon={<SettingOutlined />}>
                         Settings
-                    </Menu.Item>
+                    </Menu.Item> */}
                 </Menu>
             </Row>
             <Row justify="center">
@@ -142,10 +142,9 @@ const View = () => {
                     <Avatar size={128} icon={<UserOutlined/>}></Avatar>
                 </Col>
                 <Col >
-                      <Upload {...props}>
-                            {/* Need to figure out how to use s3 with this */}
+                      {/* <Upload {...props}>
                             <Button icon={<UploadOutlined />}>Change Avatar</Button>
-                        </Upload>
+                        </Upload> */}
                 </Col>
             </Row>
             <Row>
@@ -159,8 +158,8 @@ const View = () => {
                     <Descriptions.Item label="First Name">{user.first_name}</Descriptions.Item>
                     <Descriptions.Item label="Last Name">{user.last_name}</Descriptions.Item>
                     <Descriptions.Item label="E-Mail">{user.email}</Descriptions.Item>
-                    <Descriptions.Item label="Role">{user.profile === null ? "" : user.profile.role[0] + user.profile.role.slice(1).toLowerCase()}</Descriptions.Item>
-                    <Descriptions.Item label="No. Of Badges">1234</Descriptions.Item>
+                    <Descriptions.Item label="Role">{user.profile === null || user.profile === undefined ? "" : user.profile.role[0] + user.profile.role.slice(1).toLowerCase()}</Descriptions.Item>
+                    {/* <Descriptions.Item label="No. Of Badges">1234</Descriptions.Item> */}
                     <Descriptions.Item label="Password"> 
                     <Space align="center" size="large">
                         <Col>********</Col>

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
 import {useAppSelector, useAppDispatch} from "./redux/store";
 import NavBar from './scenes/NavBar';
@@ -11,25 +11,38 @@ import Assignments from './scenes/Assignments';
 import Assignment from 'scenes/AssignmentDescription';
 import Progress from './scenes/Progress';
 import Account from './scenes/Account';
-import Students from 'scenes/Students';
+import Students from './scenes/Students';
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
+import { refresh } from 'redux/userSlice';
+import apiInstance from 'utils/api';
+
+import {getAnnouncements} from "./redux/announcementsSlice";
+import Grades from "./scenes/Grades";
 
 function App(props: any) {
+    const [loading, setLoading] = useState(true);
     const authenticated = useAppSelector((state) => state.user.authenticated);
+    const currentUser = useAppSelector((state) => state.user.userDetail);
     const currentCohort = useAppSelector((state) => state.user.currentCohort);
     const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
+        if (loading) {
+            dispatch(refresh());
+            setLoading(false);
+        }
         if (authenticated && currentCohort) {
             dispatch(getMeetings(currentCohort));
+            dispatch(getAnnouncements(currentCohort));
         }
         if (authenticated) {
             dispatch(getAssignments());
         }
     }, [authenticated, currentCohort])
+
 
     return (
         <BrowserRouter>
@@ -44,28 +57,34 @@ function App(props: any) {
 
                 {!authenticated ? <Redirect to="/login" /> : <Switch>
                     <Route path="/home">
-                        <NavBar content={<Home />} />
+                        <NavBar content={<Home />} user={currentUser}/>
                     </Route>
                     <Route path="/announcements">
-                        <NavBar content={<Announcements />} />
+                        <NavBar content={<Announcements />} user={currentUser}/>
                     </Route>
                     <Route path="/calendar">
-                        <NavBar content={<Calendar />} />
+                        <NavBar content={<Calendar />} user={currentUser}/>
                     </Route>
                     <Route exact path="/assignments">
-                        <NavBar content={<Assignments />} />
+                        <NavBar content={<Assignments />} user={currentUser}/>
                     </Route>
                     <Route path="/assignments/create">
-                        <NavBar content={<CreateAssignment />} />
+                        <NavBar content={<CreateAssignment />} user={currentUser}/>
                     </Route>
                     <Route path="/assignments/:id">
-                        <NavBar content={<Assignment />} />
+                        <NavBar content={<Assignment user={currentUser} /> } user={currentUser}/>
                     </Route>
                     <Route path="/progress">
-                        <NavBar content={<Progress />} />
+                        <NavBar content={<Progress />} user={currentUser}/>
+                    </Route>
+                    <Route path="/grades">
+                        <NavBar content={<Grades user={currentUser}/>} user={currentUser} />
+                    </Route>
+                    <Route path="/students">
+                        <NavBar content={<Students />} user={currentUser}/>
                     </Route>
                     <Route path="/account">
-                        <NavBar content={<Account />} />
+                        <NavBar content={<Account />} user={currentUser}/>
                     </Route>
 
                     {/* Routes reserved for instructors. */}
@@ -79,5 +98,6 @@ function App(props: any) {
         </BrowserRouter>
     )
 }
+
 
 export default App;

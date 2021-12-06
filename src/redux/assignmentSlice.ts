@@ -1,21 +1,32 @@
 import {createAsyncThunk, createEntityAdapter, createSlice} from "@reduxjs/toolkit";
 import apiInstance from "utils/api";
 import {RootState} from "./store";
-import moment from "moment";
+
+export interface Submission {
+    id: number;
+    author: number;
+    time: string;
+    assignment: number;
+    comments: string;
+    graded: boolean;
+    points: number;
+    files: any;
+}
 
 export interface Assignment {
     name: string;
-    id?: number;
+    id: number;
+    cohort: number;
     creation_date: string;
-    description?: string;
+    description: string;
     points: number;
-    badge?: number;
+    badge: number;
     due_date: string;
-    undated: boolean;
-    graded: boolean;
-    grade?: number;
-    num_files: number; // temp for files
+    file_extensions: string[];
+    submissions: Submission[]
 }
+
+
 
 const assignmentsAdapter = createEntityAdapter<Assignment>();
 
@@ -26,9 +37,23 @@ export const getAssignments = createAsyncThunk(
 
 export const createAssignment = createAsyncThunk(
     'CREATE_ASSIGNMENT',
-    async (payload: Assignment) => {
+    async (payload: any) => {
         return apiInstance.createAssignment(payload);
     },
+)
+
+export const createSubmission = createAsyncThunk(
+    'CREATE_SUBMISSION',
+    async (payload: any) => {
+        return apiInstance.createSubmission(payload);
+    },
+)
+
+export const gradeSubmission = createAsyncThunk(
+    'GRADE_SUBMISSION',
+    async (payload: number) => {
+        return apiInstance.gradeSubmission(payload);
+    }
 )
 
 const assignmentsSlice = createSlice({
@@ -42,6 +67,24 @@ const assignmentsSlice = createSlice({
             })
             .addCase(createAssignment.fulfilled, (state, action) => {
                 assignmentsAdapter.addOne(state, action.payload)
+            })
+            .addCase(createSubmission.fulfilled, (state, action) => {
+                const assignment = {...state.entities[action.payload.assignment]};
+                if (assignment.submissions) {
+                    assignment.submissions = [...assignment.submissions, action.payload];
+                } else {
+                    assignment.submissions = [action.payload];
+                }
+                assignmentsAdapter.updateOne(state, {id: action.payload.assignment, changes: assignment});
+            })
+            .addCase(gradeSubmission.fulfilled, (state, action) => {
+                const assignment = {...state.entities[action.payload.assignment]};
+                const submissions = assignment.submissions?.filter((submission) => submission.id === action.payload.id);
+                if (submissions) {
+                    submissions[0].graded = true;
+                    submissions[0].points = action.payload.points;
+                } else return;
+                assignmentsAdapter.updateOne(state, {id: action.payload.assignment, changes: assignment})
             })
     }
 })
