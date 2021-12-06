@@ -62,18 +62,20 @@ const NavBar = (props: any) => {
             icon: <UnorderedListOutlined />
         },
         // view students only if instructor
-        ...role === "INSTRUCTOR" ? [{
+        ...role === "INSTRUCTOR" || role === "ADMIN" ? [{
             title: "Students",
             key: "students",
             path: "/students",
             icon: <TeamOutlined />
-        }] : [],
-        {
-            title: "Grades",
-            key: "grades",
-            path: "/grades",
-            icon: <FormOutlined />
-        },
+        }] : [
+            {
+                title: "Grades",
+                key: "grades",
+                path: "/grades",
+                icon: <FormOutlined />
+            },
+        ],
+
         {
             title: "Account",
             key: "account",

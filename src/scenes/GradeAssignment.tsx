@@ -18,16 +18,20 @@ const GradeAssignment = (props: any) => {
         width: '3em'
     };
 
+    const submission = getMostRecentSubmission(assignment, studentId);
+
     const gradeAssignment = () => {
-        dispatch(gradeSubmission(points));
+        const payload = {
+            submissionId: submission?.id,
+            points: points,
+        }
+        dispatch(gradeSubmission(payload));
         onSubmit(points);
     }
 
     const setGrade = (points: any) => {
         if (points) setPoints(points);
     }
-
-    const submission = getMostRecentSubmission(assignment, studentId);
 
     return (
         <>

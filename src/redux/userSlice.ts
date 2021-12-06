@@ -32,6 +32,8 @@ interface UserState {
     authenticated: boolean;
     userDetail?: UserDetail;
     currentCohort?: number;
+    invalidCred?: boolean;
+    students?: UserDetail[];
 }
 
 const initialState: UserState = {
@@ -46,6 +48,11 @@ export const login = createAsyncThunk(
 export const refresh = createAsyncThunk(
     'REFRESH',
     async () => apiInstance.refreshToken()
+)
+
+export const getStudents = createAsyncThunk(
+    'GETSTUDENTS',
+    async () => apiInstance.getStudents(),
 )
 
 export const selectCohort = createAction<number>('user/SELECT_COHORT');
@@ -66,6 +73,15 @@ const userSlice = createSlice({
                 userDetail: action.payload,
                 currentCohort: action.payload.profile?.cohorts[0].id,
             }));
+        builder.addCase(login.rejected, (state, action) => ({
+                ...state,
+                authenticated: false,
+                invalidCred: true
+            }));
+        builder.addCase(getStudents.fulfilled, (state, action) => ({
+            ...state,
+            students: action.payload
+        }));
         builder.addCase(refresh.fulfilled, (state, action) => ({
                 ...state,
                 authenticated: true,

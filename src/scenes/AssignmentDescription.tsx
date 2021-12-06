@@ -11,12 +11,12 @@ import SubmissionHistoryTable from "./SubmissionHistoryTable";
 const DOMPurify = require('dompurify')(window);
 
 const AssignmentDescription = (props: any) => {
-    const {id} = useParams<{id? : any}>();
-    const { studentId } = props;
+    const {assignmentId, studentId} = useParams<{assignmentId? : any, studentId? : any}>();
     const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
-    const assignment = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === id);
+    const assignment = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === assignmentId);
     const currentUser = useAppSelector((state) => state.user.userDetail);
-    const userId = currentUser?.pk;
+    const isTeacher = currentUser?.profile?.role == UserRole.Instructor;
+    const userId = isTeacher ? studentId : currentUser?.pk;
     const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [submissions, updateSubmissions] = useState<Submission[]>([]);
@@ -52,7 +52,7 @@ const AssignmentDescription = (props: any) => {
     }
 
     useEffect(() => {
-        const submissions = assignment?.submissions.filter((submission: Submission) => submission.author === userId);
+        const submissions = assignment?.submissions.filter((submission: Submission) => submission.author == userId);
         if (assignment && submissions && submissions.length > 0) {
             setSubmitted(true);
             updateSubmissions(submissions);
@@ -73,8 +73,8 @@ const AssignmentDescription = (props: any) => {
         <Space direction='horizontal'>
             <PageHeader title={assignment.name} style={{padding: '1em 0 0 0'}} />
             <div style={{padding: '1em 0 0 0'}}>
-                {role === "INSTRUCTOR" ? (
-                    <Button onClick={() => setIsGradingAssignment(true)}>{gradeText}</Button>
+                {isTeacher ? (
+                    userId ? <Button onClick={() => setIsGradingAssignment(true)}>{gradeText}</Button> : <></>
                 ) : (
                     <Button onClick={() => setIsSubmittingAssignment(true)}>{submitText}</Button>
                 )}

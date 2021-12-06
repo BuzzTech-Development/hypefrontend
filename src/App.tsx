@@ -15,7 +15,7 @@ import Students from './scenes/Students';
 import './App.css';
 import {getAssignments} from "./redux/assignmentSlice";
 import {getMeetings} from "./redux/meetingsSlice";
-import { refresh } from 'redux/userSlice';
+import { getStudents, refresh } from 'redux/userSlice';
 import apiInstance from 'utils/api';
 
 import {getAnnouncements} from "./redux/announcementsSlice";
@@ -36,6 +36,7 @@ function App(props: any) {
         if (authenticated && currentCohort) {
             dispatch(getMeetings(currentCohort));
             dispatch(getAnnouncements(currentCohort));
+            dispatch(getStudents());
         }
         if (authenticated) {
             dispatch(getAssignments());
@@ -70,11 +71,14 @@ function App(props: any) {
                     <Route path="/assignments/create">
                         <NavBar content={<CreateAssignment />} />
                     </Route>
-                    <Route path="/assignments/:id">
-                        <NavBar content={<Assignment /> } />
+                    <Route path="/assignments/:assignmentId/:studentId?">
+                        <NavBar content={<Assignment user={currentUser} /> } user={currentUser}/>
                     </Route>
-                    <Route path="/grades">
-                        <NavBar content={<Grades />} />
+                    <Route exact path="/grades">
+                        <NavBar content={<Grades student={currentUser}/>} user={currentUser} />
+                    </Route>
+                    <Route path="/students/:studentId">
+                        <NavBar content={<Grades student={currentUser}/>} user={currentUser} />
                     </Route>
                     <Route path="/account">
                         <NavBar content={<Account />} />

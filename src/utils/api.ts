@@ -81,10 +81,15 @@ class ApiWrapper{
 
     async login(payload: { username: string, password: string }): Promise<UserDetail> {
         const response = await this.instance.post(this.ENDPOINTS.tokenAuth, payload);
-        const token: string = response.data.token;
-        ApiWrapper.storeToken(token);
-        this.setTokenAuth(token);
-        return this.getUserDetail();
+        if (response.status == 200) {
+            const token: string = response.data.token;
+            ApiWrapper.storeToken(token);
+            this.setTokenAuth(token);
+            return this.getUserDetail();
+        } else {
+            return Promise.reject();
+        }
+
     }
 
     async getUserDetail(): Promise<UserDetail> {
@@ -100,6 +105,11 @@ class ApiWrapper{
     async getMeetings(cohortId: number): Promise<Meeting[]> {
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.meetings, { params });
+        return response.data;
+    }
+
+    async getCohorts(): Promise<Cohort[]> {
+        const response = await this.instance.get(this.ENDPOINTS.cohorts);
         return response.data;
     }
 
@@ -141,14 +151,27 @@ class ApiWrapper{
         return response.data;
     }
 
-    async gradeSubmission(payload: number): Promise<Submission> {
-        const response = await this.instance.patch(this.ENDPOINTS.submissions, payload);
+    async gradeSubmission(payload: any): Promise<Submission> {
+        const points = {
+            points: payload.points
+        }
+        const graded = {
+            graded: true
+        }
+        let response = await this.instance.patch(this.ENDPOINTS.submissions + payload.submissionId + "/", points);
+        response = await this.instance.patch(this.ENDPOINTS.submissions + payload.submissionId + "/", graded);
         return response.data;
     }
 
     async getAnnouncements(cohortId: number): Promise<Announcement[]> {
         const params = { cohort: cohortId };
         const response = await this.instance.get(this.ENDPOINTS.announcements, { params });
+        return response.data;
+    }
+
+    async makeAnnouncement(cohortID: number, subject: string, text: string): Promise<Announcement> {
+        const params = {cohort: cohortID, subject: subject, text: text};
+        const response = await this.instance.post(this.ENDPOINTS.announcements, params);
         return response.data;
     }
 }

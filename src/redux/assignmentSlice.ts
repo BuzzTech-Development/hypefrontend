@@ -51,7 +51,7 @@ export const createSubmission = createAsyncThunk(
 
 export const gradeSubmission = createAsyncThunk(
     'GRADE_SUBMISSION',
-    async (payload: number) => {
+    async (payload: any) => {
         return apiInstance.gradeSubmission(payload);
     }
 )
