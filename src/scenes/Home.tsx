@@ -110,13 +110,12 @@ const GradeSummary = (props: any) => {
             key: i,
             id: assignment.id,
             name: assignment.name,
-            submittedDate: formatDate(submission.time),
+            submittedDate: submission.time,
             points: submission.points,
             pointsPossible: assignment.points
         }
         return dataValue;
     }).filter((submission: any) => { return submission !== null });
-    console.log(submissions)
 
     // calculate overall grade
     let totalPoints = 0;
@@ -130,7 +129,7 @@ const GradeSummary = (props: any) => {
 
     // most recent submissions
     const numGrades = 3;
-    submissions.sort((a: any, b : any) => (a.submittedDate > b.submittedDate) ? -1 : 1);
+    submissions.sort((a: any, b : any) => (new Date(a.submittedDate.replace(' at', ',')) > new Date(b.submittedDate.replace(' at', ','))) ? -1 : 1);
     const recents = submissions.slice(0, numGrades);
 
     return <div style={{border: '1px solid grey', borderRadius: '1em', width: '100%', textAlign: 'left', padding: '1em'}}>
