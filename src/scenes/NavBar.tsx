@@ -12,7 +12,7 @@ import {
     UserOutlined
 } from "@ant-design/icons";
 
-import { useAppDispatch } from 'redux/store';
+import { useAppSelector, useAppDispatch } from 'redux/store';
 import { logout } from 'redux/userSlice';
 import styles from './Home.module.css';
 import Students from './Students';
@@ -27,6 +27,7 @@ interface ApplicationTab {
 }
 
 const NavBar = (props: any) => {
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const dispatch = useAppDispatch();
     const [menuCollapsed, setMenuCollapsed] = useState(false);
     const onCollapse = (collapsed: boolean) => setMenuCollapsed(collapsed);
@@ -58,12 +59,13 @@ const NavBar = (props: any) => {
             path: "/assignments",
             icon: <UnorderedListOutlined />
         },
-        {
-            title: "Progress",
-            key: "progress",
-            path: "/progress",
-            icon: <TrophyOutlined />
-        },
+        // view students only if instructor
+        ...role === "INSTRUCTOR" ? [{
+            title: "Students",
+            key: "students",
+            path: "/students",
+            icon: <TeamOutlined />
+        }] : [],
         {
             title: "Grades",
             key: "grades",
@@ -77,17 +79,6 @@ const NavBar = (props: any) => {
             icon: <UserOutlined />
         }
     ]
-    if (user?.profile?.role === UserRole.Instructor || user?.profile?.role === UserRole.Admin) {
-        tabs.splice(tabs.length - 2, 0, 
-            {
-                title: "Students",
-                key: "students",
-                path: "/students",
-                icon: <TeamOutlined />
-            }
-            
-        )
-    }
 
     const selectedTab = tabs.find(
         tab => matchPath(props.location.pathname, { path: tab.path, exact: tab.exact || false })

@@ -8,7 +8,7 @@ import {createSubmission} from "../redux/assignmentSlice";
 import { count } from "console";
 
 const SubmitAssignment = (props: any) => {
-    const {assignment} = props;
+    const {assignment, onSubmit} = props;
     const [description, setDescription] = useState('');
     const [fileList, updateFileList] = useState<any[]>([]);
     //const [errors, setErrors] = useState(Array(assignment.num_files).fill(''));
@@ -62,6 +62,7 @@ const SubmitAssignment = (props: any) => {
         });
         dispatch(createSubmission(formData));
         alert('Submission has been uploaded.');
+        onSubmit();
     }
 
     const uploadProps = {
