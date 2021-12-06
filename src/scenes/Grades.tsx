@@ -16,6 +16,12 @@ const Grades = (props: any) => {
     const retStud = studList?.filter((user) => user.pk == studentId)[0];
     const student  = currentUser?.profile?.role === "STUDENT" ? props.student: retStud ;
 
+    const getMostRecentSubmission = (assignment: Assignment) => {
+        const submissions = assignment.submissions.filter((submission: Submission) => submission.author === userId);
+        if (submissions.length === 0) return null;
+        return submissions[submissions.length-1];
+    }
+
     const formatDate = (date: string) => {
         const day = date !== '' ? new Date(date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }): '';
         const time = date !== '' ? new Date(date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'}) : '';
@@ -55,7 +61,7 @@ const Grades = (props: any) => {
         });
 
         submitted.map((assignment: Assignment, i:any) => {
-            const submission = getMostRecentSubmission(assignment, student.pk);
+            const submission = getMostRecentSubmission(assignment);
             if (!submission) return null;
             const dataValue = {
                 key: i,
@@ -64,7 +70,7 @@ const Grades = (props: any) => {
                 name: assignment.name,
                 dueDate: formatDate(assignment.due_date),
                 submittedDate: formatDate(submission.time),
-                grade: submission.graded ? submission.points / assignment.points : "Not yet graded"
+                grade: submission.graded ? ((submission.points / assignment.points * 100).toFixed(2)).toString() + '%' : "Not yet graded"
             }
             updateTableData(oldArray =>[...oldArray, dataValue])
         })

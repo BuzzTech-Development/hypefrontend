@@ -8,13 +8,15 @@ import {UserRole} from "../redux/userSlice";
 import GradeAssignment from "./GradeAssignment";
 import SubmissionHistoryTable from "./SubmissionHistoryTable";
 
+const DOMPurify = require('dompurify')(window);
+
 const AssignmentDescription = (props: any) => {
     const {assignmentId, studentId} = useParams<{assignmentId? : any, studentId? : any}>();
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const assignment = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === assignmentId);
     const currentUser = useAppSelector((state) => state.user.userDetail);
     const isTeacher = currentUser?.profile?.role == UserRole.Instructor;
     const userId = isTeacher ? studentId : currentUser?.pk;
-
     const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [submissions, updateSubmissions] = useState<Submission[]>([]);
@@ -92,9 +94,9 @@ const AssignmentDescription = (props: any) => {
             </div> : null}
         </Space>
         <Divider />
-        {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
+        {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(assignment.description)}}></div>}
         {isSubmittingAssignment ? <SubmitAssignment assignment={assignment} onSubmit={handleStudentSubmit}/> : null}
-        {isTeacher && isGradingAssignment ? <GradeAssignment assignment={assignment} studentId={studentId} onSubmit={handleTeacherSubmit}/> : null }
+        {role === "INSTRUCTOR" && isGradingAssignment ? <GradeAssignment assignment={assignment} studentId={studentId} onSubmit={handleTeacherSubmit}/> : null }
         {submitted ? <SubmissionHistoryTable submissions={submissions}/> : null}
     </Space>)
 }

@@ -4,10 +4,11 @@ import {Button, Col, Avatar, Row, Input, Layout, Menu, Radio, Collapse, Descript
 import { UserOutlined, TeamOutlined, SwapOutlined, CloseOutlined,SearchOutlined, FormOutlined} from '@ant-design/icons';
 import { useAppSelector } from 'redux/store';
 import apiInstance from "utils/api";
-import { UserDetail } from 'redux/userSlice';
+import { UserDetail, Cohort } from 'redux/userSlice';
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
-import { Cohort } from 'redux/userSlice';
+import {useSelector} from "react-redux";
+import {useAppSelector} from "../redux/store";
 import Grades from './Grades';
 import { Link } from 'react-router-dom';
 
@@ -180,8 +181,8 @@ function CurrentView(props: any) {
         output = (<>
             <Collapse>
                 {sub_cohorts.map((cohort) => 
-                    <Panel key={cohort.name.name} header={cohort.name}>
-                        <Message to={cohort.name} cohort={cohorts.indexOf(cohort.name) + 1}/>
+                    <Panel key={cohort.name.name} header={cohort.name.name}>
+                        <Message to={cohort.name.name} cohort={cohorts.indexOf(cohort.name) + 1}/>
                         <Danger action="Delete Cohort" callback={deleteCohort} icon={<CloseOutlined/>}/>
                         <Collapse>
 
