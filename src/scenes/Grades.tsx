@@ -12,6 +12,12 @@ const Grades = (props: any) => {
     const currentUser = useAppSelector((state) => state.user.userDetail);
     const userId = currentUser?.pk;
 
+    const getMostRecentSubmission = (assignment: Assignment) => {
+        const submissions = assignment.submissions.filter((submission: Submission) => submission.author === userId);
+        if (submissions.length === 0) return null;
+        return submissions[submissions.length-1];
+    }
+
     const formatDate = (date: string) => {
         const day = date !== '' ? new Date(date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }): '';
         const time = date !== '' ? new Date(date).toLocaleTimeString("en-US", { hour: 'numeric', minute: '2-digit'}) : '';
@@ -59,7 +65,7 @@ const Grades = (props: any) => {
                 name: assignment.name,
                 dueDate: formatDate(assignment.due_date),
                 submittedDate: formatDate(submission.time),
-                grade: submission.graded ? submission.points / assignment.points : "Not yet graded"
+                grade: submission.graded ? ((submission.points / assignment.points * 100).toFixed(2)).toString() + '%' : "Not yet graded"
             }
             updateTableData(oldArray =>[...oldArray, dataValue])
         })

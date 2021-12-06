@@ -8,6 +8,8 @@ import {UserRole} from "../redux/userSlice";
 import GradeAssignment from "./GradeAssignment";
 import SubmissionHistoryTable from "./SubmissionHistoryTable";
 
+const DOMPurify = require('dompurify')(window);
+
 const AssignmentDescription = (props: any) => {
     const {id} = useParams<{id? : any}>();
     const { studentId } = props;
@@ -92,9 +94,9 @@ const AssignmentDescription = (props: any) => {
             </div> : null}
         </Space>
         <Divider />
-        {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: assignment.description}}></div>}
+        {typeof assignment.description === 'undefined' ? null : <div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(assignment.description)}}></div>}
         {isSubmittingAssignment ? <SubmitAssignment assignment={assignment} onSubmit={handleStudentSubmit}/> : null}
-        {isTeacher && isGradingAssignment ? <GradeAssignment assignment={assignment} studentId={studentId} onSubmit={handleTeacherSubmit}/> : null }
+        {role === "INSTRUCTOR" && isGradingAssignment ? <GradeAssignment assignment={assignment} studentId={studentId} onSubmit={handleTeacherSubmit}/> : null }
         {submitted ? <SubmissionHistoryTable submissions={submissions}/> : null}
     </Space>)
 }

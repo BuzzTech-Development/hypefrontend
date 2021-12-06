@@ -28,8 +28,8 @@ const Calendar = (props: any) => {
 
         return (
             <ul>
-                {meetingsOnDate.map(meeting => <li>{meeting.name}</li>)}
-                {assignmentsOnDate.map(assignment => <li>{assignment.name}</li>)}
+                {meetingsOnDate.map((meeting, i) => <li key={i}>{meeting.name}</li>)}
+                {assignmentsOnDate.map((assignment, i) => <li key={i}>{assignment.name}</li>)}
             </ul>
         )
     };
@@ -43,9 +43,9 @@ const Calendar = (props: any) => {
         <>
             <Modal title={moment(selectedDate).format('dddd[,] MMMM Do')} visible={isModalVisible} onOk={()=>setIsModalVisible(false)} onCancel={() => setIsModalVisible(false)}>
                     <h3>Assignments</h3>
-                    {assignments.map(assignment => {
+                    {assignments.map((assignment, i) => {
                         if (selectedDate === moment(assignment.due_date).format('YYYY-MM-DD')) {
-                            return (<Link to={`/assignments/${assignment.id}`}>
+                            return (<Link key={i} to={`/assignments/${assignment.id}`}>
                                 <Card hoverable>
                                     <b>{assignment.name}</b><br/>Due at {moment(assignment.due_date).format('hh:mma')}
                                 </Card>
@@ -53,9 +53,9 @@ const Calendar = (props: any) => {
                         }
                     })}
                     <h3>Meetings</h3>
-                    {meetings.map(meeting => {
+                    {meetings.map((meeting, i) => {
                         if (selectedDate === moment(meeting.date).format('YYYY-MM-DD')) {
-                            return (<Link to={`/meetings/${meeting.id}`}>
+                            return (<Link key={i} to={`/meetings/${meeting.id}`}>
                                 <Card hoverable>
                                     <b>{meeting.name}</b><br/>At {moment(meeting.date).format('hh:mma')}
                                 </Card>

@@ -3,6 +3,8 @@ import {useSelector} from "react-redux";
 import {Empty, List} from "antd";
 import {Announcement, announcementsSelectors} from "../redux/announcementsSlice";
 
+const DOMPurify = require('dompurify')(window);
+
 const Announcements = () => {
     const announcements = useSelector(announcementsSelectors.selectAll);
 
@@ -17,7 +19,7 @@ const Announcements = () => {
                 <List.Item>
                     <List.Item.Meta
                         title={`${announcement.subject} (${announcement.created_at.slice(0, 10)})`}
-                        description={announcement.text}
+                        description={<div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(announcement.text)}}></div>}
                     />
                 </List.Item>
             )}
