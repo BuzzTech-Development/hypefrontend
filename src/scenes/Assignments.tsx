@@ -7,13 +7,13 @@ import store, {useAppSelector} from "../redux/store";
 
 const Assignments = (props: any) => {
     const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
-    const user: UserDetail = props.user;
+    const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const createAssignment = () => {
         props.history.push('/assignments/create')
     }
 
     return (<Space direction='vertical' size='large' style={{width: '80%'}}>
-        {user?.profile?.role != UserRole.Student ? <></> : <Button onClick={createAssignment}>Create an assignment</Button>}
+        {role === "INSTRUCTOR" ? <Button onClick={createAssignment}>Create an assignment</Button> : <></>}
         {assignments.length === 0 ? <></> : <AssignmentList assignments={assignments}/>}
     </Space>)
 }
@@ -63,13 +63,13 @@ const AssignmentSubList = (props: any) => {
         borderRadius: '0 0 1em 1em'
     }
 
-    return (<List size='large' bordered style={{borderRadius: '1em'}}>
+    return (<List size='large' bordered style={{borderRadius: '1em', marginBottom: '2.5em'}}>
         <div className='ant-list-header' style={{backgroundColor: '#a9a9a9', borderRadius: '1em 1em 0 0', borderBottom: '1px solid black'}}>
             <b>{header}</b>
         </div>
         {assignments.map((assignment: Assignment, i: any) =>(
             <List.Item key={i}
-                style={hover === i ? (i === assignments.length ? hoverBottomStyle : hoverStyle) : nonhoverStyle}
+                style={hover === i ? (i === assignments.length - 1 ? hoverBottomStyle : hoverStyle) : nonhoverStyle}
                 onMouseEnter={() => setHover(i)}
                 onMouseLeave={() => setHover(-1)}
             >

@@ -3,12 +3,13 @@ import React, {useEffect, useState} from 'react';
 import { withRouter, Link } from "react-router-dom";
 import {Assignment, assignmentsSelectors, Submission} from "../redux/assignmentSlice";
 import store, {useAppSelector} from "../redux/store";
+import {getMostRecentSubmission} from "../utils/utils";
 
 const Grades = (props: any) => {
+    const { student } = props;
     const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
     const [tableData, updateTableData] = useState<any[]>([]);
-    const [tableLoading, setTableLoading] = useState(true);
-    const currentUser = props.user;
+    const currentUser = useAppSelector((state) => state.user.userDetail);
     const userId = currentUser?.pk;
 
     const getMostRecentSubmission = (assignment: Assignment) => {
@@ -56,7 +57,7 @@ const Grades = (props: any) => {
         });
 
         submitted.map((assignment: Assignment, i:any) => {
-            const submission = getMostRecentSubmission(assignment);
+            const submission = getMostRecentSubmission(assignment, student.pk);
             if (!submission) return null;
             const dataValue = {
                 key: i,
