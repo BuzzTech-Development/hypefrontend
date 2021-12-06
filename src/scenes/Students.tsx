@@ -8,7 +8,6 @@ import { UserDetail, Cohort } from 'redux/userSlice';
 import Danger from 'scenes/Danger';
 import Message from 'scenes/Message';
 import {useSelector} from "react-redux";
-import {useAppSelector} from "../redux/store";
 import Grades from './Grades';
 import { Link } from 'react-router-dom';
 

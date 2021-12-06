@@ -1,6 +1,7 @@
 import {Button, List, Space, Table} from 'antd';
 import React, {useEffect, useState} from 'react';
 import { withRouter, Link, useParams } from "react-router-dom";
+import { UserRole } from 'redux/userSlice';
 import {Assignment, assignmentsSelectors, Submission} from "../redux/assignmentSlice";
 import store, {useAppSelector} from "../redux/store";
 import {getMostRecentSubmission} from "../utils/utils";
@@ -9,18 +10,13 @@ const Grades = (props: any) => {
     const assignments: Assignment[] = useAppSelector(assignmentsSelectors.selectAll);
     const [tableData, updateTableData] = useState<any[]>([]);
     const currentUser = useAppSelector((state) => state.user.userDetail);
-    const userId = currentUser?.pk;
     const { studentId } = useParams<{studentId? : any}>();
+    const isTeacher = currentUser?.profile?.role == UserRole.Instructor;
+    const userId = isTeacher ? studentId : currentUser?.pk;
     const out = useParams();
     const studList = useAppSelector((state) => state.user.students);
     const retStud = studList?.filter((user) => user.pk == studentId)[0];
     const student  = currentUser?.profile?.role === "STUDENT" ? props.student: retStud ;
-
-    const getMostRecentSubmission = (assignment: Assignment) => {
-        const submissions = assignment.submissions.filter((submission: Submission) => submission.author === userId);
-        if (submissions.length === 0) return null;
-        return submissions[submissions.length-1];
-    }
 
     const formatDate = (date: string) => {
         const day = date !== '' ? new Date(date).toLocaleDateString("en-US", { day: 'numeric', month: 'long' }): '';
@@ -55,13 +51,15 @@ const Grades = (props: any) => {
     useEffect(() => {
         const submitted = assignments.filter((v: Assignment) => {
             const submissions = v.submissions.filter((submission: Submission) =>
-                submission.author === userId || submission.author == studentId
+                submission.author == userId
             );
-            return submissions.length != 0;
+            return submissions.length !== 0;
         });
 
         submitted.map((assignment: Assignment, i:any) => {
-            const submission = getMostRecentSubmission(assignment);
+            console.log(assignment)
+            const submission = getMostRecentSubmission(assignment, userId);
+            console.log(submission)
             if (!submission) return null;
             const dataValue = {
                 key: i,
@@ -73,7 +71,7 @@ const Grades = (props: any) => {
                 grade: submission.graded ? ((submission.points / assignment.points * 100).toFixed(2)).toString() + '%' : "Not yet graded"
             }
             updateTableData(oldArray =>[...oldArray, dataValue])
-        })
+        });
     }, [])
 
 

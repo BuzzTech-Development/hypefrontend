@@ -25,6 +25,7 @@ function App(props: any) {
     const [loading, setLoading] = useState(true);
     const authenticated = useAppSelector((state) => state.user.authenticated);
     const currentCohort = useAppSelector((state) => state.user.currentCohort);
+    const currentUser = useAppSelector((state) => state.user.userDetail);
     const role = useAppSelector((state) => state.user.userDetail?.profile?.role);
     const dispatch = useAppDispatch();
 
