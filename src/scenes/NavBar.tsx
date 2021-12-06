@@ -59,13 +59,6 @@ const NavBar = (props: any) => {
             path: "/assignments",
             icon: <UnorderedListOutlined />
         },
-        // view progress only if student or parent
-        ...role === "STUDENT" || role === "PARENT" ? [{
-            title: "Progress",
-            key: "progress",
-            path: "/progress",
-            icon: <TrophyOutlined />
-        }] : [],
         // view students only if instructor
         ...role === "INSTRUCTOR" || role === "ADMIN" ? [{
             title: "Students",
@@ -86,17 +79,7 @@ const NavBar = (props: any) => {
             icon: <UserOutlined />
         }
     ]
-    if (user?.profile?.role === UserRole.Instructor || user?.profile?.role === UserRole.Admin) {
-        tabs.splice(tabs.length - 2, 0, 
-            {
-                title: "Students",
-                key: "students",
-                path: "/students",
-                icon: <TeamOutlined />
-            }
-            
-        )
-    }
+
 
     const selectedTab = tabs.find(
         tab => matchPath(props.location.pathname, { path: tab.path, exact: tab.exact || false })
