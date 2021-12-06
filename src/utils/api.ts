@@ -152,7 +152,14 @@ class ApiWrapper{
     }
 
     async gradeSubmission(payload: any): Promise<Submission> {
-        const response = await this.instance.patch(this.ENDPOINTS.submissions + payload.submissionId + "/", payload.points);
+        const points = {
+            points: payload.points
+        }
+        const graded = {
+            graded: true
+        }
+        let response = await this.instance.patch(this.ENDPOINTS.submissions + payload.submissionId + "/", points);
+        response = await this.instance.patch(this.ENDPOINTS.submissions + payload.submissionId + "/", graded);
         return response.data;
     }
 

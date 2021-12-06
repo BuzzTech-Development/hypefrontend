@@ -12,8 +12,8 @@ const AssignmentDescription = (props: any) => {
     const {assignmentId, studentId} = useParams<{assignmentId? : any, studentId? : any}>();
     const assignment = assignmentsSelectors.selectAll(store.getState()).find(val => val.id?.toString() === assignmentId);
     const currentUser = useAppSelector((state) => state.user.userDetail);
-    const userId = currentUser?.pk;
     const isTeacher = currentUser?.profile?.role == UserRole.Instructor;
+    const userId = isTeacher ? studentId : currentUser?.pk;
 
     const [isSubmittingAssignment, setIsSubmittingAssignment] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -50,7 +50,7 @@ const AssignmentDescription = (props: any) => {
     }
 
     useEffect(() => {
-        const submissions = assignment?.submissions.filter((submission: Submission) => submission.author === userId);
+        const submissions = assignment?.submissions.filter((submission: Submission) => submission.author == userId);
         if (assignment && submissions && submissions.length > 0) {
             setSubmitted(true);
             updateSubmissions(submissions);

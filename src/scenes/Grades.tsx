@@ -11,7 +11,6 @@ const Grades = (props: any) => {
     const currentUser = useAppSelector((state) => state.user.userDetail);
     const userId = currentUser?.pk;
     const { studentId } = useParams<{studentId? : any}>();
-    console.log(studentId)
     const out = useParams();
     const studList = useAppSelector((state) => state.user.students);
     const retStud = studList?.filter((user) => user.pk == studentId)[0];

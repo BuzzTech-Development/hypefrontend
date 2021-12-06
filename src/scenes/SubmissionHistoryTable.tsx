@@ -28,7 +28,6 @@ const SubmissionHistoryTable = (props: any) => {
             key: 'file',
             dataIndex: 'file',
             render: (text: any, record: any) => {
-                console.log(record.files);
                 return (
                     <a href={record.files.length > 0 ? record.files[0].file : null}>Download</a>
                 );

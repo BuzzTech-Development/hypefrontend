@@ -19,8 +19,6 @@ const GradeAssignment = (props: any) => {
     };
 
     const submission = getMostRecentSubmission(assignment, studentId);
-    console.log(studentId)
-    console.log(submission)
 
     const gradeAssignment = () => {
         const payload = {
