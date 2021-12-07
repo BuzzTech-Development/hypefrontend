@@ -7,7 +7,7 @@
     - [Set up Back-End](#set-up-back-end)
     - [Set up Front-End](#set-up-front-end)
   - [Navigating the Admin page](#navigating-the-admin-page)
-  - [Release Notes](#release-notes)
+  - [Release Notes - Version 1.0](#release-notes---version-10)
     - [Functionality](#functionality)
     - [Known Problems](#known-problems)
 
@@ -81,7 +81,7 @@ Go to http://localhost:8000/admin to perfrom administrative actions.
 Clicking on each of the "models", such as Cohorts, Assignments, or Users will allow you to look at the data held by each, create new entries, edit entries, or delete them. This will be useful for you if you ever need to make manual changes to the state of your platform.
 
 For more information see https://docs.djangoproject.com/en/3.2/ref/contrib/admin/
-## Release Notes
+## Release Notes - Version 1.0
 ### Functionality
 - Assignments
   - Teachers can create assignments
